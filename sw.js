@@ -1,27 +1,30 @@
-const CACHE_NAME = 'physioflow-v9';
+const CACHE_NAME = "physioflow-cache-v9";
 const ASSETS = [
-  '/index.html',
-  '/manifest.json'
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./PhysioFlow.png"
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).catch(() =>
-      caches.match('/index.html')
-    ))
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  event.respondWith(
+    caches.match(req).then((cached) => cached || fetch(req))
   );
 });
