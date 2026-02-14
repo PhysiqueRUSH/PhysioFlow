@@ -1,4 +1,4 @@
-const CACHE_NAME = 'physioflow-v2';
+const CACHE_NAME = 'physioflow-v3';
 const ASSETS = [
   '/index.html',
   '/manifest.json'
