@@ -1,4 +1,4 @@
-const CACHE_NAME = "physioflow-cache-v12";
+const CACHE_NAME = "physioflow-cache-v14";
 const ASSETS = [
   "./",
   "./index.html",
