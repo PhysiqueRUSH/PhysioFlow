@@ -375,6 +375,43 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
   -webkit-overflow-scrolling:touch;
   padding-bottom:18px;
 }
+/* v93 */
+.cleanpill{display:none;align-items:center;gap:3px;height:30px;padding:0 10px;border-radius:15px;background:#fff1e0;color:#c0510f;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.cleanpill.on{display:flex}
+.cleanpill:active{transform:scale(.94)}
+.pdisz{font-size:11px;color:var(--text2);white-space:nowrap;flex-shrink:0}
+/* v94 — secrétaire IA */
+.secrbtn{position:relative;height:32px;min-width:34px;padding:0 8px;border-radius:16px;background:var(--accentbg);color:var(--accent);font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.secrbtn.on{display:flex!important}
+#secrBadge:not(:empty){position:absolute;top:-4px;right:-5px;background:#e74c3c;color:#fff;border-radius:9px;font-size:10px;font-weight:700;padding:0 5px;min-width:16px;line-height:17px;text-align:center}
+.secrtabs{display:flex;gap:4px;overflow-x:auto;margin:-2px 0 12px;padding-bottom:2px;scrollbar-width:none}
+.secrtabs::-webkit-scrollbar{display:none}
+.secrtab{flex-shrink:0;padding:7px 11px;border-radius:16px;background:var(--bg);font-size:12px;font-weight:600;color:var(--text2)}
+.secrtab.on{background:var(--accent);color:#fff}
+.secrcard{background:var(--bg);border-radius:12px;padding:12px;margin-bottom:10px}
+.secrmeta{font-size:11px;color:var(--text2);margin-bottom:6px}
+.secrin{background:var(--surface);border-radius:10px;padding:8px 10px;font-size:13px;margin:6px 0;white-space:pre-wrap;word-wrap:break-word}
+.secrtag{display:inline-block;font-size:10px;font-weight:700;border-radius:6px;padding:1px 6px;margin-right:4px;background:var(--accentbg);color:var(--accent)}
+.secrtag.warn{background:#fff1e0;color:#c0510f}.secrtag.red{background:#fce0e8;color:#e74c3c}
+/* v95 — secrétaire : apprentissage */
+.secrtag.ok{background:#e6f7ee;color:#1e8c4e}
+.secract{display:flex;gap:6px;align-items:flex-start;font-size:12px;margin:6px 0}
+.secrnote{font-size:12px;margin:4px 0;color:#c0510f}
+.secrwhy{font-size:12px;margin:4px 0;color:var(--text2)}.secrwhy summary{cursor:pointer}.secrwhy div{white-space:pre-wrap;margin-top:4px}
+.secrfb{align-self:flex-end;display:flex;gap:4px;align-items:center;font-size:11px;color:var(--text3);margin:-3px 2px 2px}
+.secrfb button{background:var(--bg);border-radius:10px;padding:1px 7px;font-size:12px;opacity:.75}.secrfb button.on{opacity:1;background:var(--accentbg)}
+.secrfbform{align-self:stretch;background:var(--bg);border-radius:10px;padding:8px;margin-bottom:6px}
+.secrbar{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden;min-width:40px}.secrbar i{display:block;height:100%;background:var(--accent)}
+.secrrule{display:flex;gap:6px;align-items:flex-start;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border2)}.secrrule span.t{flex:1}
+.secrrule button{flex-shrink:0;background:none;font-size:13px;padding:0 3px}
+.secrlink{background:none;color:var(--accent);font-size:12px;padding:0;text-decoration:underline}
+.secrj{font-size:12px;padding:4px 0;border-bottom:1px solid var(--border2)}
+.secrmsgs{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.secrb{max-width:85%;padding:8px 10px;border-radius:12px;font-size:13px;white-space:pre-wrap;word-wrap:break-word}
+.secrb.in{align-self:flex-start;background:var(--bg)}
+.secrb.out{align-self:flex-end;background:#e2f3ef}.secrb.kine{background:#e5edfb}
+.secrb small{display:block;font-size:10px;color:var(--text3);margin-top:3px}
+.pdidel{flex-shrink:0;font-size:13px;line-height:1;padding:5px 7px;border-radius:8px;background:#fce0e8;color:#e74c3c}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -383,8 +420,8 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 92 · Firebase</div></div>
-    <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button class="nb" onclick="navW(1)">›</button></div>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 95 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
     <button class="ib" id="bL" onclick="togV('list')" title="Liste du jour">☰</button>
@@ -438,6 +475,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div class="mo" id="mBRK"><div class="mop"><div class="moh"></div><h2 id="mBRKT">☕ Break</h2><div id="mBRKB"></div></div></div>
 <div class="mo" id="mXS"><div class="mop"><div class="moh"></div><h2>➕ Place supplémentaire automatique</h2><div id="mXSB"></div></div></div>
 <div class="mo" id="mGCALL"><div class="mop"><div class="moh"></div><h2 id="mGCALLT">🎙️ Appel des présents</h2><div id="mGCALLB"></div></div></div>
+<div class="mo" id="mSECR"><div class="mop"><div class="moh"></div><h2 id="mSECRT">🤖 Secrétaire IA</h2><div id="mSECRB"></div></div></div>
 
 <script src="https://unpkg.com/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -459,6 +497,14 @@ firebase.initializeApp(firebaseConfig);
 const FB=firebase.database();
 const FB_REF=FB.ref('physioflow');
 let _fbPushLock=false;
+/* v93 — si Firebase refuse une écriture (données > 16 Mo, droits…), le dire une fois */
+var _pfSyncWarned=false;
+function _pfWarnSyncSize(e){
+  console.error('[v93] écriture Firebase refusée',e);
+  if(_pfSyncWarned)return;_pfSyncWarned=true;
+  var sz=0;try{sz=JSON.stringify(D).length}catch(_){}
+  toast(sz>15*1048576?('⚠️ Synchro Firebase refusée : données trop lourdes ('+_pfFmtSize(sz)+' pour 16 Mo max). Supprimez des documents : Paramètres › Données.'):'⚠️ Synchro Firebase refusée. Vos données restent enregistrées sur cet appareil.',9000);
+}
 /* v92 — synchro suspendue jusqu'à la vérification de démarrage (voir _pfBootRecover) */
 var _pfBootSyncDone=false,_pfPushWaiting=false;
 
@@ -473,6 +519,7 @@ function initFCM(){
       var title=n.title||'PhysioFlow';
       var body=n.body||'';
       toast('🔔 '+body);
+      try{if(typeof secrRefreshBadge==='function')secrRefreshBadge()}catch(e){} /* v94 */
       if(Notification.permission==='granted'){
         var opts={body:body,icon:'PhysioFlow.png',badge:'PhysioFlow.png',vibrate:[200,100,200]};
         if(navigator.serviceWorker&&navigator.serviceWorker.controller){
@@ -608,7 +655,7 @@ function fbPush(){
     /* Push config (readable by patient app) */
     FB_REF.child('config').set({
       days:D.days||[],
-      motifs:(D.motifs||[]).map(function(m){return{id:m.id,label:m.label,duration:m.duration,ci:m.ci,times:m.times||[],slots:m.slots||1,allowSimul:!!m.allowSimul,simulWith:m.simulWith||'',hiddenForPatient:!!m.hiddenForPatient,description:m.description||'',slotExceptions:m.slotExceptions||{}}}),
+      motifs:(D.motifs||[]).map(function(m){return{id:m.id,label:m.label,duration:m.duration,ci:m.ci,times:m.times||[],slots:m.slots||1,allowSimul:!!m.allowSimul,simulWith:m.simulWith||'',hiddenForPatient:!!m.hiddenForPatient,description:m.description||'',slotExceptions:m.slotExceptions||{},audience:(m.audience==='new'||m.audience==='known')?m.audience:'all'}}),
       openings:D.openings||[],
       startH:D.startH||8,
       endH:D.endH||19,
@@ -670,7 +717,11 @@ function fbPush(){
       var merged=_localApts.map(function(a){
         var _canc=!!a.cancelled;
         var _rv=_remById[a.id];
-        if(_rv&&_rv.cancelled&&!_canc){_canc=true;}
+        /* v93 — une séance rétablie par le kiné (restoredAt, ou cancelledBy resté d'une annulation
+           précédente) n'est plus ré-annulée par la copie Firebase : avant, elle restait « annulée »
+           côté patients et son créneau paraissait libre. Les nouvelles annulations patients
+           arrivent par patientCancellations, qui remet cancelled=true ici. */
+        if(_rv&&_rv.cancelled&&!_canc&&!(a.restoredAt||a.cancelledBy)){_canc=true;}
         /* Pick up patientAbsence flag from remote (patient signals absence) */
         var _pAbsence=!!a.patientAbsence;
         if(_rv&&_rv.patientAbsence&&!_pAbsence){_pAbsence=true;}
@@ -688,7 +739,7 @@ function fbPush(){
       return merged;
     }).then(function(){_done()}).catch(function(e){console.error('appointments tx error',e);_done()});
     /* Push full data */
-    FB_REF.child('full').set(D).then(function(){_done()}).catch(function(){_done()});
+    FB_REF.child('full').set(D).then(function(){_done()}).catch(function(e){_pfWarnSyncSize(e);_done()});
   }catch(e){
     console.error('fbPush error',e);
     _fbPushLock=false;
@@ -821,19 +872,8 @@ function autoBackup(){
       data:D
     };
     /* Save to Firebase under backups/YYYY-MM-DD */
-    FB_REF.child('backups/'+today).set(backup);
-    /* Keep only last 30 backups: clean old ones */
-    FB_REF.child('backups').once('value').then(function(snap){
-      var bk=snap.val();
-      if(!bk)return;
-      var keys=Object.keys(bk).sort();
-      if(keys.length>30){
-        var toRemove=keys.slice(0,keys.length-30);
-        var updates={};
-        toRemove.forEach(function(k){updates[k]=null;});
-        FB_REF.child('backups').update(updates);
-      }
-    });
+    /* v93 — puis garder les 30 plus récentes SANS télécharger les sauvegardes (voir _pfPruneBackups) */
+    FB_REF.child('backups/'+today).set(backup).then(function(){_pfPruneBackups(today)}).catch(function(e){_pfWarnSyncSize(e)});
   }catch(e){console.warn('autoBackup error',e)}
 }
 
@@ -863,7 +903,51 @@ function downloadBackup(){
 }
 
 /* Restore from Firebase backup */
+/* ═══ v93 — SAUVEGARDES FIREBASE SANS TÉLÉCHARGEMENT MASSIF ═══
+   Avant : backups.once('value') téléchargeait les 30 sauvegardes complètes
+   (30 × le poids des données, photos comprises) une fois par jour pour le
+   nettoyage, et à chaque ouverture de la liste. Désormais : liste des dates
+   (requête REST « shallow », quelques octets), puis seulement ce qui est utile. */
+function _pfBackupKeys(){
+  return fetch(firebaseConfig.databaseURL+'/physioflow/backups.json?shallow=true',{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(o){return (o&&typeof o==='object')?Object.keys(o):[];});
+}
+function _pfPruneBackups(today){
+  _pfBackupKeys().then(function(keys){
+    if(today&&keys.indexOf(today)<0)keys.push(today);
+    keys.sort();
+    if(keys.length<=30)return;
+    var updates={};keys.slice(0,keys.length-30).forEach(function(k){updates[k]=null;});
+    return FB_REF.child('backups').update(updates);
+  }).catch(function(e){console.warn('[v93] nettoyage des sauvegardes reporté',e&&e.message);});
+}
 function showRestoreBackups(){
+  _pfBackupKeys().then(function(keys){
+    if(!keys.length){toast('Aucune sauvegarde trouvée');return;}
+    keys.sort().reverse();
+    return Promise.all(keys.map(function(k){
+      return Promise.all([FB_REF.child('backups/'+k+'/stats').once('value'),FB_REF.child('backups/'+k+'/version').once('value')])
+        .then(function(r){return {k:k,st:r[0].val()||{},v:r[1].val()};})
+        .catch(function(){return {k:k,st:{},v:null};});
+    })).then(function(rows){
+      var h='<h3>🔄 Restaurer une sauvegarde</h3>'+
+        '<div style="font-size:12px;color:var(--text2);margin-bottom:12px">'+rows.length+' sauvegarde(s) disponibles sur Firebase.</div>';
+      rows.forEach(function(x){
+        h+='<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:8px;margin-bottom:4px">'+
+          '<div style="flex:1"><div style="font-weight:600;font-size:13px">'+esc(x.k)+'</div>'+
+          '<div style="font-size:11px;color:var(--text2)">'+(x.st.patients||'?')+' patients · '+(x.st.appointments||'?')+' RDV · v'+(x.v||'?')+'</div></div>'+
+          '<button class="btn bs" style="font-size:11px;padding:4px 10px" onclick="restoreBackup(\''+esc(x.k)+'\')">Restaurer</button></div>';
+      });
+      h+='<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button></div>';
+      document.getElementById('mMT').textContent='💾 Sauvegardes';
+      document.getElementById('mMB').innerHTML=h;
+      opM('mM');
+    });
+  }).catch(function(e){console.warn('[v93] liste des sauvegardes : méthode complète',e&&e.message);_pfShowRestoreBackupsFull();});
+}
+/* Ancienne méthode, gardée en secours si la requête REST est refusée */
+function _pfShowRestoreBackupsFull(){
   FB_REF.child('backups').once('value').then(function(snap){
     var bk=snap.val();
     if(!bk){toast('Aucune sauvegarde trouvée');return;}
@@ -901,9 +985,13 @@ function restoreBackup(key){
 
 /* Listen for changes from Firebase (patient bookings, or other Pro device) */
 let _fbInited=false;
+/* v93 — la première valeur de « full » n'est plus jetée : la vérification de démarrage
+   s'en sert pour ne pas écraser des modifications plus récentes faites sur un autre appareil. */
+var _pfFullInitResolve=null,_pfFullInitP=new Promise(function(r){_pfFullInitResolve=r});
 function fbListen(){
   FB_REF.child('full').on('value',function(snap){
-    if(!_fbInited){_fbInited=true;return;} /* skip initial load */
+    if(!_fbInited){_fbInited=true;try{if(_pfFullInitResolve)_pfFullInitResolve(snap);}catch(e){}_pfFullInitResolve=null;return;} /* v93 : transmise à _pfBootRecover */
+    if(_pfBootAsking)return; /* v93 : choix en attente au démarrage */
     if(_fbPushLock)return;
     var d=snap.val();
     if(!d||!d.motifs)return;
@@ -917,7 +1005,8 @@ function fbListen(){
     toast('🔄 Données synchronisées');
   });
   /* Also listen for waitlist entries */
-  FB_REF.child('waitlist').on('child_added',function(snap){
+  FB_REF.child('waitlist').on('child_added',function _pfOnWait(snap){
+    if(_pfBootAsking){_pfDefer(_pfOnWait,snap);return;} /* v93 */
     var w=snap.val();
     snap.ref.remove(); /* Toujours supprimer en premier */
     if(!w||!w.patientName)return;
@@ -930,7 +1019,8 @@ function fbListen(){
     }
   });
 /* Also listen for patient bookings specifically */
-FB_REF.child('patientBookings').on('child_added',function(snap){
+FB_REF.child('patientBookings').on('child_added',function _pfOnBooking(snap){
+  if(_pfBootAsking){_pfDefer(_pfOnBooking,snap);return;} /* v93 */
   var b=snap.val();
 
   /* TOUJOURS supprimer de Firebase en premier — empêche tout re-traitement futur */
@@ -1056,7 +1146,8 @@ FB_REF.child('patientBookings').on('child_added',function(snap){
 });
 
   /* Listen for patient cancellations */
-  FB_REF.child('patientCancellations').on('child_added',function(snap){
+  FB_REF.child('patientCancellations').on('child_added',function _pfOnCancel(snap){
+    if(_pfBootAsking){_pfDefer(_pfOnCancel,snap);return;} /* v93 */
     var c=snap.val();
     snap.ref.remove(); /* Toujours supprimer de Firebase en premier */
     if(!c||!c.appointmentId)return;
@@ -1065,6 +1156,7 @@ FB_REF.child('patientBookings').on('child_added',function(snap){
     ap.cancelled=true;
     ap.cancelledBy='patient';
     ap.cancelReason=c.reason||'';
+    delete ap.restoredAt; /* v93 */
     sv();if(typeof R==='function')R();
     var pat=ap.patientId?gp(ap.patientId):null;
     var patName=pat?(pat.lastName+' '+pat.firstName):'Patient inconnu';
@@ -1132,6 +1224,10 @@ try{
     _loadedFromDefaults=true;
   }
   _pfLsD=null;_pfIdbD=null;
+  /* v93 — date du dernier enregistrement AU CHARGEMENT : certaines routines de démarrage
+     (report des 💵 de la veille…) réenregistrent aussitôt, ce qui masquait l'ancienneté des
+     données de cet appareil face à Firebase. */
+  window._pfLoadedLastSaved=(D&&D._lastSaved)||0;
     // migrations / defaults
     if(D.bilanFee===undefined)D.bilanFee=30;
     if(!Array.isArray(D.patients))D.patients=[];
@@ -1282,17 +1378,85 @@ function _pfIdbWrite(json,lsOk,retry){
    donc avec Firebase :
    - RDV réservé en ligne présent sur Firebase mais absent de l'agenda → réintégré ;
    - (une seule fois) annulations / absences signalées par les patients → reportées. */
-function _pfBootOpenGate(){
+function _pfBootOpenGate(force){
   if(_pfBootSyncDone)return;
+  if(_pfBootAsking&&force!==true)return; /* v93 : en attente du choix de l'utilisateur */
   _pfBootSyncDone=true;
   if(_pfPushWaiting){_pfPushWaiting=false;fbPush();}
 }
+/* v93 — si Firebase contient des données plus récentes que cet appareil (modifiées sur
+   un autre appareil pendant que celui-ci était fermé), on demande AVANT d'envoyer quoi que
+   ce soit : avant, cet appareil écrasait ces modifications sans prévenir. */
+var _pfBootAsking=false,_pfBootPending=null,_pfDeferredQ=[];
+function _pfDefer(fn,snap){_pfDeferredQ.push([fn,snap]);}
+function _pfRunDeferred(){var q=_pfDeferredQ;_pfDeferredQ=[];q.forEach(function(x){try{x[0](x[1]);}catch(e){console.error('[v93] file différée',e);}});}
 function _pfBootRecover(){
-  if(_loadedFromDefaults){_pfBootOpenGate();return;}
-  Promise.all([FB_REF.child('appointments').once('value'),FB_REF.child('patientBookings').once('value')]).then(function(res){
-    try{_pfApplyRecovery(res[0].val(),res[1].val());}catch(e){console.error('[v92] récupération',e);}
-    _pfBootOpenGate();
-  }).catch(function(e){console.warn('[v92] vérification de démarrage impossible',e);_pfBootOpenGate();});
+  if(_loadedFromDefaults){_pfFullInitP=null;_pfBootOpenGate();return;}
+  Promise.all([FB_REF.child('appointments').once('value'),FB_REF.child('patientBookings').once('value'),_pfFullInitP]).then(function(res){
+    _pfFullInitP=null; /* libère la copie Firebase gardée en mémoire */
+    var rs=res[2],rt=0;
+    try{rt=(rs&&rs.child)?(rs.child('_lastSaved').val()||0):0;}catch(e){}
+    if(!_pfBootSyncDone&&rt>(window._pfLoadedLastSaved||0)+2000){
+      var rd=rs.val();
+      if(rd&&rd.motifs){
+        _pfBootPending={remote:res[0].val(),queue:res[1].val(),rd:rd};
+        _pfBootAsking=true;
+        _pfAskNewerRemote(rd);
+        return;
+      }
+    }
+    _pfBootFinish(res[0].val(),res[1].val());
+  }).catch(function(e){console.warn('[v92] vérification de démarrage impossible',e);_pfBootOpenGate(true);});
+}
+function _pfBootFinish(remote,queue){
+  try{_pfApplyRecovery(remote,queue);}catch(e){console.error('[v92] récupération',e);}
+  _pfBootOpenGate(true);
+}
+function _pfFmtTs(t){try{var d=new Date(t);return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' à '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '?'}}
+function _pfAskNewerRemote(rd){
+  var ov=document.createElement('div');ov.id='pfSyncAsk';
+  ov.style.cssText='position:fixed;inset:0;z-index:10000;background:rgba(10,15,30,.55);display:flex;align-items:center;justify-content:center;padding:16px';
+  var nA=(rd.appointments||[]).length,nP=(rd.patients||[]).length;
+  ov.innerHTML='<div style="background:var(--surface);color:var(--text);border-radius:16px;max-width:420px;width:100%;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3);font-size:14px;line-height:1.5">'+
+    '<div style="font-size:17px;font-weight:700;margin-bottom:8px">🔄 Données plus récentes sur un autre appareil</div>'+
+    '<div>Firebase contient des modifications du <b>'+_pfFmtTs(rd._lastSaved)+'</b> ('+nP+' patients, '+nA+' RDV).<br>Cet appareil a des données plus anciennes (<b>'+_pfFmtTs(window._pfLoadedLastSaved)+'</b>).</div>'+
+    '<div style="font-size:12px;color:var(--text2);margin-top:8px">Si vous gardez celles de cet appareil, les modifications faites ailleurs seront écrasées sur Firebase. Avant de charger, une copie de cet appareil est gardée (Paramètres › Données › Locales).</div>'+
+    '<button class="btn bp bw" style="margin-top:14px" onclick="_pfBootChoice(true)">⬇️ Charger les données récentes (recommandé)</button>'+
+    '<button class="btn bw" style="margin-top:8px" onclick="_pfBootChoice(false)">Garder celles de cet appareil</button></div>';
+  document.body.appendChild(ov);
+}
+function _pfBootChoice(load){
+  var ov=document.getElementById('pfSyncAsk');if(ov)ov.remove();
+  var pend=_pfBootPending;_pfBootPending=null;
+  var finished=false;
+  var done=function(){
+    if(finished)return;finished=true;
+    _pfBootAsking=false;
+    _pfRunDeferred(); /* réservations / annulations arrivées pendant la question */
+    _pfBootFinish(pend?pend.remote:null,pend?pend.queue:null);
+  };
+  if(load&&pend&&pend.rd){
+    var adopted=false;
+    var adopt=function(rd){
+      if(adopted)return;adopted=true;
+      try{if(typeof doAutoLocalBackup==='function')doAutoLocalBackup('avant chargement autre appareil');}catch(e){}
+      D=rd;_pfSaveLocal();
+      try{if(typeof checkBillCarryOver==='function')checkBillCarryOver();}catch(e){} /* routine du jour sur les données chargées */
+      if(typeof R==='function')R();
+      toast('🔄 Données de l\'autre appareil chargées',4000);
+      done();
+    };
+    /* on prend la version la plus récente de Firebase au moment du choix */
+    var tmo=setTimeout(function(){adopt(pend.rd);},5000);
+    FB_REF.child('full').once('value').then(function(sn){
+      clearTimeout(tmo);var d=sn.val();
+      adopt((d&&d.motifs&&(d._lastSaved||0)>=(pend.rd._lastSaved||0))?d:pend.rd);
+    }).catch(function(){clearTimeout(tmo);adopt(pend.rd);});
+  }else{
+    /* on garde : ces données deviennent les plus récentes pour les autres appareils */
+    D._lastSaved=Date.now();_pfSaveLocal();
+    done();
+  }
 }
 function _pfApplyRecovery(remote,queue){
   var firstRun=!D._v92Checked;
@@ -1465,7 +1629,7 @@ function mselAction(action){
     }else if(action==='restore'){
       MSEL.ids.forEach(function(aid){
         var ap=D.appointments.find(function(a){return a.id===aid});
-        if(ap)ap.cancelled=false;
+        if(ap){ap.cancelled=false;ap.restoredAt=Date.now();} /* v93 */
       });sv();R();toast('Séances rétablies');
     }else if(action==='bill'){
       MSEL.ids.forEach(function(aid){
@@ -1546,7 +1710,11 @@ function upcomingFrenchHolidays(count){
   list.sort(function(a,b){return a.date.localeCompare(b.date)});
   return list.slice(0,count||14);
 }
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* v93 — esc() échappe aussi les guillemets : il sert dans des attributs value="…".
+   Sans ça, un guillemet coupait la valeur : les exceptions de places par heure
+   s'affichaient au nombre par défaut et étaient EFFACÉES au réenregistrement du
+   motif ; un libellé contenant un guillemet était tronqué. */
+const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const gMon=d=>{const t=new Date(d);const w=t.getDay();t.setDate(t.getDate()-(w===0?6:w-1));return t};
 const same=(a,b)=>dk(a)===dk(b);
 function fmt(d){const ds=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],ms=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];return ds[d.getDay()]+' '+d.getDate()+' '+ms[d.getMonth()]+' '+d.getFullYear()}
@@ -1908,7 +2076,7 @@ function billPatient(pid,force){
   const fee=Number(p.sessionFee||18.20);
   /* Show billing dialog with adjustment option */
   var b=document.getElementById('mMB');
-  document.getElementById('mMT').textContent='💵 Facturer '+esc(p.lastName)+' '+esc(p.firstName);
+  document.getElementById('mMT').textContent='💵 Facturer '+p.lastName+' '+p.firstName;
   b.innerHTML='<div style="font-size:13px;margin-bottom:12px">'+aps.length+' séance(s) · Montant : <b>'+money(sum)+'</b></div>'+
     '<div class="fg" style="margin-bottom:10px"><label style="font-size:12px">Date de facturation</label>'+
       '<input type="date" id="billDate" value="'+todayKey()+'" max="'+todayKey()+'" onchange="updateBillPreview(\''+pid+'\')"></div>'+
@@ -1990,7 +2158,7 @@ function openForceBillDialog(pid){
   var p=gp(pid);if(!p)return;
   var fee=Number(p.sessionFee||18.20);
   var b=document.getElementById('mMB');
-  document.getElementById('mMT').textContent='💵 Facturer — '+esc(p.lastName)+' '+esc(p.firstName);
+  document.getElementById('mMT').textContent='💵 Facturer — '+p.lastName+' '+p.firstName;
   b.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Aucune séance non facturée pour ce patient. Vous pouvez facturer en indiquant un nombre de séances.</div>'+
     '<div class="fg"><label>Nombre de séances à facturer</label>'+
       '<input type="number" id="forceBillN" min="1" max="999" value="" placeholder="Obligatoire" style="font-size:16px;font-weight:700;text-align:center" autofocus></div>'+
@@ -2166,7 +2334,7 @@ function _doR(){_rTimer=null;invalidateBillCache();rWB();
   document.getElementById('plw').classList.toggle('on',vM==='patients');
   document.getElementById('bL').classList.toggle('on',vM==='list');
   document.getElementById('bP').classList.toggle('on',vM==='patients');
-  if(vM==='grid'){rGrid();rAps()}else if(vM==='list')rList();else if(vM==='patients')rPats();}
+  if(vM==='grid'){rGrid();rAps()}else if(vM==='list')rList();else if(vM==='patients')rPats();try{_pfUpdCleanBtn()}catch(e){console.warn('[v93]',e)}}
 
 function rWB(){
   const mon=gMon(cD);const today=new Date();const L=['L','M','M','J','V','S','D'];
@@ -2186,7 +2354,8 @@ function navW(dir){
   const target=new Date(mon);
   target.setDate(mon.getDate()+monIndex(chosen));
   cD=target;
-  sv();
+  /* v93 : plus de sv() ici — naviguer ne modifie pas les données (chaque semaine
+     affichée renvoyait toutes les données, documents compris, vers Firebase) */
   R();
   scrollNow();
 }
@@ -3177,7 +3346,37 @@ function finalizeCancelSMS(apId,motif){
   clM('mM');
   toast('Séance annulée · SMS préparé');
 }
-function uncancelAp(){clCtx();if(!selId)return;const ap=D.appointments.find(a=>a.id===selId);if(ap){ap.cancelled=false;sv();R();toast('Séance rétablie')}}
+function uncancelAp(){clCtx();if(!selId)return;const ap=D.appointments.find(a=>a.id===selId);if(ap){ap.cancelled=false;ap.restoredAt=Date.now();/* v93 */sv();R();toast('Séance rétablie')}}
+
+/* ═══ v93 — NETTOYAGE DES ANNULATIONS PATIENTS DU JOUR ═══
+   Supprime uniquement les séances du jour affiché annulées PAR LES PATIENTS
+   (annulées ou décalées depuis l'appli patient : celles qui apparaissent
+   estompées). Ne touche jamais : les RDV actifs, les séances annulées par le
+   kiné, les séances facturées, celles qui portent un bilan. */
+function _pfCleanableOn(key){
+  return (D.appointments||[]).filter(function(a){
+    return a&&a.date===key&&a.cancelled===true&&(a.cancelledBy==='patient'||a.cancelledBy==='patient-report')&&!a.billed&&!apHasBilan(a);
+  });
+}
+function _pfUpdCleanBtn(){
+  var b=document.getElementById('btnClean');if(!b)return;
+  var n=_pfCleanableOn(dk(cD)).length;
+  b.classList.toggle('on',n>0);
+  b.innerHTML=n?('🧹<b>'+n+'</b>'):'';
+}
+function cleanPatientCancels(){
+  var key=dk(cD),list=_pfCleanableOn(key);
+  if(!list.length){toast('Aucune séance annulée par un patient ce jour');_pfUpdCleanBtn();return;}
+  list.sort(function(a,b){return t2m(a.time)-t2m(b.time)});
+  var lines=list.map(function(a){var p=a.patientId?gp(a.patientId):null;return '• '+a.time+' — '+(p?(p.lastName+' '+p.firstName):(a.label||'?'))+(a.cancelledBy==='patient-report'?' (décalée)':'')});
+  var n=list.length,s=n>1?'s':'';
+  if(!confirm('🧹 Supprimer '+n+' séance'+s+' annulée'+s+' par '+(n>1?'des patients':'un patient')+' — '+fmt(cD)+' ?\n\n'+lines.join('\n')+'\n\nLes RDV actifs et les séances que vous avez annulées vous-même ne sont pas touchés.'))return;
+  var ids=list.map(function(a){return a.id});
+  markApDeleted(ids);
+  D.appointments=D.appointments.filter(function(a){return ids.indexOf(a.id)<0});
+  sv();R();
+  toast('🧹 '+n+' séance'+s+' annulée'+s+' supprimée'+s);
+}
 
 function openDelSeries(ap){
   var b=document.getElementById('mDelRB');
@@ -3469,7 +3668,7 @@ function confirmSlotPat(apId,pid){
   var p=gp(pid);if(!p)return;
   var newAp={id:uid(),type:ap.type||'rdv',motifId:ap.motifId,patientId:pid,label:'',date:ap.date,time:ap.time,duration:ap.duration,notes:'',cancelled:false,bookedAt:new Date().toISOString()};
   D.appointments.push(newAp);
-  sv();clM('mA');R();toast(esc(p.lastName)+' ajouté(e) à '+ap.time);
+  sv();clM('mA');R();toast(p.lastName+' ajouté(e) à '+ap.time);
 }
 function toggleAbsAllDay(){
   var checked=document.getElementById('fAbsAllDay')&&document.getElementById('fAbsAllDay').checked;
@@ -3542,7 +3741,7 @@ function svAF(exId){
     var _d=new Date(date+'T00:00:00');
     var _dn=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][_d.getDay()];
     var _pat=patientId?gp(patientId):null;
-    var _pn=_pat?(esc(_pat.lastName)+' '+esc(_pat.firstName)):(isAbs?(label||'Absence'):'');
+    var _pn=_pat?(_pat.lastName+' '+_pat.firstName):(isAbs?(label||'Absence'):'');
     toast('Rdv fixé le '+_dn+' '+_d.getDate()+'/'+(_d.getMonth()+1)+'/'+_d.getFullYear()+' à '+time+(_pn?' pour '+_pn:''));
     /* Propose same appointment for linked patient */
     if(_pat&&_pat.linkedTo){
@@ -3626,8 +3825,8 @@ function openPC(pid){
   document.getElementById('mPT').innerHTML='👤 '+esc(p.lastName)+' '+esc(p.firstName)+' '+alrt(p,true);
   var ag=p.dob?calcAge(p.dob):'';
   var dobD=p.dob?new Date(p.dob+'T00:00:00').toLocaleDateString('fr-FR'):'Non renseignée';
-  var docsH='';if(p.documents&&p.documents.length){
-    docsH=p.documents.map(function(d,i){return'<div class="pdi"><span>📎</span><a href="'+d.data+'" download="'+esc(d.name)+'">'+esc(d.name)+'</a><button style="font-size:12px;color:#e74c3c" onclick="rmDoc(\''+pid+'\','+i+')">×</button></div>'}).join('')}
+  var docsH='',_docsTot=0;if(p.documents&&p.documents.length){
+    docsH=p.documents.map(function(d,i){var _sz=_pfDocBytes(d);_docsTot+=_sz;return'<div class="pdi"><span>📎</span><a href="'+d.data+'" download="'+esc(d.name)+'">'+esc(d.name)+'</a><span class="pdisz">'+_pfFmtSize(_sz)+'</span><button class="pdidel" title="Supprimer ce document" onclick="rmDoc(\''+pid+'\','+i+')">🗑</button></div>'}).join('')}
   var b=document.getElementById('mPB');
 
   const ubN=unbilledCount(pid);
@@ -3663,9 +3862,10 @@ function openPC(pid){
     '<label><input type="checkbox" '+(p.needMut?'checked':'')+' onchange="togMutFlag(\''+pid+'\',this.checked)"> ‼️ Mutuelle</label>'+
     '<label><input type="checkbox" '+(p.needSecu?'checked':'')+' onchange="togFlag(\''+pid+'\',\'needSecu\',this.checked)"> ‼️ Sécu</label></div>'+
     rejHtml+
-    '<h3>📎 Documents</h3><div class="pdocs" id="pcD">'+(docsH||'<div style="font-size:12px;color:var(--text2);padding:4px 0">Aucun document</div>')+'</div>'+
+    '<h3>📎 Documents'+(_docsTot?' <span style="font-weight:400;font-size:12px;color:var(--text2)">('+p.documents.length+' · '+_pfFmtSize(_docsTot)+')</span>':'')+'</h3><div class="pdocs" id="pcD">'+(docsH||'<div style="font-size:12px;color:var(--text2);padding:4px 0">Aucun document</div>')+'</div>'+
     '<div style="display:flex;gap:6px;margin-top:8px"><button class="btn bs" style="flex:1;font-size:12px" onclick="addDoc(\''+pid+'\')">📁 Joindre</button>'+
     '<button class="btn bs" style="flex:1;font-size:12px" onclick="takePhoto(\''+pid+'\')">📷 Photo</button></div>'+
+    ((p.documents&&p.documents.length)?'<button class="btn bd bw" style="margin-top:6px;font-size:12px" onclick="rmAllDocs(\''+pid+'\')">🗑 Supprimer tous les documents'+(_docsTot?' ('+_pfFmtSize(_docsTot)+')':'')+'</button>':'')+
     /* Linked patient */
     (function(){
       var linked=p.linkedTo?gp(p.linkedTo):null;
@@ -3960,7 +4160,52 @@ function takePhoto(pid){
   };inp.click();
 }
 
-function rmDoc(pid,idx){var p=gp(pid);if(p&&p.documents){p.documents.splice(idx,1);sv();openPC(pid)}}
+/* ═══ v93 — DOCUMENTS : TAILLE, SUPPRESSION, ESPACE UTILISÉ ═══ */
+function _pfDocBytes(d){var s=(d&&typeof d.data==='string')?d.data:'';var i=s.indexOf(',');return Math.round((s.length-(i>=0?i+1:0))*0.75);}
+function _pfFmtSize(b){b=b||0;return b>=1048576?(b/1048576).toFixed(1).replace('.',',')+' Mo':Math.max(1,Math.round(b/1024))+' Ko';}
+function rmDoc(pid,idx){
+  var p=gp(pid);if(!p||!p.documents||!p.documents[idx])return;
+  var d=p.documents[idx];
+  if(!confirm('Supprimer le document « '+(d.name||'sans nom')+' » ('+_pfFmtSize(_pfDocBytes(d))+') de la fiche de '+p.lastName+' '+p.firstName+' ?'))return;
+  p.documents.splice(idx,1);sv();openPC(pid);toast('🗑 Document supprimé');
+}
+function rmAllDocs(pid){
+  var p=gp(pid);if(!p||!p.documents||!p.documents.length)return;
+  var n=p.documents.length,tot=p.documents.reduce(function(t,d){return t+_pfDocBytes(d)},0),s=n>1?'s':'';
+  if(!confirm('Supprimer le'+s+' '+n+' document'+s+' de '+p.lastName+' '+p.firstName+' ('+_pfFmtSize(tot)+') ?\n\nLes sauvegardes des derniers jours en gardent une copie.'))return;
+  p.documents=[];sv();openPC(pid);toast('🗑 '+n+' document'+s+' supprimé'+s+' · '+_pfFmtSize(tot)+' libérés');
+}
+function _pfStorageStats(){
+  var tot=0;try{tot=JSON.stringify(D).length}catch(e){}
+  var docs=0,nd=0,per=[];
+  (D.patients||[]).forEach(function(p){var t=0,n=0;(p.documents||[]).forEach(function(d){t+=_pfDocBytes(d);n++;});if(n){docs+=t;nd+=n;per.push({p:p,s:t,n:n});}});
+  var notes=0;(D.proNotes||[]).forEach(function(x){if(x&&x.data)notes+=_pfDocBytes(x);});
+  per.sort(function(a,b){return b.s-a.s});
+  return {tot:tot,docs:docs,nd:nd,notes:notes,per:per};
+}
+function _pfStorageSummaryHtml(){
+  var st=_pfStorageStats(),LIM=16*1048576,pct=Math.min(100,Math.round(st.tot/LIM*100));
+  var col=pct>=75?'#e74c3c':(pct>=50?'#e67e22':'#27ae60');
+  return '<div style="display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap"><span>Volume des données : <b>'+_pfFmtSize(st.tot)+'</b></span><span style="color:var(--text2)">limite de synchro : 16 Mo</span></div>'+
+    '<div style="height:6px;background:var(--bg2);border-radius:3px;margin:5px 0 6px;overflow:hidden"><div style="height:100%;width:'+Math.max(2,pct)+'%;background:'+col+'"></div></div>'+
+    '<div style="color:var(--text2)">Documents des patients : '+_pfFmtSize(st.docs)+' · '+st.nd+' fichier'+(st.nd>1?'s':'')+(st.notes?' · fichiers des notes : '+_pfFmtSize(st.notes):'')+'</div>'+
+    (st.per.length?'<button class="btn bs bw" style="margin-top:8px;font-size:12px" onclick="openDocsStorage()">📎 Voir les patients aux documents les plus lourds</button>':'');
+}
+function openDocsStorage(){
+  var st=_pfStorageStats();
+  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Patients classés par poids des documents joints. Ouvrez une fiche pour supprimer des documents.</div>';
+  st.per.slice(0,40).forEach(function(x){
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg);border-radius:8px;margin-bottom:4px">'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.p.lastName)+' '+esc(x.p.firstName)+'</div>'+
+      '<div style="font-size:11px;color:var(--text2)">'+x.n+' document'+(x.n>1?'s':'')+' · '+_pfFmtSize(x.s)+'</div></div>'+
+      '<button class="btn bs" style="font-size:11px;padding:4px 10px" onclick="clM(\'mM\');clM(\'mS\');openPC(\''+x.p.id+'\')">Ouvrir</button></div>';
+  });
+  if(!st.per.length)h+='<div style="font-size:13px;padding:8px 0">Aucun document joint.</div>';
+  h+='<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button></div>';
+  document.getElementById('mMT').textContent='📎 Documents par patient';
+  document.getElementById('mMB').innerHTML=h;
+  opM('mM');
+}
 
 /* ═══ HISTORY ═══ */
 function openHist(pid){
@@ -4044,7 +4289,7 @@ function openHist(pid){
 function addPastPresences(pid){
   var p=gp(pid);if(!p)return;
   var b=document.getElementById('mMB');
-  document.getElementById('mMT').textContent='📅 Ajouter des présences passées — '+esc(p.lastName)+' '+esc(p.firstName);
+  document.getElementById('mMT').textContent='📅 Ajouter des présences passées — '+p.lastName+' '+p.firstName;
   window._ppPid=pid;
   window._ppDates=[];
   window._ppMonth=new Date();
@@ -4175,9 +4420,10 @@ function openSet(){
   var motH=D.motifs.map(function(m,i){
     var c=CL[m.ci%6];
     var slotsLabel=(m.slots&&m.slots>1)?(' · '+m.slots+' places'):'';
+    var audLabel=m.audience==='new'?' · 🆕 nouveaux':(m.audience==='known'?' · 🔁 déjà venus':''); /* v93 */
     var visIcon=m.hiddenForPatient?'❌':'👁️';
     var visTitle=m.hiddenForPatient?'Invisible sur app Patient':'Visible sur app Patient';
-    return'<div class="mi motDrag" draggable="true" data-motidx="'+i+'" style="cursor:grab"><span style="font-size:14px;color:var(--text3);cursor:grab;margin-right:4px" class="dragH">☰</span><span style="cursor:pointer;font-size:16px" title="'+visTitle+'" onclick="togMotVis('+i+')">'+visIcon+'</span><div class="md" style="background:'+c.bd+'"></div><div class="ml">'+esc(m.label)+'</div><div class="mu">'+m.duration+'min'+slotsLabel+'</div>'+
+    return'<div class="mi motDrag" draggable="true" data-motidx="'+i+'" style="cursor:grab"><span style="font-size:14px;color:var(--text3);cursor:grab;margin-right:4px" class="dragH">☰</span><span style="cursor:pointer;font-size:16px" title="'+visTitle+'" onclick="togMotVis('+i+')">'+visIcon+'</span><div class="md" style="background:'+c.bd+'"></div><div class="ml">'+esc(m.label)+'</div><div class="mu">'+m.duration+'min'+slotsLabel+audLabel+'</div>'+
     '<button class="sb edt" onclick="editMot('+i+')">✏</button><button class="sb del" onclick="rmMot('+i+')">×</button></div>'}).join('');
 
   var opH=D.openings.map(function(o,i){
@@ -4387,8 +4633,14 @@ function openSet(){
       '<div style="font-size:11px;color:var(--text2)">Ce nom apparaîtra dans l\'onglet Groupe et les statistiques.</div>'+
     '</div>'+
 
+    /* ═══ v94 — SECRÉTAIRE IA ═══ */
+    '<div class="ss"><h3>🤖 Secrétaire IA (SMS)</h3>'+
+      '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Répond aux SMS reçus sur votre téléphone Android, propose des créneaux réels, prend ou décale les RDV selon vos règles et vous résume son activité.</div>'+
+      '<button class="btn bs bw" onclick="clM(\'mS\');openSecr(\''+(_secrCfg()?'pending':'settings')+'\')">'+(_secrCfg()?'🤖 Ouvrir le secrétaire':'⚙ Connecter le secrétaire')+'</button>'+
+    '</div>'+
     /* ═══ 8. DONNÉES ═══ */
     '<div class="ss"><h3>💾 Données & sauvegardes</h3>'+
+      '<div id="pfStoreInfo" style="font-size:12px;margin-bottom:10px">'+_pfStorageSummaryHtml()+'</div>'+ /* v93 */
       '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Sauvegarde auto quotidienne sur Firebase (30 max) et sur cet appareil (30 max, la plus récente remplace la plus ancienne).</div>'+
       '<div class="br" style="margin-top:0"><button class="btn bs" style="flex:1" onclick="showRestoreBackups()">🔄 Firebase</button><button class="btn bs" style="flex:1" onclick="showLocalBackups()">📱 Locales (30)</button><button class="btn bs" style="flex:1" onclick="downloadBackup()">💾 Télécharger</button></div>'+
       '<div class="br" style="margin-top:6px"><button class="btn bs" style="flex:1" onclick="impD()">📂 Charger un fichier local</button>'+
@@ -4648,6 +4900,9 @@ function editFutureAgenda(){
       '</div>'+
       '<div class="fg" style="margin-top:4px"><label style="font-size:10px">Heures types (séparées par virgule)</label><input value="'+(m.times||[]).join(',')+'" style="font-size:11px" onchange="D.futureAgenda.motifs['+i+'].times=this.value.split(\',\').map(function(t){return t.trim()}).filter(Boolean);sv()"></div>'+
       '<div style="margin-top:4px"><label style="font-size:10px;display:flex;align-items:center;gap:4px"><input type="checkbox" '+(m.allowSimul?'checked':'')+' onchange="D.futureAgenda.motifs['+i+'].allowSimul=this.checked;sv()"> Cumulable</label></div>'+
+      '<div class="fg" style="margin-top:4px"><label style="font-size:10px">Visible pour (appli patient)</label><select style="font-size:11px" onchange="D.futureAgenda.motifs['+i+'].audience=this.value;sv()">'+
+        [['all','Tous les patients'],['new','🆕 Nouveaux patients'],['known','🔁 Patients déjà venus']].map(function(o){return '<option value="'+o[0]+'"'+(((m.audience||'all')===o[0])?' selected':'')+'>'+o[1]+'</option>'}).join('')+
+      '</select></div>'+
     '</div>';
   });
   h+='<button class="btn bs" style="margin-top:6px" onclick="D.futureAgenda.motifs.push({id:\'fm_\'+Date.now(),label:\'Nouveau motif\',duration:30,ci:0,times:[],slots:1,allowSimul:false});sv();editFutureAgenda()">+ Ajouter un motif</button>';
@@ -4680,6 +4935,7 @@ function editMot(idx){
   var m=isNew?{label:'',duration:30,ci:0,times:[],slots:1,allowSimul:false,simulWith:''}:(D.motifs[idx]||{label:'',duration:30,ci:0,times:[],slots:1,allowSimul:false,simulWith:''});
   if(!Array.isArray(m.times))m.times=[];
   if(!m.slots)m.slots=1;
+  var _aud=(m.audience==='new'||m.audience==='known')?m.audience:'all'; /* v93 */
   document.getElementById('mMT').textContent=isNew?'Nouveau motif':'Modifier le motif';
   var colH=CL.map(function(c,i){return'<div class="chip'+(m.ci===i?' sel':'')+'" data-ci="'+i+'" style="background:'+c.bg+';color:'+c.bd+'">'+c.lb+'</div>'}).join('');
   var tStr=m.times.slice().filter(Boolean).sort(function(a,b){return t2m(a)-t2m(b)}).join(',');
@@ -4693,8 +4949,15 @@ function editMot(idx){
     '<div class="fg"><label>Nom</label><input id="emL" value="'+esc(m.label)+'"></div>'+
     '<div class="fg"><label>Description (visible par les patients)</label><textarea id="emDesc" rows="3" style="resize:vertical;min-height:60px;white-space:pre-wrap;word-wrap:break-word" placeholder="Ex: Séance de rééducation active de 45 minutes...">'+esc(m.description||'')+'</textarea></div>'+
     '<div class="fr"><div class="fg"><label>Durée par défaut (min)</label><input type="number" id="emD" value="'+m.duration+'" min="5" max="240" step="5"></div>'+
-    '<div class="fg"><label>Places par créneau</label><input type="number" id="emSlots" value="'+m.slots+'" min="1" max="10" step="1"></div></div>'+
+    '<div class="fg"><label>Places par créneau</label><input type="number" id="emSlots" value="'+m.slots+'" min="1" max="10" step="1" oninput="renderMotTimes()"></div></div>'+
     '<div style="font-size:11px;color:var(--text2);margin:-6px 0 10px">Nombre de patients pouvant réserver le même horaire typique.</div>'+
+    /* v93 — visibilité selon le type de patient */
+    '<div class="fg"><label>Visible sur l\'appli patient pour</label><select id="emAud">'+
+      '<option value="all"'+(_aud==='all'?' selected':'')+'>Tous les patients</option>'+
+      '<option value="new"'+(_aud==='new'?' selected':'')+'>🆕 Nouveaux patients uniquement</option>'+
+      '<option value="known"'+(_aud==='known'?' selected':'')+'>🔁 Patients déjà venus uniquement</option>'+
+    '</select></div>'+
+    '<div style="font-size:11px;color:var(--text2);margin:-6px 0 10px">Nouveau patient = numéro de portable inconnu du cabinet (aucune fiche patient ni RDV avec ce numéro). Les RDV déjà pris ne changent pas.</div>'+
     '<div class="pcks" style="margin-bottom:10px"><label><input type="checkbox" id="emSimul" '+(m.allowSimul?'checked':'')+' onchange="document.getElementById(\'emSimulW\').style.display=this.checked?\'block\':\'none\'"> Autoriser simultanéité avec un autre motif</label></div>'+
     '<div id="emSimulW" style="display:'+(m.allowSimul?'block':'none')+';margin-bottom:10px"><div class="fg"><label>Simultané avec</label><select id="emSimulWith">'+simulOpts+'</select></div></div>'+
     '<h3>Heures typiques</h3>'+
@@ -4794,8 +5057,13 @@ function svMot(idx){
   var times=readMotTimes();
   var desc=(document.getElementById('emDesc')&&document.getElementById('emDesc').value||'').trim();
   var slotEx=readSlotExceptions();
-  if(idx<0){D.motifs.push({id:uid(),label:label,duration:dur,ci:ci,times:times,slots:slots,allowSimul:allowSimul,simulWith:simulWith,description:desc,slotExceptions:slotEx})}
-  else{D.motifs[idx].label=label;D.motifs[idx].duration=dur;D.motifs[idx].ci=ci;D.motifs[idx].times=times;D.motifs[idx].slots=slots;D.motifs[idx].allowSimul=allowSimul;D.motifs[idx].simulWith=simulWith;D.motifs[idx].description=desc;D.motifs[idx].slotExceptions=slotEx}
+  var aud=(document.getElementById('emAud')&&document.getElementById('emAud').value)||'all';if(aud!=='new'&&aud!=='known')aud='all'; /* v93 */
+  if(idx<0){D.motifs.push({id:uid(),label:label,duration:dur,ci:ci,times:times,slots:slots,allowSimul:allowSimul,simulWith:simulWith,description:desc,slotExceptions:slotEx,audience:aud})}
+  else{D.motifs[idx].label=label;D.motifs[idx].duration=dur;D.motifs[idx].ci=ci;D.motifs[idx].times=times;D.motifs[idx].slots=slots;D.motifs[idx].allowSimul=allowSimul;D.motifs[idx].simulWith=simulWith;D.motifs[idx].description=desc;D.motifs[idx].slotExceptions=slotEx;
+    var _prevAud=D.motifs[idx].audience||'all';D.motifs[idx].audience=aud;
+    /* v93 — le changement d'agenda programmé suit ce réglage s'il n'a pas été personnalisé */
+    if(D.futureAgenda&&Array.isArray(D.futureAgenda.motifs)){var _fid=D.motifs[idx].id;D.futureAgenda.motifs.forEach(function(fm){if(fm&&fm.id===_fid&&(fm.audience||'all')===_prevAud)fm.audience=aud;});}
+  }
   sv();clM('mM');openSet();toast('Motif enregistré');
 }
 
@@ -4839,7 +5107,7 @@ function openFixNextRdv(apId){
   var pat=ap.patientId?gp(ap.patientId):null;if(!pat)return;
   FIX_RDV={patientId:ap.patientId,motifId:ap.motifId||'',defaultTime:ap.time||'09:00',planned:[]};
   FIX_RDV._calMonth=new Date();
-  document.getElementById('mMT').textContent='📅 Fixer les prochains RDV — '+esc(pat.lastName)+' '+esc(pat.firstName);
+  document.getElementById('mMT').textContent='📅 Fixer les prochains RDV — '+pat.lastName+' '+pat.firstName;
   renderFixRdv();
   opM('mM');
 }
@@ -9418,6 +9686,430 @@ window.openStats = function(){
     };
   }
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   v94 — SECRÉTAIRE IA (SMS)
+   L'appli Pro ne fait qu'afficher et piloter le secrétaire, qui tourne sur
+   votre projet Firebase. Rien ici ne modifie vos données PhysioFlow (D) :
+   les RDV pris par le secrétaire arrivent comme des réservations en ligne.
+   Adresse et code d'accès restent sur CET appareil (jamais synchronisés).
+   ═══════════════════════════════════════════════════════════════════ */
+var SECR={tab:'pending',status:null,pending:[],threads:[],summaries:[],openTid:null,simTimer:null,busy:false};
+function _secrCfg(){try{var c=JSON.parse(localStorage.getItem('pf_secr')||'null');return (c&&c.url&&c.code)?c:null}catch(e){return window._pfSecrMem||null}}
+function _secrSaveCfg(c){window._pfSecrMem=c;try{if(c)localStorage.setItem('pf_secr',JSON.stringify(c));else localStorage.removeItem('pf_secr');}catch(e){toast('⚠️ Réglage gardé pour cette session seulement (stockage plein)')}}
+function secrApi(method,path,body){
+  var c=_secrCfg();
+  if(!c)return Promise.reject(new Error('Secrétaire non connecté'));
+  var opt={method:method,headers:{'Authorization':'Bearer '+c.code}};
+  if(body!==undefined&&body!==null){opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(body);}
+  return fetch(c.url.replace(/\/+$/,'')+'/api/'+path,opt).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(j){if(!r.ok)throw new Error(j.error||('Erreur '+r.status));return j;});
+  });
+}
+function secrRefreshBadge(){
+  var btn=document.getElementById('btnSecr');if(!btn)return;
+  if(!_secrCfg()){btn.classList.remove('on');return;}
+  btn.classList.add('on');
+  secrApi('GET','status').then(function(st){
+    SECR.status=st;
+    var n=st.pendingCount||0;
+    document.getElementById('secrBadge').textContent=n>0?String(n):'';
+    btn.title='Secrétaire IA'+(n?(' — '+n+' à valider'):'')+(st.settings&&!st.settings.enabled?' (en pause)':'');
+    btn.style.opacity=(st.settings&&!st.settings.enabled)?'.55':'';
+  }).catch(function(){document.getElementById('secrBadge').textContent='';btn.title='Secrétaire IA — hors ligne';});
+}
+setTimeout(secrRefreshBadge,3000);
+setInterval(function(){if(document.visibilityState==='visible')secrRefreshBadge()},60000);
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')secrRefreshBadge()});
+
+function _secrWhen(ms){if(!ms)return '';var d=new Date(ms),t=new Date();var hmS=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  if(dk(d)===dk(t))return hmS;return d.getDate()+'/'+(d.getMonth()+1)+' '+hmS;}
+function _secrCatLabel(k){var c=(SECR.status&&SECR.status.categories)||{};return (c[k]&&c[k].label)||k||'';}
+function _secrMotifLabel(id){var m=(D.motifs||[]).find(function(x){return x.id===id})||((D.futureAgenda&&D.futureAgenda.motifs)||[]).find(function(x){return x.id===id});return m?m.label:(id||'séance');}
+function _secrDateFr(k){if(!k)return '';var d=new Date(k+'T00:00:00');if(isNaN(d.getTime()))return k;return ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1);}
+function _secrActionLabel(a){
+  if(!a||!a.type||a.type==='aucune')return '';
+  var pour=a.nom?(' pour '+a.nom.toUpperCase()+' '+(a.prenom||'')):'';
+  if(a.type==='reserver')return '📅 Réserver '+_secrMotifLabel(a.motif_id)+' — '+_secrDateFr(a.date)+' à '+(a.heure||'?')+pour;
+  if(a.type==='liste_attente')return '⏳ Inscrire sur la liste d\'attente'+(a.motif_id?' ('+_secrMotifLabel(a.motif_id)+')':'')+pour;
+  var ap=(D.appointments||[]).find(function(x){return x.id===a.rdv_id});
+  var old=ap?(_secrDateFr(ap.date)+' à '+ap.time):'(RDV '+(a.rdv_id||'?')+')';
+  if(a.type==='annuler')return '🚫 Annuler le RDV du '+old;
+  if(a.type==='deplacer')return '🔄 Décaler le RDV du '+old+' → '+_secrDateFr(a.date)+' à '+(a.heure||'?');
+  return a.type;
+}
+function _secrActs(p){return (p&&p.actions&&p.actions.length)?p.actions:((p&&p.action&&p.action.type&&p.action.type!=='aucune')?[p.action]:[]);}
+function _secrPhone(ph){var d=String(ph||'').replace(/\D/g,'');if(d.length===11&&d.indexOf('33')===0)d='0'+d.slice(2);return d.length===10?d.replace(/(\d{2})(?=\d)/g,'$1 '):String(ph||'');}
+function _secrName(x){return (x&&x.name)?x.name:'Numéro inconnu';}
+
+function openSecr(tab){
+  if(tab)SECR.tab=tab;
+  if(!_secrCfg())SECR.tab='settings';
+  opM('mSECR');
+  secrRender();
+  if(_secrCfg())secrLoad();
+}
+function secrLoad(){
+  var t=SECR.tab;
+  var pr;
+  if(t==='pending')pr=Promise.all([secrApi('GET','status'),secrApi('GET','pending')]).then(function(r){SECR.status=r[0];SECR.pending=r[1].pending||[];});
+  else if(t==='threads')pr=Promise.all([secrApi('GET','status'),secrApi('GET','threads')]).then(function(r){SECR.status=r[0];SECR.threads=r[1].threads||[];});
+  else if(t==='thread')pr=secrApi('GET','threads/'+encodeURIComponent(SECR.openTid)).then(function(r){SECR.thread=r.thread;});
+  else if(t==='summaries')pr=secrApi('GET','summaries').then(function(r){SECR.summaries=r.summaries||[];});
+  else if(t==='lessons')pr=Promise.all([secrApi('GET','status'),secrApi('GET','lessons').catch(function(e){return {_err:e.message}})]).then(function(r){SECR.status=r[0];SECR.lessons=r[1];});
+  else pr=secrApi('GET','status').then(function(r){SECR.status=r;});
+  SECR.err='';
+  pr.then(function(){secrRender();secrRefreshBadge();}).catch(function(e){SECR.err=e.message;secrRender();});
+}
+function secrTab(t){SECR.tab=t;if(t!=='thread')SECR.openTid=null;secrRender();if(_secrCfg())secrLoad();}
+function secrRender(){
+  var b=document.getElementById('mSECRB');if(!b)return;
+  var st=SECR.status||{};var n=st.pendingCount||0;
+  var tabs=[['pending','⏳ À valider'+(n?' ('+n+')':'')],['threads','💬 Conversations'],['summaries','📋 Résumés'],['lessons','🎓 Apprentissage'],['test','🧪 Tester'],['settings','⚙ Réglages']];
+  var h='<div class="secrtabs">'+tabs.map(function(x){return '<button class="secrtab'+((SECR.tab===x[0]||(SECR.tab==='thread'&&x[0]==='threads'))?' on':'')+'" onclick="secrTab(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
+  if(SECR.err)h+='<div class="secrcard" style="color:#e74c3c;font-size:13px">⚠️ '+esc(SECR.err)+'</div>';
+  if(st.settings&&!st.settings.enabled&&SECR.tab!=='settings')h+='<div class="secrcard" style="font-size:12px;background:#fff1e0">⏸ Secrétaire en pause : les SMS ne sont pas traités. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetEnabled(true)">Réactiver</button></div>';
+  if(st.suggestions&&st.suggestions.length&&SECR.tab==='pending'){
+    st.suggestions.forEach(function(sg){h+='<div class="secrcard" style="font-size:12px;background:#e6f7ee">💡 Vous avez validé '+sg.streak+' réponses « '+esc(sg.label)+' » sans les corriger. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetAuto(\''+sg.categorie+'\')">Passer en automatique</button></div>';});
+  }
+  if(SECR.tab==='pending')h+=secrPendingHtml();
+  else if(SECR.tab==='threads')h+=secrThreadsHtml();
+  else if(SECR.tab==='thread')h+=secrThreadHtml();
+  else if(SECR.tab==='summaries')h+=secrSummariesHtml();
+  else if(SECR.tab==='test')h+=secrTestHtml();
+  else if(SECR.tab==='lessons')h+=secrLessonsHtml();
+  else h+=secrSettingsHtml();
+  h+='<div class="br"><button class="btn" onclick="clM(\'mSECR\')">Fermer</button></div>';
+  b.innerHTML=h;
+}
+function secrPendingHtml(){
+  if(!_secrCfg())return '';
+  var list=SECR.pending||[];
+  if(!list.length)return '<div style="font-size:13px;color:var(--text2);padding:10px 0">Rien à valider pour l\'instant ✅</div>';
+  return list.map(function(p){
+    var acts=_secrActs(p);
+    var val=p.actionsValides||acts.map(function(){return !!p.actionValide});
+    var al=p.actionsAlertes||acts.map(function(){return p.actionProbleme||''});
+    var tags='<span class="secrtag">'+esc(_secrCatLabel(p.categorie))+'</span>'+(p.categorie==='urgence'?'<span class="secrtag red">URGENT</span>':'')+(p.simulated?'<span class="secrtag warn">🧪 simulation</span>':'')+'<span class="secrtag'+(p.confiance<0.8?' warn':'')+'">confiance '+Math.round((p.confiance||0)*100)+' %</span>';
+    var actsH=acts.map(function(a,i){var w=al[i]||'';return '<label class="secract"><input type="checkbox" id="spa_'+p.id+'_'+i+'" '+(val[i]&&!w?'checked':'')+'> <span>'+esc(_secrActionLabel(a))+(w?' <span class="secrtag warn">⚠️ '+esc(w)+'</span>':'')+'</span></label>'}).join('');
+    var notes='';
+    (p.actionsFaites||[]).forEach(function(x){notes+='<div class="secrnote" style="color:#1e8c4e">✔️ Déjà fait : '+esc(x)+'</div>'});
+    if(p.note&&p.note!==p.question_kine)notes+='<div class="secrnote">ℹ️ '+esc(p.note)+'</div>';
+    if(p.relecture)notes+='<div class="secrnote">🔎 '+esc(p.relecture)+'</div>';
+    (p.controles||[]).forEach(function(c){notes+='<div class="secrnote">📅 '+esc(c)+'</div>'});
+    if(!acts.length&&p.actionProbleme)notes+='<div class="secrnote">⚠️ '+esc(p.actionProbleme)+'</div>';
+    return '<div class="secrcard" id="sp_'+p.id+'">'+
+      '<div style="display:flex;justify-content:space-between;gap:6px;align-items:baseline"><b style="font-size:14px">'+esc(_secrName(p))+'</b><span class="secrmeta">'+_secrWhen(p.createdAt)+'</span></div>'+
+      '<div class="secrmeta">'+esc(_secrPhone(p.phone))+'</div>'+tags+
+      '<div class="secrin">'+esc(p.patientText||'')+'</div>'+
+      (p.resume?'<div class="secrmeta">🤖 '+esc(p.resume)+'</div>':'')+
+      (p.question_kine?'<div style="font-size:12px;margin:4px 0;color:#c0510f">❓ '+esc(p.question_kine)+'</div>':'')+
+      notes+actsH+
+      (p.analyse?'<details class="secrwhy"><summary>🧠 Son raisonnement</summary><div>'+esc(p.analyse)+'</div></details>':'')+
+      '<textarea id="spt_'+p.id+'" rows="4" style="width:100%;font-size:13px;border-radius:8px;border:1px solid var(--border);padding:8px;resize:vertical" placeholder="Votre réponse (vide = pas de SMS)">'+esc(p.reponse||'')+'</textarea>'+
+      '<div style="font-size:10px;color:var(--text3);margin-top:2px">Si vous modifiez la réponse, le secrétaire en tire une leçon.</div>'+
+      '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrApprove(\''+p.id+'\')">✅ Envoyer</button>'+
+      '<button class="btn bs" style="flex:1" onclick="secrOpenThread(\''+esc(p.tid||p.norm)+'\')">💬</button>'+
+      '<button class="btn" style="flex:1" onclick="secrIgnore(\''+p.id+'\')">Ignorer</button></div></div>';
+  }).join('');
+}
+function secrApprove(id){
+  if(SECR.busy)return;
+  var p=(SECR.pending||[]).find(function(x){return x.id===id});
+  var acts=_secrActs(p);var sel=[];
+  acts.forEach(function(a,i){var cb=document.getElementById('spa_'+id+'_'+i);if(cb&&cb.checked)sel.push(i)});
+  var ta=document.getElementById('spt_'+id);
+  if(sel.length&&!confirm('Confirmer :\n'+sel.map(function(i){return '• '+_secrActionLabel(acts[i])}).join('\n')+' ?'))return;
+  if(!sel.length&&!(ta&&ta.value.trim())&&!confirm('Aucun SMS ni aucune action : clore cette proposition ?'))return;
+  if(p&&sel.length<acts.length&&ta&&ta.value.trim()&&ta.value.trim()===String(p.reponse||'').trim()&&!confirm('⚠️ Vous avez décoché une action, mais la réponse n\'a pas changé : elle l\'annonce peut-être encore au patient.\n\nEnvoyer quand même ?'))return;
+  var body={texte:ta?ta.value:'',actions:sel,avecAction:sel.length>0};
+  SECR.busy=true;
+  secrApi('POST','pending/'+encodeURIComponent(id)+'/approve',body).then(function(r){
+    SECR.busy=false;toast(r.sent?'✅ SMS envoyé':'✅ Traité');secrLoad();
+  }).catch(function(e){SECR.busy=false;alert(e.message);secrLoad();});
+}
+function secrIgnore(id){
+  var note=prompt('Ignorer : aucun SMS ne sera envoyé.\n\nPourquoi ? (facultatif — le secrétaire en tirera une leçon)','');
+  if(note===null)return;
+  secrApi('POST','pending/'+encodeURIComponent(id)+'/ignore',{note:note}).then(function(){toast(note?'Ignoré — leçon notée 🎓':'Ignoré — aucun SMS envoyé');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrThreadsHtml(){
+  var list=SECR.threads||[];
+  if(!list.length)return '<div style="font-size:13px;color:var(--text2);padding:10px 0">Aucune conversation pour l\'instant.</div>';
+  return list.map(function(t){
+    var paused=t.pausedUntil&&t.pausedUntil>Date.now();
+    return '<div class="secrcard" style="cursor:pointer" onclick="secrOpenThread(\''+esc(t.tid)+'\')">'+
+      '<div style="display:flex;justify-content:space-between;gap:6px"><b style="font-size:14px">'+(t.simulated?'🧪 ':'')+esc(_secrName(t))+'</b><span class="secrmeta">'+_secrWhen(t.lastAt)+'</span></div>'+
+      '<div class="secrmeta">'+esc(_secrPhone(t.phone))+(t.known?' · patient connu':' · nouveau')+(paused?' · ✋ vous avez la main':'')+'</div>'+
+      '<div style="font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t.lastText||'')+'</div></div>';
+  }).join('');
+}
+function secrOpenThread(tid){SECR.openTid=tid;SECR.thread=null;SECR.tab='thread';secrRender();secrLoad();}
+function secrThreadHtml(){
+  var t=SECR.thread;
+  if(!t)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+  var paused=t.pausedUntil&&t.pausedUntil>Date.now();
+  var h='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px"><div><b>'+esc(_secrName(t))+'</b><div class="secrmeta">'+esc(_secrPhone(t.phone))+'</div></div>'+
+    (paused?'<button class="btn bs" style="font-size:11px" onclick="secrPause(0)">🤖 Rendre la main</button>':'<button class="btn bs" style="font-size:11px" onclick="secrPause(24)">✋ Reprendre la main (24 h)</button>')+'</div>';
+  h+='<div class="secrcard" style="font-size:12px;padding:8px 10px">📝 <b>Notes du secrétaire</b> : '+(t.memo?esc(t.memo):'<i style="color:var(--text3)">aucune</i>')+' <button class="secrlink" onclick="secrEditMemo()">modifier</button></div>';
+  h+='<div class="secrmsgs">'+(t.messages||[]).map(function(m){
+    var cls=m.dir==='in'?'in':('out'+(m.by==='kine'?' kine':''));
+    var who=m.dir==='in'?'':(m.by==='kine'?'vous':'🤖 secrétaire');
+    var x='<div class="secrb '+cls+'">'+esc(m.text||'')+'<small>'+(m.simulated?'🧪 ':'')+_secrWhen(m.at)+(who?' · '+who:'')+'</small></div>';
+    if(m.dir==='out'&&m.by==='ia'&&m.auto!==false){
+      x+='<div class="secrfb">'+(m.vote==='up'?'utile':m.vote==='down'?'à revoir':'votre avis')+
+        '<button class="'+(m.vote==='up'?'on':'')+'" onclick="secrVote('+m.at+',\'up\')">👍</button><button class="'+(m.vote==='down'?'on':'')+'" onclick="secrVoteDown('+m.at+')">👎</button></div>';
+      if(SECR.fbAt===m.at)x+='<div class="secrfbform"><div style="font-size:12px;font-weight:600;margin-bottom:4px">👎 Qu\'aurait-il fallu faire ?</div>'+
+        '<textarea id="secrFbC" rows="2" style="width:100%;font-size:12px;border-radius:8px;border:1px solid var(--border);padding:6px" placeholder="La bonne réponse (facultatif)">'+esc(m.voteCorrection||'')+'</textarea>'+
+        '<input id="secrFbN" style="width:100%;font-size:12px;margin-top:4px" placeholder="Pourquoi ? ex : trop sec, mauvais motif, fallait me demander…" value="'+esc(m.voteNote||'')+'">'+
+        '<div style="display:flex;gap:6px;margin-top:6px"><button class="btn bp" style="flex:1;font-size:12px" onclick="secrVoteSend()">Envoyer mon avis</button><button class="btn" style="font-size:12px" onclick="SECR.fbAt=null;secrRender()">Annuler</button></div>'+
+        '<div style="font-size:10px;color:var(--text3);margin-top:4px">Le patient ne reçoit rien. Après 2 avis négatifs en 30 jours, ce type de demande repasse en validation.</div></div>';
+    }
+    return x;
+  }).join('')+'</div>';
+  h+='<textarea id="secrReply" rows="3" style="width:100%;font-size:13px;border-radius:8px;border:1px solid var(--border);padding:8px" placeholder="Répondre par SMS depuis votre téléphone…"></textarea>'+
+    '<button class="btn bp bw" style="margin-top:6px" onclick="secrReply()">📤 Envoyer</button>';
+  return h;
+}
+function secrVote(at,vote){
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/feedback',{at:at,vote:vote}).then(function(){toast('👍 Merci, c\'est noté');SECR.fbAt=null;secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrVoteDown(at){SECR.fbAt=(SECR.fbAt===at?null:at);secrRender();}
+function secrVoteSend(){
+  var c=(document.getElementById('secrFbC')||{}).value||'',n=(document.getElementById('secrFbN')||{}).value||'';
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/feedback',{at:SECR.fbAt,vote:'down',correction:c,note:n}).then(function(r){
+    toast(r.demoted?'↩️ Noté — ce type de demande repasse en validation':'👎 Noté — le secrétaire va en tirer une leçon');SECR.fbAt=null;secrLoad();
+  }).catch(function(e){alert(e.message)});
+}
+function secrEditMemo(){
+  var t=SECR.thread||{};
+  var v=prompt('Notes pratiques du secrétaire sur ce patient\n(préférences d\'horaires, qui écrit pour qui… jamais d\'info médicale) :',t.memo||'');
+  if(v===null)return;
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/memo',{memo:v}).then(function(){toast('📝 Notes enregistrées');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrReply(){
+  var v=(document.getElementById('secrReply')||{}).value||'';
+  if(!v.trim())return;
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/reply',{texte:v}).then(function(){toast('📤 SMS envoyé');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrPause(h){
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/pause',{heures:h}).then(function(){toast(h?'✋ Vous avez la main sur cette conversation':'🤖 Le secrétaire reprend cette conversation');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrSummariesHtml(){
+  var h='<button class="btn bs bw" style="margin-bottom:10px" onclick="secrSummaryNow()">📋 Faire le point maintenant</button>';
+  var list=SECR.summaries||[];
+  if(!list.length)return h+'<div style="font-size:13px;color:var(--text2)">Aucun résumé pour l\'instant. Ils arrivent aux heures réglées dans ⚙ Réglages.</div>';
+  return h+list.map(function(x){return '<div class="secrcard"><div class="secrmeta">'+_secrWhen(x.at)+'</div><div style="font-size:13px;white-space:pre-wrap">'+esc(x.text||'')+'</div></div>'}).join('');
+}
+function secrSummaryNow(){secrApi('POST','summaries/now',{}).then(function(){secrLoad();}).catch(function(e){alert(e.message)});}
+function secrTestHtml(){
+  if(!_secrCfg())return '<div style="font-size:13px">Connectez d\'abord le secrétaire (⚙ Réglages).</div>';
+  return '<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Simulez un SMS reçu : le secrétaire le traite exactement comme un vrai, <b>mais n\'envoie aucun SMS et ne touche pas à l\'agenda</b>. Utilisez le numéro d\'un patient pour tester un patient connu, ou un numéro inventé pour un nouveau patient.</div>'+
+    '<div class="fg"><label>Numéro de l\'expéditeur</label><input id="secrSimPh" value="'+esc(SECR.simPhone||'06 00 00 00 01')+'" inputmode="tel"></div>'+
+    '<div class="fg"><label>SMS reçu</label><textarea id="secrSimTx" rows="3" placeholder="Ex : Bonjour, auriez-vous une place mardi en fin de journée ?">'+esc(SECR.simText||'')+'</textarea></div>'+
+    '<button class="btn bp bw" onclick="secrSimulate()">🧪 Simuler l\'arrivée de ce SMS</button>'+
+    '<div id="secrSimOut" style="margin-top:12px">'+(SECR.simOut||'')+'</div>';
+}
+function secrSimulate(){
+  var ph=document.getElementById('secrSimPh').value,tx=document.getElementById('secrSimTx').value;
+  SECR.simPhone=ph;SECR.simText=tx;
+  if(!tx.trim()){toast('Écrivez un message');return;}
+  SECR.simOut='<div class="secrcard" style="font-size:13px">⏳ Le secrétaire réfléchit… (≈ 20 s)</div>';secrRender();
+  secrApi('POST','simulate',{phone:ph,texte:tx}).then(function(r){
+    var tid=r.tid,t0=Date.now(),known=0;
+    secrApi('GET','threads/'+encodeURIComponent(tid)).then(function(x){known=((x.thread||{}).messages||[]).length}).catch(function(){});
+    clearInterval(SECR.simTimer);
+    SECR.simTimer=setInterval(function(){
+      if(Date.now()-t0>120000){clearInterval(SECR.simTimer);SECR.simOut='<div class="secrcard">⏱ Pas de réponse après 2 min : vérifiez l\'onglet ⏳ À valider.</div>';if(SECR.tab==='test')secrRender();return;}
+      Promise.all([secrApi('GET','threads/'+encodeURIComponent(tid)).catch(function(){return {}}),secrApi('GET','pending')]).then(function(res){
+        var th=(res[0]||{}).thread,msgs=(th&&th.messages)||[];
+        var pend=(res[1].pending||[]).filter(function(p){return p.tid===tid&&p.createdAt>=t0-5000});
+        var out=msgs.slice(known).filter(function(m){return m.dir==='out'});
+        if(!out.length&&!pend.length){
+          if(th&&th.lastDecision&&th.lastDecision.at>=t0-5000&&msgs.length>known){clearInterval(SECR.simTimer);SECR.simOut='<div class="secrcard" style="font-size:13px">🤫 Pas de réponse nécessaire ('+esc(_secrCatLabel(th.lastDecision.categorie))+') — '+esc(th.lastDecision.resume||'')+'</div>';if(SECR.tab==='test')secrRender();}
+          return;
+        }
+        clearInterval(SECR.simTimer);
+        if(out.length)SECR.simOut='<div class="secrcard"><div class="secrmeta">🤖 Réponse envoyée automatiquement (mode auto) :</div><div class="secrin">'+esc(out[out.length-1].text)+'</div></div>';
+        else{var p=pend[0];SECR.simOut='<div class="secrcard"><div class="secrmeta">⏳ Soumis à votre validation — '+esc(_secrCatLabel(p.categorie))+', confiance '+Math.round(p.confiance*100)+' %</div>'+(p.reponse?'<div class="secrin">'+esc(p.reponse)+'</div>':'')+_secrActs(p).map(function(a){return '<div style="font-size:12px">'+esc(_secrActionLabel(a))+'</div>'}).join('')+(p.actionProbleme?'<div style="font-size:12px">⚠️ '+esc(p.actionProbleme)+'</div>':'')+((p.controles||[]).length?'<div style="font-size:12px">📅 '+esc(p.controles.join(' ; '))+'</div>':'')+(p.relecture?'<div style="font-size:12px">🔎 '+esc(p.relecture)+'</div>':'')+(p.question_kine?'<div style="font-size:12px;color:#c0510f">❓ '+esc(p.question_kine)+'</div>':'')+'</div>';}
+        if(SECR.tab==='test')secrRender();secrRefreshBadge();
+      }).catch(function(){});
+    },3000);
+  }).catch(function(e){SECR.simOut='<div class="secrcard" style="color:#e74c3c">'+esc(e.message)+'</div>';secrRender();});
+}
+var _SECR_KIND={correction:'✏️ Réponse corrigée',takeover:'💬 Vous avez répondu à sa place',kine_reply:'💬 Votre réponse',feedback_neg:'👎 Avis négatif',ignored:'🙈 Proposition ignorée'};
+function secrLessonsHtml(){
+  if(!_secrCfg())return '<div style="font-size:13px">Connectez d\'abord le secrétaire (⚙ Réglages).</div>';
+  var L=SECR.lessons;
+  if(!L)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+  if(L._err)return '<div class="secrcard" style="font-size:13px">⚠️ '+esc(L._err)+'<br><span style="font-size:12px;color:var(--text2)">Si le message parle d\'une route inconnue : mettez à jour le secrétaire sur le serveur (version 2).</span></div>';
+  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Le secrétaire apprend de vos corrections, de vos réponses à sa place, des propositions ignorées (avec une raison) et de vos 👎. Il en tire des <b>leçons</b> qu\'il applique ensuite. Vous pouvez les corriger, en ajouter ou en retirer.</div>';
+  h+='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><b style="font-size:13px">🤖 Autonomie</b>'+
+    '<label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="slPromote" '+(L.autoPromote?'checked':'')+' onchange="secrSetPromote(this.checked)"> progressive</label></div>'+
+    '<div style="font-size:11px;color:var(--text2);margin:4px 0 8px">'+(L.autoPromote?'Un type de demande passe seul en automatique après '+L.suggestAfter+' validations sans correction (le double après un retour en arrière), et repasse en validation après 2 👎 en 30 jours.':'Le secrétaire vous propose de passer un type de demande en automatique après '+L.suggestAfter+' validations sans correction.')+'</div>';
+  Object.keys(L.stats||{}).forEach(function(k){
+    var st=L.stats[k];
+    var mode=st.locked?'<span class="secrtag">🔒 toujours vous</span>':(st.mode==='auto'?'<span class="secrtag ok">automatique</span>':'<span class="secrtag warn">validation</span>');
+    var prog=(!st.locked&&st.mode!=='auto')?'<div class="secrbar" title="validations sans correction"><i style="width:'+Math.min(100,Math.round(100*(st.streak||0)/Math.max(1,st.need)))+'%"></i></div><span class="secrmeta" style="margin:0">'+(st.streak||0)+'/'+st.need+'</span>':'<span style="flex:1"></span>';
+    h+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)"><span style="font-size:12px;width:40%">'+esc(st.label)+'</span>'+mode+prog+
+      '<span class="secrmeta" style="margin:0;white-space:nowrap">✅'+(st.approved||0)+' ✏️'+(st.edited||0)+(st.negatives30?' 👎'+st.negatives30:'')+'</span></div>';
+  });
+  h+='</div>';
+  h+='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">🎓 Leçons ('+(L.rules||[]).length+')</b><button class="btn bs" style="font-size:11px;padding:4px 8px" onclick="secrRelearn()">🔄 Apprendre maintenant</button></div>';
+  if(!(L.rules||[]).length)h+='<div style="font-size:12px;color:var(--text2);margin:6px 0">Aucune pour l\'instant : elles apparaîtront au fil de vos corrections.</div>';
+  (L.rules||[]).forEach(function(r){
+    h+='<div class="secrrule"><span class="secrtag'+(r.source==='kine'?'':' ok')+'">'+(r.source==='kine'?'✍️ vous':'🎓 apprise')+'</span><span class="t">'+esc(r.text)+'</span>'+
+      '<button title="Modifier" onclick="secrLessonEdit(\''+r.id+'\')">✏️</button><button title="Retirer" onclick="secrLessonDel(\''+r.id+'\')">🗑</button></div>';
+  });
+  h+='<textarea id="secrNewLesson" rows="2" style="width:100%;font-size:12px;border-radius:8px;border:1px solid var(--border);padding:6px;margin-top:8px" placeholder="Ajouter une règle, ex : Ne jamais proposer le vendredi après 17h aux nouveaux patients."></textarea>'+
+    '<button class="btn bp bw" style="margin-top:6px" onclick="secrLessonAdd()">➕ Ajouter cette règle</button>'+
+    '<div style="font-size:10px;color:var(--text3);margin-top:4px">Vos règles (✍️) ne sont jamais modifiées par l\'IA. Une leçon apprise que vous modifiez devient la vôtre.</div></div>';
+  var J=L.journal||[];
+  h+='<div class="secrcard"><b style="font-size:13px">📓 Ce qu\'il a appris récemment</b>'+(J.length?'':'<div style="font-size:12px;color:var(--text2);margin-top:6px">Rien pour l\'instant.</div>')+
+    J.map(function(j){return '<div class="secrj"><span class="secrmeta" style="margin:0">'+_secrWhen(j.at)+'</span> '+(_SECR_KIND[j.kind]||j.kind)+(j.categorie?' · '+esc(_secrCatLabel(j.categorie)):'')+
+      (j.status==='new'?' <span class="secrtag warn">en cours</span>':'<div style="color:var(--text2)">→ '+esc(j.result||'')+(j.comment?' — '+esc(j.comment):'')+'</div>')+'</div>'}).join('')+
+    '<div class="secrmeta" style="margin-top:6px">'+(L.examples||0)+' exemple'+((L.examples||0)>1?'s':'')+' de vos réponses gardé'+((L.examples||0)>1?'s':'')+' en mémoire.</div></div>';
+  return h;
+}
+function secrSetPromote(on){secrApi('PUT','settings',{autoPromote:!!on}).then(function(){toast(on?'🤖 Autonomie progressive activée':'Autonomie progressive désactivée');secrLoad();}).catch(function(e){alert(e.message)});}
+function secrLessonAdd(){
+  var v=((document.getElementById('secrNewLesson')||{}).value||'').trim();
+  if(!v){toast('Écrivez la règle');return;}
+  secrApi('POST','lessons',{text:v}).then(function(){toast('🎓 Règle ajoutée');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrLessonEdit(id){
+  var r=((SECR.lessons||{}).rules||[]).find(function(x){return x.id===id});if(!r)return;
+  var v=prompt('Modifier la leçon :',r.text);
+  if(v===null)return;
+  if(!v.trim())return secrLessonDel(id);
+  secrApi('POST','lessons/'+encodeURIComponent(id),{text:v}).then(function(){toast('🎓 Leçon modifiée');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrLessonDel(id){
+  if(!confirm('Retirer cette leçon ?'))return;
+  secrApi('POST','lessons/'+encodeURIComponent(id)+'/delete',{}).then(function(){toast('Leçon retirée');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrRelearn(){
+  toast('🎓 Apprentissage en cours…');
+  secrApi('POST','lessons/relearn',{}).then(function(r){var x=r.result||{};toast(x.skipped?'Rien de nouveau à apprendre':('🎓 '+((x.add||0)+(x.mod||0)+(x.del||0))+' changement(s) dans les leçons'));secrLoad();}).catch(function(e){alert(e.message)});
+}
+function _secrNorm(ph){ph=String(ph||'').replace(/\D/g,'');if(ph.indexOf('33')===0&&ph.length>9)ph=ph.substring(2);if(ph.indexOf('0')===0)ph=ph.substring(1);return ph;}
+function secrPickContacts(){
+  if(!(navigator.contacts&&navigator.contacts.select)){
+    alert('Le choix dans les contacts se fait depuis PhysioFlow Pro sur votre téléphone Android (Chrome).\n\nIci, vous pouvez saisir les numéros dans la case « Autres numéros jamais lus ».');return;}
+  var st=(SECR.status&&SECR.status.settings)||{};
+  navigator.contacts.select(['name','tel'],{multiple:true}).then(function(list){
+    var cur=JSON.parse(JSON.stringify(st.ignoredContacts||[]));var added=[];
+    (list||[]).forEach(function(c){
+      var phones=(c.tel||[]).map(function(t){return String(t).trim()}).filter(function(t){return t.replace(/\D/g,'').length>=8});
+      if(!phones.length)return;
+      var name=String(((c.name||[])[0])||phones[0]).trim();
+      var ex=cur.find(function(x){return x.name===name});
+      if(ex)phones.forEach(function(p){if(!ex.phones.some(function(q){return _secrNorm(q)===_secrNorm(p)}))ex.phones.push(p)});
+      else cur.push({name:name,phones:phones});
+      added.push({name:name,phones:phones});
+    });
+    if(!added.length){if((list||[]).length)toast('Aucun numéro de mobile dans ces contacts');return;}
+    /* garde-fou : un contact qui est aussi un patient */
+    var pats=[];
+    added.forEach(function(a){a.phones.forEach(function(ph){var n=_secrNorm(ph);(D.patients||[]).forEach(function(p){if(n.length>=8&&_secrNorm(p.phone)===n&&pats.indexOf(p)<0)pats.push(p)})})});
+    if(pats.length&&!confirm('⚠️ '+pats.map(function(p){return ((p.lastName||'')+' '+(p.firstName||'')).trim()}).join(', ')+(pats.length>1?' sont aussi des patients':' est aussi un(e) patient(e)')+' du cabinet.\nSes SMS (même pour un RDV) ne seront plus traités par le secrétaire.\n\nContinuer ?'))return;
+    return secrApi('PUT','settings',{ignoredContacts:cur}).then(function(){toast('🔒 '+added.length+' contact'+(added.length>1?'s':'')+' : leurs SMS ne seront jamais lus');secrLoad();});
+  }).catch(function(e){if(e&&e.name!=='AbortError')alert('Contacts inaccessibles : '+(e&&e.message||e));});
+}
+function secrUnignore(i){
+  var st=(SECR.status&&SECR.status.settings)||{};var cur=JSON.parse(JSON.stringify(st.ignoredContacts||[]));var c=cur[i];if(!c)return;
+  if(!confirm('Le secrétaire lira de nouveau les SMS de '+(c.name||'ce contact')+' ?'))return;
+  cur.splice(i,1);
+  secrApi('PUT','settings',{ignoredContacts:cur}).then(function(){toast('Contact retiré de la liste');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrSettingsHtml(){
+  var c=_secrCfg()||{};
+  var h='<div class="secrcard"><b style="font-size:13px">🔌 Connexion au secrétaire</b>'+
+    '<div class="fg" style="margin-top:8px"><label>Adresse du secrétaire</label><input id="secrUrl" value="'+esc(c.url||'')+'" placeholder="https://secretaire-….a.run.app" autocapitalize="off" autocorrect="off"></div>'+
+    '<div class="fg"><label>Code d\'accès (PRO_TOKEN)</label><input id="secrCode" type="password" value="'+esc(c.code||'')+'" autocomplete="off"></div>'+
+    '<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px">Gardés sur cet appareil uniquement (jamais envoyés dans vos données PhysioFlow).</div>'+
+    '<div style="display:flex;gap:6px"><button class="btn bp" style="flex:1" onclick="secrConnect()">Enregistrer et tester</button>'+(c.url?'<button class="btn" onclick="secrDisconnect()">Déconnecter</button>':'')+'</div></div>';
+  var st=SECR.status;
+  if(!c.url||!st||!st.settings)return h;
+  var s=st.settings,cats=st.categories||{},gw=st.gateway||{};
+  h+='<div class="secrcard"><b style="font-size:13px">📱 Téléphone (SMS Gateway)</b> '+(gw.configured?(gw.registeredAt?'<span class="secrtag">connecté</span>':'<span class="secrtag warn">à brancher</span>'):'<span class="secrtag warn">non configuré</span>')+(gw.encrypted?'<span class="secrtag">chiffré</span>':'')+
+    '<div style="font-size:11px;color:var(--text2);margin:6px 0">Dans l\'appli SMS Gateway : onglet Accueil (serveur cloud) pour l\'identifiant et le mot de passe ; Réglages › Webhooks pour la clé de signature ; Réglages › Chiffrement pour la phrase secrète.</div>'+
+    '<div class="fr"><div class="fg"><label>Identifiant</label><input id="gwU" autocapitalize="off" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div><div class="fg"><label>Mot de passe</label><input id="gwP" type="password" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div></div>'+
+    '<div class="fr"><div class="fg"><label>Clé de signature</label><input id="gwK" type="password" placeholder="'+(gw.configured?'(déjà enregistrée)':'')+'"></div><div class="fg"><label>Phrase secrète (chiffrement)</label><input id="gwE" type="password" placeholder="'+(gw.encrypted?'(déjà enregistrée)':'recommandé')+'"></div></div>'+
+    '<div class="fg"><label>Carte SIM à utiliser</label><select id="gwS"><option value="">Par défaut</option><option value="1"'+(gw.sim==1?' selected':'')+'>SIM 1</option><option value="2"'+(gw.sim==2?' selected':'')+'>SIM 2</option></select></div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrSaveGateway()">Enregistrer et brancher le téléphone</button><button class="btn bs" style="flex:1" onclick="secrTestSms()">SMS de test</button></div></div>';
+  h+='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">Secrétaire</b>'+
+    '<label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ssEn" '+(s.enabled?'checked':'')+'> actif</label></div>'+
+    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">Ce qu\'il fait seul</div>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:6px">« Validation » : il prépare la réponse, vous l\'envoyez d\'un geste. « Automatique » : il répond et agit seul (dans le respect des règles de réservation). En cas de doute, il vous demande toujours.</div>';
+  Object.keys(cats).forEach(function(k){
+    if(k==='personnel')return;
+    var lock=cats[k].lockValider;
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border2)"><span style="font-size:12px">'+esc(cats[k].label)+'</span>'+
+      (lock?'<span class="secrmeta" style="margin:0">toujours validé par vous</span>':'<select id="ssA_'+k+'" style="font-size:12px;width:auto"><option value="valider"'+((s.autonomy||{})[k]!=='auto'?' selected':'')+'>Validation</option><option value="auto"'+((s.autonomy||{})[k]==='auto'?' selected':'')+'>Automatique</option></select>')+'</div>';
+  });
+  h+='<div class="fr" style="margin-top:10px"><div class="fg"><label>Seuil de confiance</label><select id="ssConf">'+[0.7,0.8,0.9].map(function(v){return '<option value="'+v+'"'+(Math.abs(s.confidenceMin-v)<0.01?' selected':'')+'>'+Math.round(v*100)+' %</option>'}).join('')+'</select></div>'+
+    '<div class="fg"><label>Modèle d\'IA</label><select id="ssModel">'+[['claude-sonnet-5','Sonnet 5 (recommandé)'],['claude-haiku-4-5-20251001','Haiku 4.5 (économique)'],['claude-opus-5-5','Opus 5.5 (le plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+(s.model===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>'+
+    '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssDbl" '+(s.doubleCheck!==false?'checked':'')+'> <span>Relecture par une 2e IA avant chaque envoi automatique <span style="color:var(--text3)">(recommandé)</span></span></label>'+
+    '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssProm" '+(s.autoPromote?'checked':'')+'> <span>Autonomie progressive : passer seul en automatique après <select id="ssAfter" style="font-size:12px;width:auto;padding:1px 4px">'+[5,8,12,20].map(function(v){return '<option value="'+v+'"'+(s.suggestAfter===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select> validations sans correction</span></label>'+
+    '<div style="font-size:12px;font-weight:700;margin:6px 0 4px">📋 Résumés</div>'+
+    '<div class="fg"><label>Heures (séparées par des virgules)</label><input id="ssTimes" value="'+esc((s.summaryTimes||[]).join(', '))+'" placeholder="12:30, 19:30"></div>'+
+    '<div class="chips" id="ssDays">'+[1,2,3,4,5,6,0].map(function(d){return '<div class="chip'+((s.summaryDays||[]).indexOf(d)>=0?' sel':'')+'" data-d="'+d+'" style="background:var(--bg)" onclick="this.classList.toggle(\'sel\')">'+['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][d]+'</div>'}).join('')+'</div>'+
+    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">🔒 Confidentialité</div>'+
+    '<div class="fg"><label>Contacts jamais lus (famille, amis…)</label>'+
+      ((s.ignoredContacts||[]).length?(s.ignoredContacts||[]).map(function(c,i){return '<div class="secrrule"><span class="t"><b>'+esc(c.name||'?')+'</b> <span class="secrmeta" style="margin:0">'+esc((c.phones||[]).map(_secrPhone).join(', '))+'</span></span><button title="Ne plus ignorer" onclick="secrUnignore('+i+')">✕</button></div>'}).join(''):'<div class="secrmeta">Aucun pour l\'instant.</div>')+
+      '<button class="btn bs bw" style="margin-top:6px" onclick="secrPickContacts()">📇 Choisir dans mes contacts</button>'+
+      '<div style="font-size:10px;color:var(--text3);margin-top:3px">Leurs SMS sont écartés dès leur arrivée : jamais lus par l\'IA, jamais conservés, jamais de réponse.</div></div>'+
+    '<div class="fg"><label>Autres numéros jamais lus — un par ligne</label><textarea id="ssIgn" rows="2">'+esc((s.ignoredNumbers||[]).join('\n'))+'</textarea></div>'+
+    '<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-bottom:8px"><input type="checkbox" id="ssKnown" '+(s.onlyKnownPatients?'checked':'')+'> Ne traiter que les patients connus (ignore les numéros inconnus)</label>'+
+    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">✍️ Ce que le secrétaire doit savoir</div>'+
+    '<div class="fg"><label>Infos pratiques du cabinet (adresse, accès, tarifs, documents…)</label><textarea id="ssInfo" rows="3">'+esc(s.cabinetInfo||'')+'</textarea></div>'+
+    '<div class="fg"><label>Vos consignes (ton, règles maison…)</label><textarea id="ssInstr" rows="3" placeholder="Ex : Tutoie les patients qui te tutoient. Ne propose pas le vendredi après 17h aux nouveaux patients.">'+esc(s.instructions||'')+'</textarea></div>'+
+    '<div class="fg"><label>Signature (ajoutée au 1er message de la journée)</label><input id="ssSig" value="'+esc(s.signature||'')+'"></div>'+
+    '<button class="btn bp bw" onclick="secrSaveSettings()">💾 Enregistrer les réglages</button></div>';
+  return h;
+}
+function secrConnect(){
+  var url=(document.getElementById('secrUrl').value||'').trim().replace(/\/+$/,''),code=(document.getElementById('secrCode').value||'').trim();
+  if(!/^https:\/\//.test(url)){toast('Adresse invalide (doit commencer par https://)');return;}
+  if(code.length<8){toast('Code d\'accès trop court');return;}
+  var prev=_secrCfg();
+  _secrSaveCfg({url:url,code:code});
+  secrApi('GET','status').then(function(st){SECR.status=st;toast('✅ Secrétaire connecté');secrRender();secrRefreshBadge();})
+    .catch(function(e){_secrSaveCfg(prev);alert('Connexion impossible : '+e.message);secrRender();});
+}
+function secrDisconnect(){if(!confirm('Déconnecter cet appareil du secrétaire ?\n(Le secrétaire continue de fonctionner sur le serveur.)'))return;_secrSaveCfg(null);SECR.status=null;secrRefreshBadge();secrRender();}
+function secrSaveGateway(){
+  var body={};
+  var u=document.getElementById('gwU').value.trim(),p=document.getElementById('gwP').value.trim(),k=document.getElementById('gwK').value.trim(),e=document.getElementById('gwE').value.trim();
+  if(u)body.user=u;if(p)body.pass=p;if(k)body.signingKey=k;if(e)body.passphrase=e;
+  body.sim=document.getElementById('gwS').value||null;
+  var c=_secrCfg();
+  secrApi('PUT','gateway',body).then(function(r){
+    if(!r.configured){toast('Identifiant, mot de passe et clé de signature sont nécessaires');return secrLoad();}
+    return secrApi('POST','gateway/register',{baseUrl:c.url}).then(function(){toast('✅ Téléphone branché sur le secrétaire');secrLoad();});
+  }).catch(function(e2){alert(e2.message);secrLoad();});
+}
+function secrTestSms(){
+  var ph=prompt('Envoyer un SMS de test à quel numéro ? (le vôtre par exemple)',D.proPhone||'');
+  if(!ph)return;
+  secrApi('POST','gateway/test',{phone:ph}).then(function(){toast('📤 SMS de test envoyé');}).catch(function(e){alert(e.message)});
+}
+function secrSaveSettings(){
+  var st=SECR.status||{};var cats=st.categories||{};var auto={};
+  Object.keys(cats).forEach(function(k){var el=document.getElementById('ssA_'+k);if(el)auto[k]=el.value;});
+  var days=Array.from(document.querySelectorAll('#ssDays .chip.sel')).map(function(x){return parseInt(x.dataset.d)});
+  var body={enabled:document.getElementById('ssEn').checked,autonomy:auto,confidenceMin:parseFloat(document.getElementById('ssConf').value),
+    model:document.getElementById('ssModel').value,summaryTimes:(document.getElementById('ssTimes').value||'').split(/[,;\s]+/).map(function(x){x=x.trim().replace('h',':');if(/^\d{1,2}:\d{2}$/.test(x))x=('0'+x).slice(-5);else if(/^\d{1,2}:?$/.test(x))x=('0'+x.replace(':','')).slice(-2)+':00';return x}).filter(function(x){return /^\d{2}:\d{2}$/.test(x)}),
+    summaryDays:days,ignoredNumbers:(document.getElementById('ssIgn').value||'').split(/\n+/).map(function(x){return x.trim()}).filter(Boolean),
+    onlyKnownPatients:document.getElementById('ssKnown').checked,cabinetInfo:document.getElementById('ssInfo').value,instructions:document.getElementById('ssInstr').value,
+    signature:document.getElementById('ssSig').value,
+    doubleCheck:!!(document.getElementById('ssDbl')||{}).checked,autoPromote:!!(document.getElementById('ssProm')||{}).checked,suggestAfter:parseInt((document.getElementById('ssAfter')||{}).value||'8')};
+  secrApi('PUT','settings',body).then(function(){toast('💾 Réglages du secrétaire enregistrés');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrSetAuto(cat){var a={};a[cat]='auto';secrApi('PUT','settings',{autonomy:a}).then(function(){toast('🤖 « '+_secrCatLabel(cat)+' » passe en automatique');secrLoad();}).catch(function(e){alert(e.message)});}
+function secrSetEnabled(on){secrApi('PUT','settings',{enabled:!!on}).then(function(){toast(on?'🤖 Secrétaire réactivé':'⏸ Secrétaire en pause');secrLoad();}).catch(function(e){alert(e.message)});}
+
 /* Orientation/resize: re-render agenda for optimal display */
 window.addEventListener('resize',function(){if(typeof R==='function')R()});
 window.addEventListener('orientationchange',function(){setTimeout(function(){if(typeof R==='function')R()},300)});
