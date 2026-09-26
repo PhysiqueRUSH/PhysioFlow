@@ -396,6 +396,31 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 /* v95 — secrétaire : apprentissage */
 .secrtag.ok{background:#e6f7ee;color:#1e8c4e}
 .secrtag.app{background:#e5edfb;color:#2a5bb8} /* v98 */
+/* v99 — secrétaire : 4 onglets, segments, bandeau d'état, menu des réglages */
+.secrnav{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--bg);border-radius:14px;padding:4px;margin:0 0 12px}
+.secrnav button{position:relative;background:none;border:none;border-radius:11px;padding:7px 2px 6px;font-size:11px;font-weight:600;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0}
+.secrnav button .i{font-size:19px;line-height:1.1}
+.secrnav button.on{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+.secrnav .bdg{position:absolute;top:2px;left:calc(50% + 8px);background:#e74c3c;color:#fff;border-radius:9px;font-size:10px;font-weight:700;min-width:16px;height:16px;line-height:16px;padding:0 4px}
+.secrseg{display:flex;gap:4px;margin:0 0 10px}
+.secrseg button{flex:1;min-width:0;padding:7px 4px;border-radius:10px;border:1px solid var(--border);background:none;font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.secrseg button.on{background:var(--accentbg);color:var(--accent);border-color:var(--accent)}
+.secrstat{display:flex;flex-wrap:wrap;gap:5px;margin:-6px 0 10px}
+.secrstat button{font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;border:none;background:var(--bg);color:var(--text2);cursor:pointer}
+.secrstat button.ok{background:#e6f7ee;color:#1e8c4e}.secrstat button.warn{background:#fff1e0;color:#c0510f}.secrstat button.off{background:var(--bg);color:var(--text3)}
+.secrmenu h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin:12px 4px 6px}
+.secrmenu h4:first-child{margin-top:2px}
+.secrrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--bg);border:none;border-radius:12px;padding:10px 12px;margin-bottom:6px;cursor:pointer;color:var(--text)}
+.secrrow .i{font-size:20px;width:26px;text-align:center;flex-shrink:0}
+.secrrow .t{flex:1;min-width:0}.secrrow .t b{display:block;font-size:13px}
+.secrrow .t small{display:block;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.secrrow .c{color:var(--text3);font-size:20px;line-height:1}
+.secrsech{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.secrsect{font-size:15px;font-weight:700}
+.secrback{background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;padding:2px 0;margin:0 0 8px;cursor:pointer;white-space:nowrap}
+.secrsech .secrback{margin:0}
+#mSECR .mop{min-height:88vh} /* les onglets restent à la même place d'un écran à l'autre */
+@media(min-width:500px){#mSECR .mop{min-height:82vh}}
 .secract{display:flex;gap:6px;align-items:flex-start;font-size:12px;margin:6px 0}
 .secrnote{font-size:12px;margin:4px 0;color:#c0510f}
 .secrwhy{font-size:12px;margin:4px 0;color:var(--text2)}.secrwhy summary{cursor:pointer}.secrwhy div{white-space:pre-wrap;margin-top:4px}
@@ -445,7 +470,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 98 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 99 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -569,13 +594,31 @@ function requestNotifPermission(){
 function registerFCMToken(){
   if(!_fcmMessaging)return;
   var opts={vapidKey:'BHs6QaNOKQZvDDA_-Sgwk0raMLKJ1j41KxN9Qocl3p16kWsC5SDhCdGdGDpW6o-zCFScBaClxsaBMjhPt6IbLJM'};
-  if(window._swReg)opts.serviceWorkerRegistration=window._swReg;
-  _fcmMessaging.getToken(opts).then(function(token){
-    if(token){
-      FB_REF.child('fcmTokens/pro').set(token);
-      console.log('FCM token registered');
-    }
-  }).catch(function(e){console.warn('FCM getToken error',e)});
+  /* v99 — on attend le service worker de l'appli (sw.js) : c'est lui qui affiche les notifications appli fermée */
+  var go=function(reg){
+    if(reg)opts.serviceWorkerRegistration=reg;
+    _fcmMessaging.getToken(opts).then(function(token){
+      if(token){
+        FB_REF.child('fcmTokens/pro').set(token);
+        /* v99 — chaque appareil est prévenu (téléphone, tablette, ordinateur), pas seulement le dernier ouvert */
+        try{
+          window._pfFcmTok=token;
+          var h1=2166136261,h2=5381;for(var i=0;i<token.length;i++){var c=token.charCodeAt(i);h1=Math.imul(h1^c,16777619);h2=((h2<<5)+h2+c)|0;}
+          var ua=navigator.userAgent||'',lab=/Android/i.test(ua)?'Android':(/iPhone|iPad/i.test(ua)?'iPhone / iPad':(/Windows/i.test(ua)?'Ordinateur Windows':(/Mac/i.test(ua)?'Mac':'Appareil')));
+          if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)lab+=' · appli';
+          FB_REF.child('fcmTokens/proDevices/d'+(h1>>>0).toString(36)+(h2>>>0).toString(36)).set({token:token,label:lab,at:Date.now()});
+        }catch(e){console.warn('[v99] inscription appareil',e);}
+        console.log('FCM token registered');
+      }
+    }).catch(function(e){console.warn('FCM getToken error',e)});
+  };
+  if(window._swReg)go(window._swReg);
+  else if(navigator.serviceWorker&&navigator.serviceWorker.ready){
+    var done=false,once=function(r){if(done)return;done=true;go(r);};
+    navigator.serviceWorker.ready.then(once).catch(function(){once(null)});
+    setTimeout(function(){once(window._swReg||null)},6000);
+  }
+  else go(null);
 }
 initFCM();
 requestNotifPermission();
@@ -9783,56 +9826,12 @@ function _secrActs(p){return (p&&p.actions&&p.actions.length)?p.actions:((p&&p.a
 function _secrPhone(ph){var d=String(ph||'').replace(/\D/g,'');if(d.length===11&&d.indexOf('33')===0)d='0'+d.slice(2);return d.length===10?d.replace(/(\d{2})(?=\d)/g,'$1 '):String(ph||'');}
 function _secrName(x){return (x&&x.name)?x.name:'Numéro inconnu';}
 
-function openSecr(tab){
-  if(tab)SECR.tab=tab;
-  if(tab==='pending'&&((typeof ASST!=='undefined'&&ASST.confirm)||(SECR.status&&!SECR.status.pendingCount&&!(SECR.status.suggestions||[]).length)))SECR.tab='assistant';
-  if(!_secrCfg())SECR.tab='settings';
-  opM('mSECR');
-  secrRender();
-  if(_secrCfg())secrLoad();
-}
-function secrLoad(){
-  var t=SECR.tab;
-  var pr;
-  if(t==='pending')pr=Promise.all([secrApi('GET','status'),secrApi('GET','pending')]).then(function(r){SECR.status=r[0];SECR.pending=r[1].pending||[];});
-  else if(t==='threads')pr=Promise.all([secrApi('GET','status'),secrApi('GET','threads')]).then(function(r){SECR.status=r[0];SECR.threads=r[1].threads||[];});
-  else if(t==='thread')pr=secrApi('GET','threads/'+encodeURIComponent(SECR.openTid)).then(function(r){SECR.thread=r.thread;});
-  else if(t==='summaries')pr=secrApi('GET','summaries').then(function(r){SECR.summaries=r.summaries||[];});
-  else if(t==='calls')pr=secrApi('GET','calls').then(function(r){SECR.calls=r;}); /* v98 */
-  else if(t==='lessons')pr=Promise.all([secrApi('GET','status'),secrApi('GET','lessons').catch(function(e){return {_err:e.message}})]).then(function(r){SECR.status=r[0];SECR.lessons=r[1];});
-  else if(t==='assistant')pr=Promise.all([secrApi('GET','status'),secrApi('GET','assistant/usage').catch(function(){return null})]).then(function(r){SECR.status=r[0];if(r[1])ASST.usage=r[1];});
-  else pr=secrApi('GET','status').then(function(r){SECR.status=r;});
-  SECR.err='';
-  pr.then(function(){secrRender();secrRefreshBadge();}).catch(function(e){SECR.err=e.message;secrRender();});
-}
-function secrTab(t){SECR.tab=t;if(t!=='thread')SECR.openTid=null;secrRender();if(_secrCfg())secrLoad();}
-function secrRender(){
-  var b=document.getElementById('mSECRB');if(!b)return;
-  var st=SECR.status||{};var n=st.pendingCount||0;
-  var tabs=[['pending','⏳ À valider'+(n?' ('+n+')':'')],['assistant','✨ Assistant'+((typeof ASST!=='undefined'&&ASST.confirm)?' ✋':'')],['threads','💬 Conversations'],['calls','📞 Appels'],['summaries','📋 Résumés'],['lessons','🎓 Apprentissage'],['test','🧪 Tester'],['settings','⚙ Réglages']];
-  var h='<div class="secrtabs">'+tabs.map(function(x){return '<button class="secrtab'+((SECR.tab===x[0]||(SECR.tab==='thread'&&x[0]==='threads'))?' on':'')+'" onclick="secrTab(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
-  if(SECR.err)h+='<div class="secrcard" style="color:#e74c3c;font-size:13px">⚠️ '+esc(SECR.err)+'</div>';
-  if(st.settings&&!st.settings.enabled&&SECR.tab!=='settings')h+='<div class="secrcard" style="font-size:12px;background:#fff1e0">⏸ Secrétaire en pause : les SMS ne sont pas traités. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetEnabled(true)">Réactiver</button></div>';
-  if(st.suggestions&&st.suggestions.length&&SECR.tab==='pending'){
-    st.suggestions.forEach(function(sg){h+='<div class="secrcard" style="font-size:12px;background:#e6f7ee">💡 Vous avez validé '+sg.streak+' réponses « '+esc(sg.label)+' » sans les corriger. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetAuto(\''+sg.categorie+'\')">Passer en automatique</button></div>';});
-  }
-  if(SECR.tab==='pending')h+=secrPendingHtml();
-  else if(SECR.tab==='threads')h+=secrThreadsHtml();
-  else if(SECR.tab==='thread')h+=secrThreadHtml();
-  else if(SECR.tab==='summaries')h+=secrSummariesHtml();
-  else if(SECR.tab==='calls')h+=secrCallsHtml(); /* v98 */
-  else if(SECR.tab==='test')h+=secrTestHtml();
-  else if(SECR.tab==='lessons')h+=secrLessonsHtml();
-  else if(SECR.tab==='assistant')h+=asstHtml();
-  else h+=secrSettingsHtml();
-  h+='<div class="br"><button class="btn" onclick="clM(\'mSECR\')">Fermer</button></div>';
-  b.innerHTML=h;
-  if(SECR.tab==='assistant')_asstAfterRender();
-}
 function secrPendingHtml(){
   if(!_secrCfg())return '';
   var list=SECR.pending||[];
-  if(!list.length)return '<div style="font-size:13px;color:var(--text2);padding:10px 0">Rien à valider pour l\'instant ✅</div>';
+  if(!list.length)return '<div class="secrcard" style="text-align:center;padding:18px 12px"><div style="font-size:26px">✅</div><b style="font-size:14px">Rien à traiter</b>'+
+    '<div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Le secrétaire vous prévient dès qu\'un message demande votre avis.</div>'+
+    '<div style="display:flex;gap:6px"><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'activity\')">📬 Voir l\'activité</button><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'assistant\')">✨ Assistant</button></div></div>'; /* v99 */
   return list.map(function(p){
     var acts=_secrActs(p);
     var val=p.actionsValides||acts.map(function(){return !!p.actionValide});
@@ -10064,7 +10063,7 @@ function secrPickContacts(){
     /* garde-fou : un contact qui est aussi un patient */
     var pats=[];
     added.forEach(function(a){a.phones.forEach(function(ph){var n=_secrNorm(ph);(D.patients||[]).forEach(function(p){if(n.length>=8&&_secrNorm(p.phone)===n&&pats.indexOf(p)<0)pats.push(p)})})});
-    if(pats.length&&!confirm('⚠️ '+pats.map(function(p){return ((p.lastName||'')+' '+(p.firstName||'')).trim()}).join(', ')+(pats.length>1?' sont aussi des patients':' est aussi un(e) patient(e)')+' du cabinet.\nSes SMS (même pour un RDV) ne seront plus traités par le secrétaire.\n\nContinuer ?'))return;
+    if(pats.length&&!confirm('⚠️ '+pats.map(function(p){return ((p.lastName||'')+' '+(p.firstName||'')).trim()}).join(', ')+(pats.length>1?' sont aussi des patients':' est aussi un(e) patient(e)')+' du cabinet.\nSes SMS (même pour un RDV) ne seront plus traités par le secrétaire, et ses appels ne seront pas signalés.\n\nContinuer ?'))return;
     return secrApi('PUT','settings',{ignoredContacts:cur}).then(function(){toast('🔒 '+added.length+' contact'+(added.length>1?'s':'')+' : leurs SMS ne seront jamais lus');secrLoad();});
   }).catch(function(e){if(e&&e.name!=='AbortError')alert('Contacts inaccessibles : '+(e&&e.message||e));});
 }
@@ -10074,64 +10073,13 @@ function secrUnignore(i){
   cur.splice(i,1);
   secrApi('PUT','settings',{ignoredContacts:cur}).then(function(){toast('Contact retiré de la liste');secrLoad();}).catch(function(e){alert(e.message)});
 }
-function secrSettingsHtml(){
-  var c=_secrCfg()||{};
-  var h='<div class="secrcard"><b style="font-size:13px">🔌 Connexion au secrétaire</b>'+
-    '<div class="fg" style="margin-top:8px"><label>Adresse du secrétaire</label><input id="secrUrl" value="'+esc(c.url||'')+'" placeholder="https://secretaire-….a.run.app" autocapitalize="off" autocorrect="off"></div>'+
-    '<div class="fg"><label>Code d\'accès (PRO_TOKEN)</label><input id="secrCode" type="password" value="'+esc(c.code||'')+'" autocomplete="off"></div>'+
-    '<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px">Gardés sur cet appareil uniquement (jamais envoyés dans vos données PhysioFlow).</div>'+
-    '<div style="display:flex;gap:6px"><button class="btn bp" style="flex:1" onclick="secrConnect()">Enregistrer et tester</button>'+(c.url?'<button class="btn" onclick="secrDisconnect()">Déconnecter</button>':'')+'</div></div>';
-  var st=SECR.status;
-  if(!c.url||!st||!st.settings)return h;
-  var s=st.settings,cats=st.categories||{},gw=st.gateway||{};
-  h+='<div class="secrcard"><b style="font-size:13px">📱 Téléphone (SMS Gateway)</b> '+(gw.configured?(gw.registeredAt?'<span class="secrtag">connecté</span>':'<span class="secrtag warn">à brancher</span>'):'<span class="secrtag warn">non configuré</span>')+(gw.encrypted?'<span class="secrtag">chiffré</span>':'')+
-    (gw.lastWebhook?'<div style="font-size:12px;margin:6px 0;color:'+(gw.lastWebhook.status===200?'#1e8c4e':'#c0510f')+'">📶 Dernier SMS transmis par le téléphone : '+_secrWhen(gw.lastWebhook.at)+' — '+esc(gw.lastWebhook.result||String(gw.lastWebhook.status))+'</div>':(gw.registeredAt?'<div style="font-size:12px;margin:6px 0;color:var(--text2)">📶 Aucun SMS transmis par le téléphone pour l\'instant.</div>':''))+
-    '<div style="font-size:11px;color:var(--text2);margin:6px 0">Dans l\'appli SMS Gateway : onglet Accueil (serveur cloud) pour l\'identifiant et le mot de passe ; Réglages › Webhooks pour la clé de signature ; Réglages › Chiffrement pour la phrase secrète.</div>'+
-    '<div class="fr"><div class="fg"><label>Identifiant</label><input id="gwU" autocapitalize="off" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div><div class="fg"><label>Mot de passe</label><input id="gwP" type="password" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div></div>'+
-    '<div class="fr"><div class="fg"><label>Clé de signature</label><input id="gwK" type="password" placeholder="'+(gw.configured?'(déjà enregistrée)':'')+'"></div><div class="fg"><label>Phrase secrète (chiffrement)</label><input id="gwE" type="password" placeholder="'+(gw.encrypted?'(déjà enregistrée)':'recommandé')+'"></div></div>'+
-    '<div class="fg"><label>Carte SIM à utiliser</label><select id="gwS"><option value="">Par défaut</option><option value="1"'+(gw.sim==1?' selected':'')+'>SIM 1</option><option value="2"'+(gw.sim==2?' selected':'')+'>SIM 2</option></select></div>'+
-    '<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrSaveGateway()">Enregistrer et brancher le téléphone</button><button class="btn bs" style="flex:1" onclick="secrTestSms()">SMS de test</button></div></div>';
-  h+='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">Secrétaire</b>'+
-    '<label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ssEn" '+(s.enabled?'checked':'')+'> actif</label></div>'+
-    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">Ce qu\'il fait seul</div>'+
-    '<div style="font-size:11px;color:var(--text2);margin-bottom:6px">« Validation » : il prépare la réponse, vous l\'envoyez d\'un geste. « Automatique » : il répond et agit seul (dans le respect des règles de réservation). En cas de doute, il vous demande toujours.</div>';
-  Object.keys(cats).forEach(function(k){
-    if(k==='personnel')return;
-    var lock=cats[k].lockValider;
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border2)"><span style="font-size:12px">'+esc(cats[k].label)+'</span>'+
-      (lock?'<span class="secrmeta" style="margin:0">toujours validé par vous</span>':'<select id="ssA_'+k+'" style="font-size:12px;width:auto"><option value="valider"'+((s.autonomy||{})[k]!=='auto'?' selected':'')+'>Validation</option><option value="auto"'+((s.autonomy||{})[k]==='auto'?' selected':'')+'>Automatique</option></select>')+'</div>';
-  });
-  h+='<div class="fr" style="margin-top:10px"><div class="fg"><label>Seuil de confiance</label><select id="ssConf">'+[0.7,0.8,0.9].map(function(v){return '<option value="'+v+'"'+(Math.abs(s.confidenceMin-v)<0.01?' selected':'')+'>'+Math.round(v*100)+' %</option>'}).join('')+'</select></div>'+
-    '<div class="fg"><label>Modèle d\'IA</label><select id="ssModel">'+[['claude-sonnet-5','Sonnet 5 (recommandé)'],['claude-haiku-4-5-20251001','Haiku 4.5 (économique)'],['claude-opus-5-5','Opus 5.5 (le plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+(s.model===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>'+
-    '<div class="fr"><div class="fg"><label>✨ Assistant (tchat / voix)</label><select id="ssAModel">'+[['claude-haiku-4-5-20251001','Haiku 4.5 (rapide — recommandé)'],['claude-sonnet-5','Sonnet 5 (plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+((s.assistantModel||'claude-haiku-4-5-20251001')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
-    '<div class="fg"><label>Échanges max / jour</label><input type="number" id="ssALim" min="20" max="2000" step="10" value="'+(s.assistantDailyLimit||300)+'"></div></div>'+
-    '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssDbl" '+(s.doubleCheck!==false?'checked':'')+'> <span>Relecture par une 2e IA avant chaque envoi automatique <span style="color:var(--text3)">(recommandé)</span></span></label>'+
-    '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssProm" '+(s.autoPromote?'checked':'')+'> <span>Autonomie progressive : passer seul en automatique après <select id="ssAfter" style="font-size:12px;width:auto;padding:1px 4px">'+[5,8,12,20].map(function(v){return '<option value="'+v+'"'+(s.suggestAfter===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select> validations sans correction</span></label>'+
-    '<div style="font-size:12px;font-weight:700;margin:6px 0 4px">📋 Résumés</div>'+
-    '<div class="fg"><label>Heures (séparées par des virgules)</label><input id="ssTimes" value="'+esc((s.summaryTimes||[]).join(', '))+'" placeholder="12:30, 19:30"></div>'+
-    '<div class="chips" id="ssDays">'+[1,2,3,4,5,6,0].map(function(d){return '<div class="chip'+((s.summaryDays||[]).indexOf(d)>=0?' sel':'')+'" data-d="'+d+'" style="background:var(--bg)" onclick="this.classList.toggle(\'sel\')">'+['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][d]+'</div>'}).join('')+'</div>'+
-    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">🔒 Confidentialité</div>'+
-    '<div class="fg"><label>Contacts jamais lus (famille, amis…)</label>'+
-      ((s.ignoredContacts||[]).length?(s.ignoredContacts||[]).map(function(c,i){return '<div class="secrrule"><span class="t"><b>'+esc(c.name||'?')+'</b> <span class="secrmeta" style="margin:0">'+esc((c.phones||[]).map(_secrPhone).join(', '))+'</span></span><button title="Ne plus ignorer" onclick="secrUnignore('+i+')">✕</button></div>'}).join(''):'<div class="secrmeta">Aucun pour l\'instant.</div>')+
-      '<button class="btn bs bw" style="margin-top:6px" onclick="secrPickContacts()">📇 Choisir dans mes contacts</button>'+
-      '<div style="font-size:10px;color:var(--text3);margin-top:3px">Leurs SMS sont écartés dès leur arrivée : jamais lus par l\'IA, jamais conservés, jamais de réponse.</div></div>'+
-    '<div class="fg"><label>Autres numéros jamais lus — un par ligne</label><textarea id="ssIgn" rows="2">'+esc((s.ignoredNumbers||[]).join('\n'))+'</textarea></div>'+
-    '<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-bottom:8px"><input type="checkbox" id="ssKnown" '+(s.onlyKnownPatients?'checked':'')+'> Ne traiter que les patients connus (ignore les numéros inconnus)</label>'+
-    '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin-bottom:8px"><input type="checkbox" id="ssApp" '+(s.appMessages!==false?'checked':'')+'> <span>💬 Traiter aussi la messagerie de l\'appli patient <span style="color:var(--text3)">(comme les SMS : même conversation, réponse dans l\'appli)</span></span></label>'+ /* v98 */
-    '<div style="font-size:12px;font-weight:700;margin:10px 0 4px">✍️ Ce que le secrétaire doit savoir</div>'+
-    '<div class="fg"><label>Infos pratiques du cabinet (adresse, accès, tarifs, documents…)</label><textarea id="ssInfo" rows="3">'+esc(s.cabinetInfo||'')+'</textarea></div>'+
-    '<div class="fg"><label>Vos consignes (ton, règles maison…)</label><textarea id="ssInstr" rows="3" placeholder="Ex : Tutoie les patients qui te tutoient. Ne propose pas le vendredi après 17h aux nouveaux patients.">'+esc(s.instructions||'')+'</textarea></div>'+
-    '<div class="fg"><label>Signature (ajoutée au 1er message de la journée)</label><input id="ssSig" value="'+esc(s.signature||'')+'"></div>'+
-    '<button class="btn bp bw" onclick="secrSaveSettings()">💾 Enregistrer les réglages</button></div>';
-  return h;
-}
 function secrConnect(){
   var url=(document.getElementById('secrUrl').value||'').trim().replace(/\/+$/,''),code=(document.getElementById('secrCode').value||'').trim();
   if(!/^https:\/\//.test(url)){toast('Adresse invalide (doit commencer par https://)');return;}
   if(code.length<8){toast('Code d\'accès trop court');return;}
   var prev=_secrCfg();
   _secrSaveCfg({url:url,code:code});
-  secrApi('GET','status').then(function(st){SECR.status=st;toast('✅ Secrétaire connecté');secrRender();secrRefreshBadge();})
+  secrApi('GET','status').then(function(st){SECR.status=st;SECR.sec=null;toast('✅ Secrétaire connecté');secrRender();secrRefreshBadge();_secrLoadCalls();}) /* v99 */
     .catch(function(e){_secrSaveCfg(prev);alert('Connexion impossible : '+e.message);secrRender();});
 }
 function secrDisconnect(){if(!confirm('Déconnecter cet appareil du secrétaire ?\n(Le secrétaire continue de fonctionner sur le serveur.)'))return;_secrSaveCfg(null);SECR.status=null;secrRefreshBadge();secrRender();}
@@ -10150,19 +10098,6 @@ function secrTestSms(){
   var ph=prompt('Envoyer un SMS de test à quel numéro ? (le vôtre par exemple)',D.proPhone||'');
   if(!ph)return;
   secrApi('POST','gateway/test',{phone:ph}).then(function(){toast('📤 SMS de test envoyé');}).catch(function(e){alert(e.message)});
-}
-function secrSaveSettings(){
-  var st=SECR.status||{};var cats=st.categories||{};var auto={};
-  Object.keys(cats).forEach(function(k){var el=document.getElementById('ssA_'+k);if(el)auto[k]=el.value;});
-  var days=Array.from(document.querySelectorAll('#ssDays .chip.sel')).map(function(x){return parseInt(x.dataset.d)});
-  var body={enabled:document.getElementById('ssEn').checked,autonomy:auto,confidenceMin:parseFloat(document.getElementById('ssConf').value),
-    model:document.getElementById('ssModel').value,summaryTimes:(document.getElementById('ssTimes').value||'').split(/[,;\s]+/).map(function(x){x=x.trim().replace('h',':');if(/^\d{1,2}:\d{2}$/.test(x))x=('0'+x).slice(-5);else if(/^\d{1,2}:?$/.test(x))x=('0'+x.replace(':','')).slice(-2)+':00';return x}).filter(function(x){return /^\d{2}:\d{2}$/.test(x)}),
-    summaryDays:days,ignoredNumbers:(document.getElementById('ssIgn').value||'').split(/\n+/).map(function(x){return x.trim()}).filter(Boolean),
-    onlyKnownPatients:document.getElementById('ssKnown').checked,appMessages:!!(document.getElementById('ssApp')||{}).checked, /* v98 */cabinetInfo:document.getElementById('ssInfo').value,instructions:document.getElementById('ssInstr').value,
-    signature:document.getElementById('ssSig').value,
-    assistantModel:(document.getElementById('ssAModel')||{}).value||undefined,assistantDailyLimit:parseInt((document.getElementById('ssALim')||{}).value||'300',10),
-    doubleCheck:!!(document.getElementById('ssDbl')||{}).checked,autoPromote:!!(document.getElementById('ssProm')||{}).checked,suggestAfter:parseInt((document.getElementById('ssAfter')||{}).value||'8')};
-  secrApi('PUT','settings',body).then(function(){toast('💾 Réglages du secrétaire enregistrés');secrLoad();}).catch(function(e){alert(e.message)});
 }
 function secrSetAuto(cat){var a={};a[cat]='auto';secrApi('PUT','settings',{autonomy:a}).then(function(){toast('🤖 « '+_secrCatLabel(cat)+' » passe en automatique');secrLoad();}).catch(function(e){alert(e.message)});}
 function secrSetEnabled(on){secrApi('PUT','settings',{enabled:!!on}).then(function(){toast(on?'🤖 Secrétaire réactivé':'⏸ Secrétaire en pause');secrLoad();}).catch(function(e){alert(e.message)});}
@@ -11317,7 +11252,7 @@ function _asstSystem(){
   L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
   L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
   L.push('- supprimer une fiche patient : ouvrir la fiche du patient, bouton 🗑 en bas ; documents (ordonnance, photos) : fiche du patient, rubrique « Documents ».');
-  L.push('- appels entrants (qui appelle, appels manqués, SMS après un appel manqué) : bouton 🤖 du secrétaire, onglet « 📞 Appels » ; messagerie de l\'appli traitée ou non par le secrétaire : bouton 🤖, onglet « ⚙ Réglages ».'); /* v98 */
+  L.push('- secrétaire (bouton 🤖) : onglets « ⏳ À traiter », « ✨ Assistant », « 📬 Activité » (conversations, journal des appels, résumés) et « ⚙ Réglages » (autonomie, infos et consignes, confidentialité, résumés, SMS du téléphone, messagerie de l\'appli, appels entrants, notifications, apprentissage, tester, modèles d\'IA, connexion).'); /* v99 */
   L.push('');
   L.push('Style : français, vouvoiement du kiné, 1 à 3 phrases, sans markdown, sans astérisques, sans liste à puces (sauf si le kiné demande une liste). N\'écris JAMAIS d\'identifiant (rdv_id, patient_id, action_id, codes entre parenthèses) ni de date AAAA-MM-JJ : dates en toutes lettres (« jeudi 1er octobre à 10 h 30 »). Tes réponses peuvent être lues à voix haute.');
   L.push('Dans les outils : dates AAAA-MM-JJ, heures HH:MM, et toujours le jour de la semaine correspondant (paramètre jour), lu dans le calendrier ci-dessous — ne calcule jamais une date de tête.');
@@ -12549,7 +12484,8 @@ function _asstPublicCfg(){return {
     };}
 
 /* ═══════════════════════════════════════════════════════════════════
-   v98 — APPELS ENTRANTS (onglet 📞 Appels du secrétaire)
+   v98/v99 — APPELS ENTRANTS
+   v99 : le journal est dans 📬 Activité › 📞 Appels, le réglage dans ⚙ Réglages › 📞 Appels entrants.
    Le téléphone du cabinet (appli SmsForwarder) signale chaque appel au secrétaire ;
    si le numéro est celui d'un patient enregistré, vous êtes notifié tout de suite.
    La clé de l'adresse reste sur le serveur et sur cet écran : jamais dans vos données.
@@ -12561,11 +12497,11 @@ function _secrCallStatus(c){
   if(c.kind==='manque')return '<span class="secrtag warn">manqué</span>';
   return '';
 }
-var _CALL_DIAG={'patient · notifié':'patient reconnu → notifié','patient':'patient reconnu (notification désactivée)','inconnu':'numéro inconnu → ignoré','journal':'noté au journal','doublon':'déjà signalé','numéro masqué':'numéro masqué → ignoré','numéro ignoré':'numéro « jamais lu » → ignoré','désactivé':'appels désactivés'};
+var _CALL_DIAG={'patient · notifié':'patient reconnu → notifié','patient':'patient reconnu (notification désactivée)','inconnu':'numéro inconnu → ignoré','journal':'noté au journal','doublon':'déjà signalé','numéro masqué':'numéro masqué → ignoré','numéro ignoré':'contact « jamais lu » → ignoré','contact du téléphone':'contact du téléphone → ignoré','désactivé':'appels désactivés'};
 var _CALL_KD={sonnerie:'sonnerie',manque:'appel manqué',decroche:'décroché',fin_entrant:'fin d\'appel',sortant:'appel sortant',fin_sortant:'fin d\'appel sortant'};
 function _secrCallDiag(d){return (d.kind?(_CALL_KD[d.kind]||d.kind)+' · ':'')+(d.num?d.num+' · ':'')+(_CALL_DIAG[d.result]||d.result||'');}
 function _secrCallUrl(c){var s=_secrCfg();return s&&c&&c.key?s.url.replace(/\/+$/,'')+'/appel?cle='+encodeURIComponent(c.key):'';}
-function secrCallsHtml(){
+function secrCallsCfgHtml(){
   if(!_secrCfg())return '<div style="font-size:13px">Connectez d\'abord le secrétaire (⚙ Réglages).</div>';
   var v=SECR.calls;
   if(!v)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
@@ -12576,12 +12512,13 @@ function secrCallsHtml(){
       '<button class="btn bp bw" onclick="secrCallsSave({enabled:true})">📞 Activer</button></div>';
   }else{
     var url=_secrCallUrl(c),d=(v.diag||[])[0];
-    h+='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">📞 Appels entrants</b><span class="secrtag ok">actif</span></div>'+
+    h+='<div class="secrcard"><div style="margin-bottom:2px"><span class="secrtag ok">actifs</span></div>'+
       '<div class="fg" style="margin-top:8px"><label>Adresse à coller dans SmsForwarder (Webhook)</label><div style="display:flex;gap:6px"><input id="scUrl" readonly value="'+esc(url)+'" style="flex:1;font-size:11px" onclick="this.select()"><button class="btn bs" style="flex-shrink:0" onclick="secrCallsCopy()">📋 Copier</button></div>'+
       '<div style="font-size:10px;color:var(--text3);margin-top:3px">Cette adresse contient une clé secrète : ne la partagez pas. « Nouvelle adresse » invalide l\'ancienne.</div></div>'+
-      (d?'<div style="font-size:12px;margin:0 0 8px;color:'+(/patient|inconnu|journal|doublon/.test(d.result||'')?'#1e8c4e':'#c0510f')+'">📶 Dernier appel signalé par le téléphone : '+_secrWhen(d.at)+' — '+esc(_secrCallDiag(d))+'</div>':'<div style="font-size:12px;margin:0 0 8px;color:var(--text2)">📶 Aucun appel signalé par le téléphone pour l\'instant.</div>')+
+      _secrCallLastHtml(d)+
       '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="scRing" '+(c.notifyRinging?'checked':'')+'> <span>Pendant la sonnerie : « 📞 NOM vous appelle »</span></label>'+
       '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="scMiss" '+(c.notifyMissed?'checked':'')+'> <span>Après un appel manqué : « 📵 Appel manqué : NOM »</span></label>'+
+      '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="scCt" '+(c.ignorePhoneContacts!==false?'checked':'')+'> <span>Ne jamais signaler un numéro enregistré dans les contacts du téléphone, même patient <span style="color:var(--text3)">(votre téléphone affiche déjà son nom ; vos contacts « jamais lus » ne sont jamais signalés)</span></span></label>'+
       '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 4px"><input type="checkbox" id="scSms" '+(c.missedSms?'checked':'')+' onchange="document.getElementById(\'scSmsB\').style.display=this.checked?\'block\':\'none\'"> <span>Après un appel manqué, envoyer ce SMS au patient <span style="color:var(--text3)">(au plus 1 fois par 12 h ; sa réponse est traitée par le secrétaire)</span></span></label>'+
       '<div id="scSmsB" style="display:'+(c.missedSms?'block':'none')+'"><textarea id="scSmsT" rows="3" maxlength="320" style="width:100%;font-size:12px;border-radius:8px;border:1px solid var(--border);padding:6px">'+esc(c.missedSmsText||'')+'</textarea></div>'+
       '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="btn bp" style="flex:2" onclick="secrCallsSaveForm()">💾 Enregistrer</button><button class="btn bs" style="flex:1" onclick="secrCallsTest()">🔔 Tester</button></div>'+
@@ -12589,14 +12526,25 @@ function secrCallsHtml(){
       '<details class="secrwhy" style="margin-top:10px"><summary>📲 Installer SmsForwarder sur le téléphone du cabinet (5 min)</summary><div style="line-height:1.5">'+
         '<b>1.</b> Sur le téléphone du cabinet, téléchargez l\'APK de <b>SmsForwarder</b> (github.com/pppscn/SmsForwarder › Releases) et installez-le. Sur Android 13 et plus, si une autorisation est grisée : Paramètres › Applications › SmsForwarder › ⋮ › « Autoriser les paramètres restreints ».<br>'+
         '<b>2.</b> L\'appli est en chinois au départ : ⚙ (3e onglet) › <i>Multilingual</i> (多语言) › English, puis redémarrez-la.<br>'+
-        '<b>3.</b> <i>Settings</i> : activez <i>Forward Calls Log</i>, autorisez le téléphone et le journal d\'appels, cochez <i>In Received</i> (sonnerie) et <i>Missed</i> (manqué). Facultatif : <i>In Answered</i> (noté « répondu ») et <i>Out Started</i> (noté « rappelé »). Désactivez l\'optimisation de la batterie pour SmsForwarder.<br>'+
+        '<b>3.</b> <i>Settings</i> : activez <i>Forward Calls Log</i>, autorisez le téléphone, le journal d\'appels et les contacts (pour reconnaître vos proches), cochez <i>In Received</i> (sonnerie) et <i>Missed</i> (manqué). Facultatif : <i>In Answered</i> (noté « répondu ») et <i>Out Started</i> (noté « rappelé »). Désactivez l\'optimisation de la batterie pour SmsForwarder.<br>'+
         '<b>4.</b> <i>Senders</i> › + › <i>Webhook</i> : méthode <b>POST</b>, <i>Webhook Server</i> = l\'adresse ci-dessus ; laissez <i>Params</i> et <i>Secret</i> vides. Enregistrez.<br>'+
         '<b>5.</b> <i>Rules</i> › + › onglet <i>Call</i> : champ <i>Transpond All</i>, choisissez le webhook, enregistrez.<br>'+
         '<b>6.</b> Faites-vous appeler par le numéro d\'un patient (ou « 🔔 Tester ») : la notification arrive en quelques secondes.'+
       '</div></details></div>';
   }
+  return h;
+}
+function _secrCallLastHtml(d){
+  return d?'<div style="font-size:12px;margin:0 0 8px;color:'+(/patient|inconnu|journal|doublon/.test(d.result||'')?'#1e8c4e':'#c0510f')+'">📶 Dernier appel signalé par le téléphone : '+_secrWhen(d.at)+' — '+esc(_secrCallDiag(d))+'</div>':'<div style="font-size:12px;margin:0 0 8px;color:var(--text2)">📶 Aucun appel signalé par le téléphone pour l\'instant.</div>';
+}
+function secrCallsLogHtml(){
+  var v=SECR.calls;
+  if(!v)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+  var c=v.config||{};
+  if(!c.enabled)return '<div class="secrcard" style="font-size:13px;line-height:1.45">📞 <b>Les appels ne sont pas activés.</b><br><span style="font-size:12px;color:var(--text2)">Quand un patient enregistré appelle le cabinet, vous pouvez être prévenu aussitôt : son nom, son prochain RDV, sa dernière séance.</span>'+
+    '<button class="btn bp bw" style="margin-top:8px" onclick="secrSec(\'callscfg\')">Configurer les appels</button></div>';
+  var h=_secrCallLastHtml((v.diag||[])[0]);
   var L=v.calls||[];
-  h+='<div style="font-size:12px;font-weight:700;margin:12px 0 6px">Derniers appels de patients</div>';
   if(!L.length)h+='<div style="font-size:13px;color:var(--text2);padding:4px 0 10px">Aucun appel pour l\'instant. Seuls les appels de patients enregistrés apparaissent ici (45 jours).</div>';
   h+=L.map(function(x){
     var ph=_secrPhone(x.phone);
@@ -12604,18 +12552,18 @@ function secrCallsHtml(){
       '<div style="display:flex;justify-content:space-between;gap:6px;align-items:baseline"><b style="font-size:13px">'+(_CALL_KIND[x.kind]||'📞')+' '+esc(x.name||ph)+'</b><span class="secrmeta">'+_secrWhen(x.at)+'</span></div>'+
       '<div class="secrmeta">'+esc(ph)+' '+_secrCallStatus(x)+(x.smsAt?'<span class="secrtag">SMS envoyé</span>':'')+(x.smsError?'<span class="secrtag warn">SMS non envoyé</span>':'')+(x.pending?'<span class="secrtag warn">💬 message en attente</span>':'')+'</div>'+
       '<div style="font-size:11px;color:var(--text2)">'+(x.next?'Prochain RDV : '+esc(x.next):'Aucun RDV à venir')+(x.last?' · dernière séance : '+esc(x.last):'')+'</div>'+
-      '<div style="display:flex;gap:6px;margin-top:6px"><a class="btn bs" style="flex:1;text-decoration:none;text-align:center;font-size:12px" href="tel:'+esc(String(x.phone||'').replace(/\s/g,''))+'">📞 Rappeler</a>'+
+      '<div style="display:flex;gap:6px;margin-top:6px"><a class="btn bs" style="flex:1;text-decoration:none;text-align:center;font-size:12px;color:inherit" href="tel:'+esc(String(x.phone||'').replace(/\s/g,''))+'">📞 Rappeler</a>'+
       '<button class="btn bs" style="flex:1;font-size:12px" onclick="secrCallsSms(\''+esc(x.phone)+'\',\''+esc(String(x.name||'').replace(/'/g,''))+'\')">💬 SMS</button></div></div>';
   }).join('');
   return h;
 }
 function secrCallsSave(b){
   return secrApi('PUT','calls',b).then(function(r){
-    toast(b.enabled===true?'📞 Appels activés : suivez les étapes d\'installation':(b.enabled===false?'Appels désactivés':'💾 Enregistré'));secrLoad();return r;
+    toast(b.enabled===true?'📞 Appels activés : suivez les étapes d\'installation ci-dessous':(b.enabled===false?'Appels désactivés':'💾 Enregistré'));secrLoad();return r;
   }).catch(function(e){alert(e.message)});
 }
 function secrCallsSaveForm(){
-  secrCallsSave({notifyRinging:!!(document.getElementById('scRing')||{}).checked,notifyMissed:!!(document.getElementById('scMiss')||{}).checked,
+  secrCallsSave({notifyRinging:!!(document.getElementById('scRing')||{}).checked,notifyMissed:!!(document.getElementById('scMiss')||{}).checked,ignorePhoneContacts:!!(document.getElementById('scCt')||{}).checked,
     missedSms:!!(document.getElementById('scSms')||{}).checked,missedSmsText:((document.getElementById('scSmsT')||{}).value||'').trim()});
 }
 function secrCallsCopy(){
@@ -12632,14 +12580,288 @@ function secrCallsTest(){
   var ph=prompt('Numéro d\'un patient enregistré (le vôtre, si vous êtes dans vos patients) :','');
   if(!ph)return;
   secrApi('POST','calls/test',{phone:ph}).then(function(r){
-    if(!r.matched){alert('Ce numéro ne correspond à aucun patient enregistré'+(r.info?' ('+r.info+')':'')+' : aucune notification ne serait envoyée.');return;}
-    alert(r.pushed?'🔔 Notification de test envoyée : « '+r.name+' vous appelle »\n\n'+(r.body||''):'Patient reconnu ('+r.name+'), mais la notification n\'a pas pu partir : autorisez les notifications de PhysioFlow sur cet appareil.');
+    if(!r.matched){alert('Aucun patient enregistré n\'a ce numéro'+(r.info?' ('+r.info+')':'')+' : un appel de ce numéro ne serait pas signalé.\n\nSeul le numéro principal d\'une fiche (champ Téléphone) est reconnu.');return;}
+    if(r.ignoredContact){alert('✋ '+r.name+' est dans vos contacts « jamais lus » : ses appels ne déclenchent aucune notification (et ses SMS ne sont pas lus par le secrétaire).\n\nPour tester, prenez le numéro d\'un autre patient.');return;}
+    var note='';
+    alert((r.pushed?'🔔 Notification de test envoyée : « '+r.name+' vous appelle »\n\n'+(r.body||''):'Patient reconnu ('+r.name+'), mais la notification n\'a pas pu partir : autorisez les notifications de PhysioFlow sur cet appareil.')+note);
   }).catch(function(e){alert(e.message)});
 }
 function secrCallsSms(phone,name){
   var t=prompt('SMS à '+(name||_secrPhone(phone))+' (envoyé par le téléphone du cabinet) :','');
   if(!t||!t.trim())return;
   secrApi('POST','sms',{phone:phone,texte:t.trim(),name:name||''}).then(function(){toast('📤 SMS envoyé');}).catch(function(e){alert(e.message)});
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v99 — SECRÉTAIRE : présentation simplifiée
+   4 onglets : ⏳ À traiter · ✨ Assistant · 📬 Activité · ⚙ Réglages.
+   Activité : 💬 Conversations · 📞 Appels · 📋 Résumés.
+   Réglages : un menu par rubrique (Comportement, Canaux, Outils), chaque rubrique sur sa page.
+   ═══════════════════════════════════════════════════════════════════ */
+var _SECR_GROUP={pending:'pending',assistant:'assistant',threads:'activity',thread:'activity',calls:'activity',summaries:'activity',settings:'settings',lessons:'settings',test:'settings'};
+var _SECR_MENU=[
+  ['Comportement',[['auto','🤖','Autonomie'],['infos','✍️','Infos et consignes'],['privacy','🔒','Confidentialité'],['summ','📋','Résumés']]],
+  ['Canaux',[['sms','📱','SMS du téléphone'],['app','💬','Messagerie de l\'appli'],['callscfg','📞','Appels entrants'],['notif','🔔','Notifications']]],
+  ['Outils',[['lessons','🎓','Apprentissage'],['test','🧪','Tester'],['models','🧠','Modèles d\'IA'],['connect','🔌','Connexion']]]
+];
+function _secrSecInfo(k){var r=null;_SECR_MENU.forEach(function(g){g[1].forEach(function(x){if(x[0]===k)r=x;});});return r;}
+function openSecr(tab){
+  if(tab)SECR.tab=tab;
+  if(tab==='settings')SECR.sec=null;
+  if(tab==='pending'&&((typeof ASST!=='undefined'&&ASST.confirm)||(SECR.status&&!SECR.status.pendingCount&&!(SECR.status.suggestions||[]).length)))SECR.tab='assistant';
+  if(!_secrCfg()){SECR.tab='settings';SECR.sec='connect';}
+  opM('mSECR');
+  secrRender();
+  if(_secrCfg()){secrLoad();_secrLoadCalls();}
+}
+/* état des appels pour le bandeau d'état (sans redessiner la page : une saisie en cours n'est jamais perdue) */
+function _secrLoadCalls(){
+  secrApi('GET','calls').then(function(r){SECR.calls=r;var el=document.getElementById('secrStat');if(el)el.outerHTML=_secrStatusHtml();}).catch(function(){});
+}
+function secrTab(t){
+  SECR.tab=t;
+  if(t!=='thread')SECR.openTid=null;
+  if(t==='settings')SECR.sec=null;
+  if(t==='threads'||t==='calls'||t==='summaries')SECR.lastAct=t;
+  secrRender();
+  if(_secrCfg())secrLoad();
+}
+function secrGo(g){
+  if(g==='activity')secrTab(SECR.lastAct||'threads');
+  else secrTab(g);
+}
+function secrSec(k){
+  if(k==='lessons'||k==='test'){secrTab(k);return;}
+  SECR.tab='settings';SECR.sec=k;SECR.openTid=null;
+  secrRender();
+  if(_secrCfg())secrLoad();
+}
+function secrLoad(){
+  var t=SECR.tab,pr;
+  var calls=function(){return secrApi('GET','calls').then(function(r){SECR.calls=r;}).catch(function(e){if(t==='calls'||SECR.sec==='callscfg')throw e;});};
+  if(t==='pending')pr=Promise.all([secrApi('GET','status'),secrApi('GET','pending')]).then(function(r){SECR.status=r[0];SECR.pending=r[1].pending||[];});
+  else if(t==='threads')pr=Promise.all([secrApi('GET','status'),secrApi('GET','threads')]).then(function(r){SECR.status=r[0];SECR.threads=r[1].threads||[];});
+  else if(t==='thread')pr=secrApi('GET','threads/'+encodeURIComponent(SECR.openTid)).then(function(r){SECR.thread=r.thread;});
+  else if(t==='summaries')pr=secrApi('GET','summaries').then(function(r){SECR.summaries=r.summaries||[];});
+  else if(t==='calls')pr=calls();
+  else if(t==='lessons')pr=Promise.all([secrApi('GET','status'),secrApi('GET','lessons').catch(function(e){return {_err:e.message}})]).then(function(r){SECR.status=r[0];SECR.lessons=r[1];});
+  else if(t==='assistant')pr=Promise.all([secrApi('GET','status'),secrApi('GET','assistant/usage').catch(function(){return null})]).then(function(r){SECR.status=r[0];if(r[1])ASST.usage=r[1];});
+  else if(t==='settings'&&SECR.sec==='notif')pr=Promise.all([secrApi('GET','status'),secrApi('GET','push').catch(function(){return {devices:[]}})]).then(function(r){SECR.status=r[0];SECR.push=r[1];});
+  else if(t==='settings'&&(!SECR.sec||SECR.sec==='callscfg'))pr=Promise.all([secrApi('GET','status'),calls()]).then(function(r){SECR.status=r[0];});
+  else pr=secrApi('GET','status').then(function(r){SECR.status=r;});
+  SECR.err='';
+  pr.then(function(){secrRender();secrRefreshBadge();}).catch(function(e){SECR.err=e.message;secrRender();});
+}
+/* bandeau d'état : chaque pastille mène au réglage concerné */
+function _secrStatusHtml(){
+  var st=SECR.status;
+  if(!st||!st.settings||!_secrCfg())return '<div id="secrStat"></div>';
+  var s=st.settings,gw=st.gateway||{},c=SECR.calls&&SECR.calls.config,smsOk=!!(gw.configured&&gw.registeredAt);
+  var chip=function(cls,txt,k){return '<button class="'+cls+'" onclick="secrSec(\''+k+'\')">'+txt+'</button>';};
+  var h=chip(s.enabled?'ok':'warn',s.enabled?'● Actif':'⏸ En pause','auto')+
+    chip(smsOk?'ok':'warn','📱 SMS'+(smsOk?'':' à brancher'),'sms')+
+    chip(s.appMessages!==false?'ok':'off','💬 Appli'+(s.appMessages!==false?'':' : non'),'app');
+  if(c)h+=chip(c.enabled?'ok':'off','📞 Appels'+(c.enabled?'':' : non'),'callscfg');
+  return '<div class="secrstat" id="secrStat">'+h+'</div>';
+}
+function secrRender(){
+  var b=document.getElementById('mSECRB');if(!b)return;
+  var st=SECR.status||{},n=st.pendingCount||0,g=_SECR_GROUP[SECR.tab]||'settings',conn=!!_secrCfg();
+  var h=_secrStatusHtml();
+  if(conn){
+    var nav=[['pending','⏳','À traiter'],['assistant','✨','Assistant'],['activity','📬','Activité'],['settings','⚙','Réglages']];
+    h+='<div class="secrnav">'+nav.map(function(x){
+      var bd=(x[0]==='pending'&&n)?'<span class="bdg">'+n+'</span>':((x[0]==='assistant'&&typeof ASST!=='undefined'&&ASST.confirm)?'<span class="bdg">✋</span>':'');
+      return '<button class="'+(g===x[0]?'on':'')+'" onclick="secrGo(\''+x[0]+'\')"><span class="i">'+x[1]+'</span><span>'+x[2]+'</span>'+bd+'</button>';
+    }).join('')+'</div>';
+  }
+  if(SECR.err)h+='<div class="secrcard" style="color:#e74c3c;font-size:13px">⚠️ '+esc(SECR.err)+'</div>';
+  if(g==='pending'){
+    if(st.settings&&!st.settings.enabled)h+='<div class="secrcard" style="font-size:12px;background:#fff1e0">⏸ Secrétaire en pause : les messages ne sont pas traités. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetEnabled(true)">Réactiver</button></div>';
+    (st.suggestions||[]).forEach(function(sg){h+='<div class="secrcard" style="font-size:12px;background:#e6f7ee">💡 Vous avez validé '+sg.streak+' réponses « '+esc(sg.label)+' » sans les corriger. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetAuto(\''+sg.categorie+'\')">Passer en automatique</button></div>';});
+    h+=secrPendingHtml();
+  }
+  else if(g==='assistant')h+=asstHtml();
+  else if(g==='activity'){
+    if(SECR.tab==='thread')h+='<button class="secrback" onclick="secrTab(\'threads\')">‹ Conversations</button>'+secrThreadHtml();
+    else{
+      h+='<div class="secrseg">'+[['threads','💬 Conversations'],['calls','📞 Appels'],['summaries','📋 Résumés']].map(function(x){return '<button class="'+(SECR.tab===x[0]?'on':'')+'" onclick="secrTab(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
+      h+=SECR.tab==='calls'?secrCallsLogHtml():(SECR.tab==='summaries'?secrSummariesHtml():secrThreadsHtml());
+    }
+  }
+  else{
+    var k=SECR.tab==='settings'?SECR.sec:SECR.tab;
+    if(!k)h+=secrSettingsHtml();
+    else{
+      var inf=_secrSecInfo(k)||['','⚙','Réglages'];
+      h+='<div class="secrsech">'+(conn?'<button class="secrback" onclick="secrTab(\'settings\')">‹ Réglages</button>':'')+'<div class="secrsect">'+inf[1]+' '+inf[2]+'</div></div>';
+      h+=SECR.tab==='lessons'?secrLessonsHtml():(SECR.tab==='test'?secrTestHtml():secrSettingsHtml());
+    }
+  }
+  h+='<div class="br"><button class="btn" onclick="clM(\'mSECR\')">Fermer</button></div>';
+  b.innerHTML=h;
+  if(g==='assistant')_asstAfterRender();
+}
+/* ─── Réglages : menu, puis une page par rubrique ─── */
+function _secrSub(k){
+  var st=SECR.status||{},s=st.settings||{},gw=st.gateway||{},cats=st.categories||{},c=SECR.calls&&SECR.calls.config,cf=_secrCfg()||{};
+  if(k==='auto'){if(!s.enabled)return 'En pause : les messages ne sont pas traités';var n=Object.keys(s.autonomy||{}).filter(function(x){return (s.autonomy||{})[x]==='auto'&&cats[x]&&!cats[x].lockValider}).length;return 'Actif · '+n+' type'+(n>1?'s':'')+' de demande traité'+(n>1?'s':'')+' seul';}
+  if(k==='infos')return s.cabinetInfo?'Adresse, tarifs, consignes, signature':'À compléter : adresse, accès, tarifs…';
+  if(k==='privacy'){var m=(s.ignoredContacts||[]).length+(s.ignoredNumbers||[]).length;return m?m+' contact'+(m>1?'s':'')+' ou numéro'+(m>1?'s':'')+' jamais lu'+(m>1?'s':''):'Aucun numéro écarté';}
+  if(k==='summ')return (s.summaryTimes||[]).length?'À '+(s.summaryTimes||[]).map(function(t){return t.replace(':','h')}).join(' et '):'Aucun résumé programmé';
+  if(k==='sms')return gw.configured?(gw.registeredAt?'Téléphone branché':'Téléphone à brancher'):'Non configuré';
+  if(k==='app')return s.appMessages!==false?'Traitée comme les SMS':'Non traitée';
+  if(k==='callscfg')return c?(c.enabled?'Notifications actives':'Désactivés'):'SmsForwarder';
+  if(k==='lessons')return (st.lessons||0)+' leçon'+((st.lessons||0)>1?'s':'')+' · progression par type de demande';
+  if(k==='test')return 'Simuler un SMS ou un message de l\'appli';
+  if(k==='models'){var M={'claude-sonnet-5':'Sonnet 5','claude-haiku-4-5-20251001':'Haiku 4.5','claude-opus-5-5':'Opus 5.5'};return 'SMS : '+(M[s.model]||s.model||'?')+' · assistant : '+(M[s.assistantModel]||'Haiku 4.5');}
+  if(k==='notif'){var P=('Notification' in window)?Notification.permission:'';return P==='granted'?'Cet appareil les reçoit, appli fermée comprise':(P==='denied'?'Bloquées sur cet appareil':'À autoriser sur cet appareil');}
+  if(k==='connect'){var u=String(cf.url||'').replace(/^https?:\/\//,'').split('/')[0];return u?'Connecté · '+u:'Non connecté';}
+  return '';
+}
+function _secrSaveBtn(){return '<button class="btn bp bw" style="margin-top:4px" onclick="secrSaveSettings()">💾 Enregistrer les réglages</button>';}
+function secrSettingsHtml(){
+  var c=_secrCfg()||{},st=SECR.status,k=SECR.sec;
+  if(!k){
+    if(!st||!st.settings)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+    return '<div class="secrmenu">'+_SECR_MENU.map(function(gr){
+      return '<h4>'+gr[0]+'</h4>'+gr[1].map(function(x){
+        return '<button class="secrrow" onclick="secrSec(\''+x[0]+'\')"><span class="i">'+x[1]+'</span><span class="t"><b>'+x[2]+'</b><small>'+esc(_secrSub(x[0]))+'</small></span><span class="c">›</span></button>';
+      }).join('');
+    }).join('')+'</div>';
+  }
+  if(k==='connect'){
+    return '<div class="secrcard">'+
+      '<div class="fg"><label>Adresse du secrétaire</label><input id="secrUrl" value="'+esc(c.url||'')+'" placeholder="https://secretaire-….a.run.app" autocapitalize="off" autocorrect="off"></div>'+
+      '<div class="fg"><label>Code d\'accès (PRO_TOKEN)</label><input id="secrCode" type="password" value="'+esc(c.code||'')+'" autocomplete="off"></div>'+
+      '<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px">Gardés sur cet appareil uniquement (jamais envoyés dans vos données PhysioFlow).</div>'+
+      '<div style="display:flex;gap:6px"><button class="btn bp" style="flex:1" onclick="secrConnect()">Enregistrer et tester</button>'+(c.url?'<button class="btn" onclick="secrDisconnect()">Déconnecter</button>':'')+'</div></div>';
+  }
+  if(!st||!st.settings)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+  var s=st.settings,cats=st.categories||{},gw=st.gateway||{};
+  var cb=function(id,on,txt){return '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:4px 0 8px"><input type="checkbox" id="'+id+'" '+(on?'checked':'')+'> <span>'+txt+'</span></label>';};
+  if(k==='auto'){
+    var h='<div class="secrcard"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">Secrétaire</b>'+
+      '<label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ssEn" '+(s.enabled?'checked':'')+'> actif</label></div>'+
+      '<div style="font-size:11px;color:var(--text2);margin:8px 0">« Validation » : il prépare la réponse, vous l\'envoyez d\'un geste. « Automatique » : il répond et agit seul, dans le respect des règles de réservation. En cas de doute, il vous demande toujours.</div>';
+    Object.keys(cats).forEach(function(x){
+      if(x==='personnel')return;
+      var lock=cats[x].lockValider;
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border2)"><span style="font-size:12px">'+esc(cats[x].label)+'</span>'+
+        (lock?'<span class="secrmeta" style="margin:0">toujours validé par vous</span>':'<select id="ssA_'+x+'" style="font-size:12px;width:auto"><option value="valider"'+((s.autonomy||{})[x]!=='auto'?' selected':'')+'>Validation</option><option value="auto"'+((s.autonomy||{})[x]==='auto'?' selected':'')+'>Automatique</option></select>')+'</div>';
+    });
+    h+='<div class="fg" style="margin-top:10px"><label>Seuil de confiance (en dessous : toujours validé par vous)</label><select id="ssConf">'+[0.7,0.8,0.9].map(function(v){return '<option value="'+v+'"'+(Math.abs(s.confidenceMin-v)<0.01?' selected':'')+'>'+Math.round(v*100)+' %</option>'}).join('')+'</select></div>'+
+      cb('ssDbl',s.doubleCheck!==false,'Relecture par une 2e IA avant chaque envoi automatique <span style="color:var(--text3)">(recommandé)</span>')+
+      '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:4px 0 8px"><input type="checkbox" id="ssProm" '+(s.autoPromote?'checked':'')+'> <span>Autonomie progressive : passer seul en automatique après <select id="ssAfter" style="font-size:12px;width:auto;padding:1px 4px">'+[5,8,12,20].map(function(v){return '<option value="'+v+'"'+(s.suggestAfter===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select> validations sans correction</span></label>'+
+      _secrSaveBtn()+'</div>';
+    return h;
+  }
+  if(k==='infos'){
+    return '<div class="secrcard"><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Le secrétaire n\'invente rien : il répond seulement avec ce qui est écrit ici et dans vos réglages de l\'agenda.</div>'+
+      '<div class="fg"><label>Infos pratiques du cabinet (adresse, accès, tarifs, documents…)</label><textarea id="ssInfo" rows="4">'+esc(s.cabinetInfo||'')+'</textarea></div>'+
+      '<div class="fg"><label>Vos consignes (ton, règles maison…)</label><textarea id="ssInstr" rows="4" placeholder="Ex : Tutoie les patients qui te tutoient. Ne propose pas le vendredi après 17h aux nouveaux patients.">'+esc(s.instructions||'')+'</textarea></div>'+
+      '<div class="fg"><label>Signature (ajoutée au 1er message de la journée)</label><input id="ssSig" value="'+esc(s.signature||'')+'"></div>'+
+      _secrSaveBtn()+'</div>';
+  }
+  if(k==='privacy'){
+    return '<div class="secrcard"><div class="fg"><label>Contacts jamais lus (famille, amis…)</label>'+
+      ((s.ignoredContacts||[]).length?(s.ignoredContacts||[]).map(function(ct,i){return '<div class="secrrule"><span class="t"><b>'+esc(ct.name||'?')+'</b> <span class="secrmeta" style="margin:0">'+esc((ct.phones||[]).map(_secrPhone).join(', '))+'</span></span><button title="Ne plus ignorer" onclick="secrUnignore('+i+')">✕</button></div>'}).join(''):'<div class="secrmeta">Aucun pour l\'instant.</div>')+
+      '<button class="btn bs bw" style="margin-top:6px" onclick="secrPickContacts()">📇 Choisir dans mes contacts</button>'+
+      '<div style="font-size:10px;color:var(--text3);margin-top:3px">Leurs SMS et leurs messages sont écartés dès leur arrivée : jamais lus par l\'IA, jamais conservés, jamais de réponse. Leurs appels ne déclenchent aucune notification, même s\'ils sont aussi vos patients.</div></div>'+
+      '<div class="fg"><label>Autres numéros jamais lus — un par ligne</label><textarea id="ssIgn" rows="2">'+esc((s.ignoredNumbers||[]).join('\n'))+'</textarea></div>'+
+      cb('ssKnown',s.onlyKnownPatients,'Ne traiter que les patients connus (ignore les numéros inconnus)')+
+      _secrSaveBtn()+'</div>';
+  }
+  if(k==='summ'){
+    return '<div class="secrcard"><div style="font-size:11px;color:var(--text2);margin-bottom:8px">Aux heures choisies, vous recevez le point sur ce que le secrétaire a fait (RDV pris, décalés, annulés, appels manqués…). Vous les retrouvez dans 📬 Activité › 📋 Résumés.</div>'+
+      '<div class="fg"><label>Heures (séparées par des virgules)</label><input id="ssTimes" value="'+esc((s.summaryTimes||[]).join(', '))+'" placeholder="12:30, 19:30"></div>'+
+      '<div class="fg"><label>Jours</label><div class="chips" id="ssDays">'+[1,2,3,4,5,6,0].map(function(d){return '<div class="chip'+((s.summaryDays||[]).indexOf(d)>=0?' sel':'')+'" data-d="'+d+'" style="background:var(--bg)" onclick="this.classList.toggle(\'sel\')">'+['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][d]+'</div>'}).join('')+'</div></div>'+
+      _secrSaveBtn()+'</div>';
+  }
+  if(k==='app'){
+    return '<div class="secrcard"><div style="font-size:12px;color:var(--text2);line-height:1.45;margin-bottom:8px">Les messages écrits par vos patients dans la messagerie de l\'appli passent par le secrétaire, exactement comme les SMS : même conversation, mêmes règles, et la réponse repart dans l\'appli.</div>'+
+      cb('ssApp',s.appMessages!==false,'💬 Traiter aussi la messagerie de l\'appli patient')+
+      _secrSaveBtn()+'</div>';
+  }
+  if(k==='models'){
+    return '<div class="secrcard">'+
+      '<div class="fg"><label>IA des SMS et de la messagerie</label><select id="ssModel">'+[['claude-sonnet-5','Sonnet 5 (recommandé)'],['claude-haiku-4-5-20251001','Haiku 4.5 (économique)'],['claude-opus-5-5','Opus 5.5 (le plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+(s.model===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+      '<div class="fr"><div class="fg"><label>✨ Assistant (tchat / voix)</label><select id="ssAModel">'+[['claude-haiku-4-5-20251001','Haiku 4.5 (rapide — recommandé)'],['claude-sonnet-5','Sonnet 5 (plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+((s.assistantModel||'claude-haiku-4-5-20251001')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+      '<div class="fg"><label>Échanges max / jour</label><input type="number" id="ssALim" min="20" max="2000" step="10" value="'+(s.assistantDailyLimit||300)+'"></div></div>'+
+      _secrSaveBtn()+'</div>';
+  }
+  if(k==='sms'){
+    return '<div class="secrcard"><div style="margin-bottom:6px">'+(gw.configured?(gw.registeredAt?'<span class="secrtag ok">branché</span>':'<span class="secrtag warn">à brancher</span>'):'<span class="secrtag warn">non configuré</span>')+(gw.encrypted?'<span class="secrtag">chiffré</span>':'')+'</div>'+
+      (gw.lastWebhook?'<div style="font-size:12px;margin:6px 0;color:'+(gw.lastWebhook.status===200?'#1e8c4e':'#c0510f')+'">📶 Dernier SMS transmis par le téléphone : '+_secrWhen(gw.lastWebhook.at)+' — '+esc(gw.lastWebhook.result||String(gw.lastWebhook.status))+'</div>':(gw.registeredAt?'<div style="font-size:12px;margin:6px 0;color:var(--text2)">📶 Aucun SMS transmis par le téléphone pour l\'instant.</div>':''))+
+      '<div style="font-size:11px;color:var(--text2);margin:6px 0">Dans l\'appli SMS Gateway : onglet Accueil (serveur cloud) pour l\'identifiant et le mot de passe ; Réglages › Webhooks pour la clé de signature ; Réglages › Chiffrement pour la phrase secrète.</div>'+
+      '<div class="fr"><div class="fg"><label>Identifiant</label><input id="gwU" autocapitalize="off" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div><div class="fg"><label>Mot de passe</label><input id="gwP" type="password" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div></div>'+
+      '<div class="fr"><div class="fg"><label>Clé de signature</label><input id="gwK" type="password" placeholder="'+(gw.configured?'(déjà enregistrée)':'')+'"></div><div class="fg"><label>Phrase secrète (chiffrement)</label><input id="gwE" type="password" placeholder="'+(gw.encrypted?'(déjà enregistrée)':'recommandé')+'"></div></div>'+
+      '<div class="fg"><label>Carte SIM à utiliser</label><select id="gwS"><option value="">Par défaut</option><option value="1"'+(gw.sim==1?' selected':'')+'>SIM 1</option><option value="2"'+(gw.sim==2?' selected':'')+'>SIM 2</option></select></div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrSaveGateway()">Enregistrer et brancher le téléphone</button><button class="btn bs" style="flex:1" onclick="secrTestSms()">SMS de test</button></div></div>';
+  }
+  if(k==='callscfg')return secrCallsCfgHtml();
+  if(k==='notif')return secrNotifHtml();
+  return '';
+}
+function secrSaveSettings(){
+  var st=SECR.status||{},cats=st.categories||{},body={},el=function(id){return document.getElementById(id)};
+  if(el('ssEn'))body.enabled=el('ssEn').checked;
+  var auto={},anyA=false;
+  Object.keys(cats).forEach(function(k){var e=el('ssA_'+k);if(e){auto[k]=e.value;anyA=true;}});
+  if(anyA)body.autonomy=auto;
+  if(el('ssConf'))body.confidenceMin=parseFloat(el('ssConf').value);
+  if(el('ssDbl'))body.doubleCheck=!!el('ssDbl').checked;
+  if(el('ssProm'))body.autoPromote=!!el('ssProm').checked;
+  if(el('ssAfter'))body.suggestAfter=parseInt(el('ssAfter').value||'8',10);
+  if(el('ssModel'))body.model=el('ssModel').value;
+  if(el('ssAModel'))body.assistantModel=el('ssAModel').value;
+  if(el('ssALim'))body.assistantDailyLimit=parseInt(el('ssALim').value||'300',10);
+  if(el('ssTimes'))body.summaryTimes=(el('ssTimes').value||'').split(/[,;\s]+/).map(function(x){x=x.trim().replace('h',':');if(/^\d{1,2}:\d{2}$/.test(x))x=('0'+x).slice(-5);else if(/^\d{1,2}:?$/.test(x))x=('0'+x.replace(':','')).slice(-2)+':00';return x}).filter(function(x){return /^\d{2}:\d{2}$/.test(x)});
+  if(el('ssDays'))body.summaryDays=Array.from(document.querySelectorAll('#ssDays .chip.sel')).map(function(x){return parseInt(x.dataset.d,10)});
+  if(el('ssIgn'))body.ignoredNumbers=(el('ssIgn').value||'').split(/\n+/).map(function(x){return x.trim()}).filter(Boolean);
+  if(el('ssKnown'))body.onlyKnownPatients=!!el('ssKnown').checked;
+  if(el('ssApp'))body.appMessages=!!el('ssApp').checked;
+  if(el('ssInfo'))body.cabinetInfo=el('ssInfo').value;
+  if(el('ssInstr'))body.instructions=el('ssInstr').value;
+  if(el('ssSig'))body.signature=el('ssSig').value;
+  if(!Object.keys(body).length)return;
+  secrApi('PUT','settings',body).then(function(){toast('💾 Réglages enregistrés');secrLoad();}).catch(function(e){alert(e.message)});
+}
+
+/* ─── 🔔 Notifications : cet appareil, tous vos appareils, test ─── */
+function secrNotifHtml(){
+  var P=('Notification' in window)?Notification.permission:'unsupported',mine=String(window._pfFcmTok||'');
+  var h='<div class="secrcard"><div style="font-size:12px;color:var(--text2);line-height:1.45;margin-bottom:8px">Le secrétaire travaille sur le serveur : il lit, répond, réserve et vous prévient <b>même quand PhysioFlow Pro est fermée</b>. Il suffit que chaque appareil où vous voulez être prévenu ait ouvert l\'appli une fois avec les notifications autorisées.</div>'+
+    '<b style="font-size:13px">Cet appareil</b><div style="font-size:12px;margin:4px 0 8px">'+
+    (P==='granted'?'✅ Notifications autorisées'+(mine?' — appareil inscrit':' — inscription en cours…'):(P==='denied'?'⛔ Notifications bloquées : autorisez-les dans les réglages du navigateur (cadenas à côté de l\'adresse › Notifications), puis rouvrez l\'appli.':(P==='unsupported'?'Ce navigateur ne gère pas les notifications.':'<button class="btn bp bw" onclick="secrNotifAllow()">🔔 Autoriser les notifications sur cet appareil</button>')))+'</div>';
+  var L=(SECR.push&&SECR.push.devices)||[];
+  h+='<b style="font-size:13px">Appareils prévenus ('+L.length+')</b>';
+  if(!L.length)h+='<div class="secrmeta" style="margin-top:4px">Aucun pour l\'instant.</div>';
+  h+=L.map(function(d){
+    var me=mine&&d.tail&&mine.slice(-8)===d.tail;
+    return '<div class="secrrule"><span class="t">'+(me?'<b>📍 Cet appareil</b>':esc(d.label||'Appareil'))+(d.at?' <span class="secrmeta" style="margin:0">· vu le '+_secrWhen(d.at)+'</span>':'')+'</span>'+(d.key&&!me?'<button title="Ne plus prévenir cet appareil" onclick="secrNotifRemove(\''+esc(d.key)+'\')">✕</button>':'')+'</div>';
+  }).join('');
+  h+='<button class="btn bs bw" style="margin-top:10px" onclick="secrNotifTest()">🔔 M\'envoyer une notification de test</button></div>';
+  h+='<details class="secrwhy"><summary>📲 Rien n\'arrive quand l\'appli est fermée ? (Android)</summary><div style="line-height:1.5">'+
+    '<b>1.</b> Paramètres Android › Applications › <b>Chrome</b> › Notifications : autorisées.<br>'+
+    '<b>2.</b> Même écran › Batterie : <b>Sans restriction</b>. Sur Xiaomi, activez aussi « Démarrage automatique ».<br>'+
+    '<b>3.</b> Rouvrez PhysioFlow Pro une fois : l\'appareil se réinscrit.<br>'+
+    '<b>4.</b> Pour vérifier : fermez complètement PhysioFlow Pro, puis dans SmsForwarder › Rules › votre règle › <i>Test</i> avec le numéro d\'un patient. La notification doit arriver en quelques secondes.</div></details>';
+  return h;
+}
+function secrNotifAllow(){
+  if(!('Notification' in window))return;
+  Notification.requestPermission().then(function(p){
+    if(p==='granted'){registerFCMToken();toast('🔔 Notifications autorisées');setTimeout(secrLoad,2500);}
+    else{toast('Notifications refusées');secrRender();}
+  });
+}
+function secrNotifTest(){
+  secrApi('POST','push/test',{}).then(function(r){toast(r.sent?'🔔 Envoyée à '+r.sent+' appareil'+(r.sent>1?'s':''):'⚠️ Aucun appareil n\'a pu être prévenu');secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrNotifRemove(k){
+  if(!confirm('Ne plus envoyer les notifications du secrétaire à cet appareil ?\n(Il se réinscrira s\'il rouvre l\'appli.)'))return;
+  secrApi('POST','push/remove',{key:k}).then(function(){toast('Appareil retiré');secrLoad();}).catch(function(e){alert(e.message)});
 }
 
 /* Orientation/resize: re-render agenda for optimal display */

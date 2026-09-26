@@ -51,13 +51,16 @@ self.addEventListener('push', function(e) {
 /* Click on notification: focus or open the app */
 self.addEventListener('notificationclick', function(e) {
   e.notification.close();
+  /* v99 — ouvre (ou ramène) l'appli Pro elle-même, même hébergée dans un sous-dossier (GitHub Pages) */
+  var scope = self.registration.scope;
   e.waitUntil(clients.matchAll({type: 'window', includeUncontrolled: true}).then(function(cls) {
-    if (cls.length) { cls[0].focus(); return; }
-    return clients.openWindow('/');
+    var mine = cls.filter(function(c) { return c.url.indexOf(scope) === 0; });
+    if (mine.length) { return mine[0].focus(); }
+    return clients.openWindow(scope);
   }));
 });
 
-const CACHE = 'physioflow-pro-v98';
+const CACHE = 'physioflow-pro-v99';
 const ASSETS = ['./index.html', './manifest.json'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
