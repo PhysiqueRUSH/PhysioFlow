@@ -406,6 +406,27 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .secrrule button{flex-shrink:0;background:none;font-size:13px;padding:0 3px}
 .secrlink{background:none;color:var(--accent);font-size:12px;padding:0;text-decoration:underline}
 .secrj{font-size:12px;padding:4px 0;border-bottom:1px solid var(--border2)}
+/* v96 — assistant (tchat / voix) */
+.asstbar{display:flex;gap:4px;overflow-x:auto;margin:-4px 0 8px;padding-bottom:2px;scrollbar-width:none}.asstbar::-webkit-scrollbar{display:none}
+.asstchip{flex-shrink:0;white-space:nowrap;padding:4px 9px;border-radius:14px;background:var(--bg);font-size:11px;font-weight:600;color:var(--text2)}.asstchip.on{background:var(--accentbg);color:var(--accent)}
+.asstmsgs{display:flex;flex-direction:column;gap:6px;min-height:150px;max-height:50vh;overflow-y:auto;padding:2px 1px 6px;margin-bottom:6px}
+.asstinfo{align-self:center;font-size:11px;color:var(--text3);text-align:center;max-width:95%}.asstinfo.err{color:#c0510f;font-size:12px}
+.asstdots{animation:asstBlink 1.2s infinite;letter-spacing:2px}@keyframes asstBlink{50%{opacity:.3}}
+.asstcard{align-self:stretch;background:#fff7e8;border:1px solid #f3d3a4;border-radius:12px;padding:10px;font-size:13px}.asstcard.done{background:var(--bg);border-color:var(--border2);opacity:.85}
+.asstct{font-weight:700;font-size:12px;margin-bottom:4px}
+.asstit{display:flex;gap:6px;align-items:flex-start;margin:5px 0}.asstit>div{flex:1;min-width:0}.asstit input{margin-top:3px}
+.asstin{display:flex;gap:6px;align-items:flex-end}
+.asstin textarea{flex:1;resize:none;max-height:120px;font-size:14px;border-radius:10px;border:1px solid var(--border);padding:9px 10px;min-width:0}
+.asstmic{width:42px;height:42px;border-radius:21px;background:var(--bg);font-size:19px;flex-shrink:0}
+.asstmic.on{background:#e74c3c;color:#fff;animation:asstPulse 1.2s infinite}
+@keyframes asstPulse{0%{box-shadow:0 0 0 0 rgba(231,76,60,.5)}70%{box-shadow:0 0 0 10px rgba(231,76,60,0)}100%{box-shadow:0 0 0 0 rgba(231,76,60,0)}}
+.asstgo{padding:10px 14px;flex-shrink:0}
+.asstuse{font-size:10px;color:var(--text3);margin-top:5px;text-align:center}
+.asstsug{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:10px}.asstsug button{background:var(--bg);border-radius:14px;padding:5px 10px;font-size:12px;color:var(--text2)}
+.asstj{background:var(--bg);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:12px}.asstj.undone{opacity:.6}
+.asstjh{display:flex;justify-content:space-between;gap:6px;color:var(--text3);font-size:11px}
+.asstjl{margin:3px 0;font-size:13px}
+.asstjb{display:flex;gap:6px;justify-content:flex-end;margin-top:4px}.asstjb .btn{font-size:11px;padding:4px 9px}
 .secrmsgs{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .secrb{max-width:85%;padding:8px 10px;border-radius:12px;font-size:13px;white-space:pre-wrap;word-wrap:break-word}
 .secrb.in{align-self:flex-start;background:var(--bg)}
@@ -420,7 +441,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 95 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 96 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -9744,6 +9765,7 @@ function _secrName(x){return (x&&x.name)?x.name:'Numéro inconnu';}
 
 function openSecr(tab){
   if(tab)SECR.tab=tab;
+  if(tab==='pending'&&((typeof ASST!=='undefined'&&ASST.confirm)||(SECR.status&&!SECR.status.pendingCount&&!(SECR.status.suggestions||[]).length)))SECR.tab='assistant';
   if(!_secrCfg())SECR.tab='settings';
   opM('mSECR');
   secrRender();
@@ -9757,6 +9779,7 @@ function secrLoad(){
   else if(t==='thread')pr=secrApi('GET','threads/'+encodeURIComponent(SECR.openTid)).then(function(r){SECR.thread=r.thread;});
   else if(t==='summaries')pr=secrApi('GET','summaries').then(function(r){SECR.summaries=r.summaries||[];});
   else if(t==='lessons')pr=Promise.all([secrApi('GET','status'),secrApi('GET','lessons').catch(function(e){return {_err:e.message}})]).then(function(r){SECR.status=r[0];SECR.lessons=r[1];});
+  else if(t==='assistant')pr=Promise.all([secrApi('GET','status'),secrApi('GET','assistant/usage').catch(function(){return null})]).then(function(r){SECR.status=r[0];if(r[1])ASST.usage=r[1];});
   else pr=secrApi('GET','status').then(function(r){SECR.status=r;});
   SECR.err='';
   pr.then(function(){secrRender();secrRefreshBadge();}).catch(function(e){SECR.err=e.message;secrRender();});
@@ -9765,7 +9788,7 @@ function secrTab(t){SECR.tab=t;if(t!=='thread')SECR.openTid=null;secrRender();if
 function secrRender(){
   var b=document.getElementById('mSECRB');if(!b)return;
   var st=SECR.status||{};var n=st.pendingCount||0;
-  var tabs=[['pending','⏳ À valider'+(n?' ('+n+')':'')],['threads','💬 Conversations'],['summaries','📋 Résumés'],['lessons','🎓 Apprentissage'],['test','🧪 Tester'],['settings','⚙ Réglages']];
+  var tabs=[['pending','⏳ À valider'+(n?' ('+n+')':'')],['assistant','✨ Assistant'+((typeof ASST!=='undefined'&&ASST.confirm)?' ✋':'')],['threads','💬 Conversations'],['summaries','📋 Résumés'],['lessons','🎓 Apprentissage'],['test','🧪 Tester'],['settings','⚙ Réglages']];
   var h='<div class="secrtabs">'+tabs.map(function(x){return '<button class="secrtab'+((SECR.tab===x[0]||(SECR.tab==='thread'&&x[0]==='threads'))?' on':'')+'" onclick="secrTab(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>';
   if(SECR.err)h+='<div class="secrcard" style="color:#e74c3c;font-size:13px">⚠️ '+esc(SECR.err)+'</div>';
   if(st.settings&&!st.settings.enabled&&SECR.tab!=='settings')h+='<div class="secrcard" style="font-size:12px;background:#fff1e0">⏸ Secrétaire en pause : les SMS ne sont pas traités. <button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="secrSetEnabled(true)">Réactiver</button></div>';
@@ -9778,9 +9801,11 @@ function secrRender(){
   else if(SECR.tab==='summaries')h+=secrSummariesHtml();
   else if(SECR.tab==='test')h+=secrTestHtml();
   else if(SECR.tab==='lessons')h+=secrLessonsHtml();
+  else if(SECR.tab==='assistant')h+=asstHtml();
   else h+=secrSettingsHtml();
   h+='<div class="br"><button class="btn" onclick="clM(\'mSECR\')">Fermer</button></div>';
   b.innerHTML=h;
+  if(SECR.tab==='assistant')_asstAfterRender();
 }
 function secrPendingHtml(){
   if(!_secrCfg())return '';
@@ -9855,7 +9880,7 @@ function secrThreadHtml(){
   h+='<div class="secrmsgs">'+(t.messages||[]).map(function(m){
     var cls=m.dir==='in'?'in':('out'+(m.by==='kine'?' kine':''));
     var who=m.dir==='in'?'':(m.by==='kine'?'vous':'🤖 secrétaire');
-    var x='<div class="secrb '+cls+'">'+esc(m.text||'')+'<small>'+(m.simulated?'🧪 ':'')+_secrWhen(m.at)+(who?' · '+who:'')+'</small></div>';
+    var x='<div class="secrb '+cls+'">'+esc(m.text||'')+'<small>'+(m.simulated?'🧪 ':'')+_secrWhen(m.at)+(who?' · '+who:'')+(m.failed?' · <b style="color:#c0510f">⚠️ non envoyé</b>':'')+'</small></div>';
     if(m.dir==='out'&&m.by==='ia'&&m.auto!==false){
       x+='<div class="secrfb">'+(m.vote==='up'?'utile':m.vote==='down'?'à revoir':'votre avis')+
         '<button class="'+(m.vote==='up'?'on':'')+'" onclick="secrVote('+m.at+',\'up\')">👍</button><button class="'+(m.vote==='down'?'on':'')+'" onclick="secrVoteDown('+m.at+')">👎</button></div>';
@@ -10033,6 +10058,7 @@ function secrSettingsHtml(){
   if(!c.url||!st||!st.settings)return h;
   var s=st.settings,cats=st.categories||{},gw=st.gateway||{};
   h+='<div class="secrcard"><b style="font-size:13px">📱 Téléphone (SMS Gateway)</b> '+(gw.configured?(gw.registeredAt?'<span class="secrtag">connecté</span>':'<span class="secrtag warn">à brancher</span>'):'<span class="secrtag warn">non configuré</span>')+(gw.encrypted?'<span class="secrtag">chiffré</span>':'')+
+    (gw.lastWebhook?'<div style="font-size:12px;margin:6px 0;color:'+(gw.lastWebhook.status===200?'#1e8c4e':'#c0510f')+'">📶 Dernier SMS transmis par le téléphone : '+_secrWhen(gw.lastWebhook.at)+' — '+esc(gw.lastWebhook.result||String(gw.lastWebhook.status))+'</div>':(gw.registeredAt?'<div style="font-size:12px;margin:6px 0;color:var(--text2)">📶 Aucun SMS transmis par le téléphone pour l\'instant.</div>':''))+
     '<div style="font-size:11px;color:var(--text2);margin:6px 0">Dans l\'appli SMS Gateway : onglet Accueil (serveur cloud) pour l\'identifiant et le mot de passe ; Réglages › Webhooks pour la clé de signature ; Réglages › Chiffrement pour la phrase secrète.</div>'+
     '<div class="fr"><div class="fg"><label>Identifiant</label><input id="gwU" autocapitalize="off" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div><div class="fg"><label>Mot de passe</label><input id="gwP" type="password" placeholder="'+(gw.configured?'(déjà enregistré)':'')+'"></div></div>'+
     '<div class="fr"><div class="fg"><label>Clé de signature</label><input id="gwK" type="password" placeholder="'+(gw.configured?'(déjà enregistrée)':'')+'"></div><div class="fg"><label>Phrase secrète (chiffrement)</label><input id="gwE" type="password" placeholder="'+(gw.encrypted?'(déjà enregistrée)':'recommandé')+'"></div></div>'+
@@ -10050,6 +10076,8 @@ function secrSettingsHtml(){
   });
   h+='<div class="fr" style="margin-top:10px"><div class="fg"><label>Seuil de confiance</label><select id="ssConf">'+[0.7,0.8,0.9].map(function(v){return '<option value="'+v+'"'+(Math.abs(s.confidenceMin-v)<0.01?' selected':'')+'>'+Math.round(v*100)+' %</option>'}).join('')+'</select></div>'+
     '<div class="fg"><label>Modèle d\'IA</label><select id="ssModel">'+[['claude-sonnet-5','Sonnet 5 (recommandé)'],['claude-haiku-4-5-20251001','Haiku 4.5 (économique)'],['claude-opus-5-5','Opus 5.5 (le plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+(s.model===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>'+
+    '<div class="fr"><div class="fg"><label>✨ Assistant (tchat / voix)</label><select id="ssAModel">'+[['claude-haiku-4-5-20251001','Haiku 4.5 (rapide — recommandé)'],['claude-sonnet-5','Sonnet 5 (plus fin)']].map(function(o){return '<option value="'+o[0]+'"'+((s.assistantModel||'claude-haiku-4-5-20251001')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+    '<div class="fg"><label>Échanges max / jour</label><input type="number" id="ssALim" min="20" max="2000" step="10" value="'+(s.assistantDailyLimit||300)+'"></div></div>'+
     '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssDbl" '+(s.doubleCheck!==false?'checked':'')+'> <span>Relecture par une 2e IA avant chaque envoi automatique <span style="color:var(--text3)">(recommandé)</span></span></label>'+
     '<label style="font-size:12px;display:flex;gap:6px;align-items:flex-start;margin:2px 0 6px"><input type="checkbox" id="ssProm" '+(s.autoPromote?'checked':'')+'> <span>Autonomie progressive : passer seul en automatique après <select id="ssAfter" style="font-size:12px;width:auto;padding:1px 4px">'+[5,8,12,20].map(function(v){return '<option value="'+v+'"'+(s.suggestAfter===v?' selected':'')+'>'+v+'</option>'}).join('')+'</select> validations sans correction</span></label>'+
     '<div style="font-size:12px;font-weight:700;margin:6px 0 4px">📋 Résumés</div>'+
@@ -10104,11 +10132,1926 @@ function secrSaveSettings(){
     summaryDays:days,ignoredNumbers:(document.getElementById('ssIgn').value||'').split(/\n+/).map(function(x){return x.trim()}).filter(Boolean),
     onlyKnownPatients:document.getElementById('ssKnown').checked,cabinetInfo:document.getElementById('ssInfo').value,instructions:document.getElementById('ssInstr').value,
     signature:document.getElementById('ssSig').value,
+    assistantModel:(document.getElementById('ssAModel')||{}).value||undefined,assistantDailyLimit:parseInt((document.getElementById('ssALim')||{}).value||'300',10),
     doubleCheck:!!(document.getElementById('ssDbl')||{}).checked,autoPromote:!!(document.getElementById('ssProm')||{}).checked,suggestAfter:parseInt((document.getElementById('ssAfter')||{}).value||'8')};
   secrApi('PUT','settings',body).then(function(){toast('💾 Réglages du secrétaire enregistrés');secrLoad();}).catch(function(e){alert(e.message)});
 }
 function secrSetAuto(cat){var a={};a[cat]='auto';secrApi('PUT','settings',{autonomy:a}).then(function(){toast('🤖 « '+_secrCatLabel(cat)+' » passe en automatique');secrLoad();}).catch(function(e){alert(e.message)});}
 function secrSetEnabled(on){secrApi('PUT','settings',{enabled:!!on}).then(function(){toast(on?'🤖 Secrétaire réactivé':'⏸ Secrétaire en pause');secrLoad();}).catch(function(e){alert(e.message)});}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v96 — ASSISTANT DU CABINET (tchat écrit ou vocal, Claude Haiku)
+   Le kiné demande ; l'assistant cherche dans les données et agit
+   EXACTEMENT comme les boutons de l'appli (mêmes champs, mêmes
+   enregistrements, mêmes envois Firebase). Il ne touche ni aux réglages,
+   ni aux motifs, ni au code, et ne supprime jamais un patient.
+   Chaque modification : proposée → confirmée → faite → consignée dans
+   D.assistantLog (consultable, annulable si possible, supprimable).
+   L'IA est appelée via le secrétaire (/api/assistant) : la clé Claude
+   reste sur le serveur, jamais dans l'appli.
+   ═══════════════════════════════════════════════════════════════════ */
+var ASST={ui:[],api:[],busy:false,abort:false,confirm:null,view:'chat',draft:'',rec:null,listening:false,usage:null,lastDemande:'',voiceTurn:false,noSpeech:0,srErr:null,sys:null,sysKey:'',defs:null};
+var ASST_MAX_TURNS=10;
+function _asstCfg(){var d={speak:true,confirm:true,handsFree:false};try{var c=JSON.parse(localStorage.getItem('pf_asst')||'null');if(c&&typeof c==='object')Object.keys(d).forEach(function(k){if(k in c)d[k]=!!c[k]});}catch(e){}return d;}
+function _asstSetCfg(k,v){var c=_asstCfg();c[k]=v;try{localStorage.setItem('pf_asst',JSON.stringify(c));}catch(e){}}
+function _asstOpen(){var m=document.getElementById('mSECR');return !!(m&&m.classList.contains('open')&&SECR.tab==='assistant');}
+
+/* ─────────── utilitaires ─────────── */
+var _A_DJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+var _A_MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+/* contrôle anti-erreur : le jour de la semaine annoncé doit correspondre à la date */
+function _aDowCheck(k,jour){
+  if(!k||!jour)return null;var j=_aNorm(jour).split(' ')[0];var idx=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'].indexOf(j);
+  if(idx<0)return null;var d=new Date(k+'T00:00:00');
+  return d.getDay()===idx?null:'Erreur de date : le '+k+' est un '+_A_DJ[d.getDay()]+', pas un '+j+'. Reprends la date dans le calendrier des consignes (ex. '+j+' → '+_aNextDow(idx)+').';
+}
+function _aNextDow(idx){var d=new Date();d.setHours(12,0,0,0);do{d.setDate(d.getDate()+1)}while(d.getDay()!==idx);return dk(d);}
+function _aKey(s){s=String(s||'').trim();var m=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);if(!m)return null;var d=new Date(+m[1],+m[2]-1,+m[3]);if(isNaN(d.getTime())||d.getMonth()!==+m[2]-1)return null;return dk(d);}
+function _aHm(s){s=String(s||'').trim().toLowerCase().replace(/\s+/g,'');var m=/^(\d{1,2})(?:[:h](\d{2})?)?$/.exec(s);if(!m)return null;var h=+m[1],mi=m[2]?+m[2]:0;if(h>23||mi>59)return null;return String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0');}
+function _aDateFr(k){var d=new Date(k+'T00:00:00');if(isNaN(d.getTime()))return String(k||'');var s=_A_DJ[d.getDay()]+' '+(d.getDate()===1?'1er':d.getDate())+' '+_A_MO[d.getMonth()];if(d.getFullYear()!==new Date().getFullYear())s+=' '+d.getFullYear();return s;}
+function _aHmFr(t){var m=/^(\d{1,2}):(\d{2})$/.exec(String(t||''));if(!m)return String(t||'');return (+m[1])+' h'+(m[2]==='00'?'':' '+m[2]);}
+function _aQuand(k,t){return _aDateFr(k)+(t?' à '+_aHmFr(t):'');}
+function _aDateS(k){var d=new Date(k+'T00:00:00');if(isNaN(d.getTime()))return String(k||'');return ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1);}
+function _aAdd(k,n){var d=new Date(k+'T00:00:00');d.setDate(d.getDate()+n);return dk(d);}
+function _aDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+function _aNowHm(){var d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function _aNorm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+function _aPName(p){return p?((p.lastName||'')+' '+(p.firstName||'')).trim():'';}
+function _aAp(id){return (D.appointments||[]).find(function(a){return a&&a.id===id})||null;}
+function _aIsSess(a){return !!a&&a.type!=='absence'&&a.type!=='bilan';}
+function _aWho(a){if(!a)return '?';if(a.type==='absence')return a.label||'Absence';var p=a.patientId?gp(a.patientId):null;return p?_aPName(p):(a.patientName||a.label||'?');}
+function _aMotif(id,k){if(!id)return null;var eff=getEffectiveMotifs(k||todayKey())||[];var s=_aNorm(id);return eff.find(function(m){return m.id===id})||eff.find(function(m){return _aNorm(m.label)===s})||null;}
+function _aMotifLabel(id){if(!id)return '';var all=(D.motifs||[]).concat((D.futureAgenda&&D.futureAgenda.motifs)||[]);var m=all.find(function(x){return x.id===id});return m?m.label:String(id);}
+function _aMotifList(k){return (getEffectiveMotifs(k||todayKey())||[]).map(function(m){return m.id+' ('+m.label+')'}).join(', ');}
+function _aVac(k){var v=(D.vacationPeriods||[]).filter(function(x){return x&&x.from&&x.to});if(!v.length&&D.vacationMode&&D.vacationMode.enabled&&D.vacationMode.from)v=[D.vacationMode];return v.some(function(x){return k>=x.from&&k<=x.to});}
+function _aSince(n){if(n<=0)return "aujourd'hui";if(n===1)return 'hier (1 jour)';if(n<14)return n+' jours';if(n<60)return n+' jours (environ '+Math.round(n/7)+' semaines)';var mo=Math.floor(n/30.44);return n+' jours (environ '+mo+' mois'+(n>=365?', soit '+(Math.round(n/36.5)/10).toString().replace('.',',')+' an'+(n>=730?'s':''):'')+')';}
+function _aClone(o){return o===undefined?undefined:JSON.parse(JSON.stringify(o));}
+function _aEuro(n){return (Math.round((Number(n)||0)*100)/100);}
+function _aApOut(a,full){
+  var o={rdv_id:a.id,quand:_aQuand(a.date,a.time),date:a.date,heure:a.time,duree:a.duration||0};
+  if(a.type==='absence'){o.type='absence';o.libelle=a.label||'Absence';if(a.allDay)o.journee_entiere=true;}
+  else{o.patient=_aWho(a);if(a.patientId)o.patient_id=a.patientId;o.motif=_aMotifLabel(a.motifId);if(a.type==='bilan')o.type='bilan';}
+  o.statut=a.cancelled?('annulé'+(a.cancelledBy==='pro'?' par le kiné':(a.cancelledBy?' par le patient':''))+(a.cancelReason?' ('+a.cancelReason+')':'')):'actif';
+  if(a.patientAbsence)o.absence_signalee=true;
+  if(a.billed)o.facturee=true;
+  if(a.isBilan||(a.type!=='absence'&&apHasBilan(a)))o.bilan=true;
+  if(a.source==='patient')o.pris_en_ligne=true;
+  if(full&&a.notes)o.notes=String(a.notes).slice(0,200);
+  return o;
+}
+
+/* ─────────── patients : recherche tolérante (dictée vocale, fautes) ─────────── */
+function _aPhon(w){
+  w=_aNorm(w).replace(/[^a-z]/g,'');if(w.length<2)return w;
+  w=w.replace(/sch|sh|ch/g,'X').replace(/ph/g,'f').replace(/th/g,'t').replace(/h/g,'')
+    .replace(/ck|qu|q/g,'k').replace(/c(?=[eiy])/g,'s').replace(/c/g,'k')
+    .replace(/gu(?=[eiy])/g,'g').replace(/ge(?=[aou])/g,'j').replace(/g(?=[eiy])/g,'j')
+    .replace(/w/g,'v').replace(/y/g,'i').replace(/z/g,'s').replace(/bv/g,'v')
+    .replace(/eau|au/g,'o').replace(/ai|ei/g,'e')
+    .replace(/(en|an|em|am)(?![aeiou])/g,'A').replace(/(ain|ein|in|im|un)(?![aeiou])/g,'I').replace(/(on|om)(?![aeiou])/g,'O')
+    .replace(/([a-zA-Z])\1+/g,'$1').replace(/(er|ez|et|ed)$/,'e').replace(/[estdxzp]+$/,'');
+  return w;
+}
+function _aLev(a,b){if(a===b)return 0;if(Math.abs(a.length-b.length)>2)return 9;var prev=[],cur,i,j;for(j=0;j<=b.length;j++)prev[j]=j;for(i=1;i<=a.length;i++){cur=[i];for(j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];}
+function _aTok(tk,words,full){
+  if(!full)return 0;
+  if(full===tk||words.indexOf(tk)>=0)return 10;
+  var best=0,pk=_aPhon(tk);
+  words.forEach(function(w){
+    var s=0;
+    if(tk.length>=3&&w.indexOf(tk)===0)s=7;
+    else if(pk.length>=2&&_aPhon(w)===pk)s=7;
+    else if(tk.length>=4&&_aLev(tk,w)<=1)s=6;
+    else if(tk.length>=7&&_aLev(tk,w)<=2)s=5;
+    if(s>best)best=s;
+  });
+  if(!best&&tk.length>=4&&full.replace(/ /g,'').indexOf(tk)>=0)best=5;
+  return best;
+}
+var _A_CIV=/^(monsieur|madame|mademoiselle|mr|mme|mlle|m|mm|docteur|dr|le|la|les|de|du|des|d|l|patient|patiente|pour|chez|et)$/;
+function _aSearch(q,limit){
+  var digits=String(q||'').replace(/\D/g,'');var nd=digits.length>=6?_proNormPhone(digits):'';
+  var toks=_aNorm(q).split(' ').filter(function(w){return w&&!/^\d+$/.test(w)&&!_A_CIV.test(w)});
+  var out=[];
+  (D.patients||[]).forEach(function(p){
+    var sc=0,miss=0;
+    if(nd){var phs=[p.phone].concat(p.extraPhones||[]).map(_proNormPhone).filter(function(x){return x.length>=6});if(phs.some(function(x){return x===nd||x.indexOf(nd)>=0}))sc+=20;else if(!toks.length)return;}
+    if(toks.length){
+      var ln=_aNorm(p.lastName),fn=_aNorm(p.firstName),lw=ln.split(' ').filter(Boolean),fw=fn.split(' ').filter(Boolean);
+      toks.forEach(function(tk){var b=Math.max(_aTok(tk,lw,ln),_aTok(tk,fw,fn)*0.8);if(b<=0)miss++;sc+=b;});
+      if(miss&&(toks.length<2||miss>1||sc<8))return;
+      if(miss)sc-=5;
+    }
+    if(sc>0)out.push({p:p,sc:sc});
+  });
+  out.sort(function(a,b){return b.sc-a.sc});
+  if(out.length>1){var top=out[0].sc;out=out.filter(function(x){return x.sc>=top-6});}
+  return out.slice(0,limit||6).map(function(x){return x.p});
+}
+function _aNear(q){
+  var toks=_aNorm(q).split(' ').filter(function(w){return w.length>=3&&!_A_CIV.test(w)&&!/^\d+$/.test(w)});if(!toks.length)return [];
+  return (D.patients||[]).map(function(p){var ln=_aNorm(p.lastName);return {p:p,d:Math.min.apply(null,toks.map(function(t){return _aLev(t,ln)}))}})
+    .filter(function(x){return x.d<=3}).sort(function(a,b){return a.d-b.d}).slice(0,4).map(function(x){return _aPName(x.p)+' (patient_id '+x.p.id+')'});
+}
+function _aPStats(p){
+  var t=todayKey(),hm=_aNowHm();
+  var aps=(D.appointments||[]).filter(function(a){return a&&a.patientId===p.id&&_aIsSess(a)});
+  var isPast=function(a){return a.date<t||(a.date===t&&a.time<=hm)};
+  var byD=function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)};
+  var past=aps.filter(function(a){return !a.cancelled&&!a.patientAbsence&&isPast(a)}).sort(byD);
+  var fut=aps.filter(function(a){return !a.cancelled&&!isPast(a)}).sort(byD);
+  return {aps:aps,past:past,fut:fut,last:past[past.length-1]||null,next:fut[0]||null};
+}
+function _aPOut(p){
+  var s=_aPStats(p),t=todayKey();
+  var o={patient_id:p.id,nom:p.lastName||'',prenom:p.firstName||''};
+  if(p.dob){var ag=calcAge(p.dob);if(ag!=='')o.age=ag;}
+  if(p.phone)o.telephone=p.phone;
+  if(p.tutoie||p.cool)o.tutoiement=true;
+  if(s.last){var n=_aDiff(s.last.date,t);o.derniere_venue={quand:_aQuand(s.last.date,s.last.time),date:s.last.date,motif:_aMotifLabel(s.last.motifId)};o.jours_depuis_derniere_venue=n;o.depuis=_aSince(n);}
+  else o.derniere_venue=null;
+  o.prochain_rdv=s.next?{rdv_id:s.next.id,quand:_aQuand(s.next.date,s.next.time),date:s.next.date,heure:s.next.time,motif:_aMotifLabel(s.next.motifId)}:null;
+  o.seances_effectuees=s.past.length;o.rdv_a_venir=s.fut.length;
+  return o;
+}
+
+/* ─────────── places : mêmes règles que l'appli patient (moteur du secrétaire),
+   sans les restrictions propres aux patients (délai de réservation, horizon…) ─────────── */
+function _asstEngCfg(){
+  var c=JSON.parse(JSON.stringify(_asstPublicCfg()));
+  var br=c.bookingRules=Object.assign({},c.bookingRules||{});
+  br.minHoursBefore=0.01;br.maxDaysAhead=400;
+  ['refuseNewPatients','refuseNewTreatments','delayNewPatients'].forEach(function(k){br[k]=false;c[k]=false;});
+  var vac=(c.vacationPeriods||[]).filter(function(v){return v&&v.from&&v.to});
+  if(!vac.length&&c.vacationMode&&c.vacationMode.enabled&&c.vacationMode.from)vac=[c.vacationMode];
+  c.vacationPeriods=vac;c.vacationMode={enabled:false,from:'',to:'',msg:''};
+  c.smartDistrib={enabled:false,motifIds:[],futureMotifIds:[],fromDate:''};
+  return c;
+}
+function _asstEngApts(){
+  var pats={};(D.patients||[]).forEach(function(p){pats[p.id]=p});
+  return (D.appointments||[]).filter(function(a){return a&&a.type!=='bilan'}).map(function(a){var p=a.patientId?pats[a.patientId]:null;return Object.assign({},a,{patientPhone:p?(p.phone||''):(a.patientPhone||''),patientName:p?_aPName(p):(a.patientName||'')});});
+}
+function _asstEng(p){
+  var who=p?{phone:p.phone||'',lastName:p.lastName||'',firstName:p.firstName||'',extraPhones:p.extraPhones||[],patientId:p.id}:{phone:''};
+  return PFENG.createEngine(_asstEngCfg(),_asstEngApts(),who,{now:new Date()});
+}
+function _aSlotCheck(o){
+  var w=[],k=o.date,t=o.time,d=new Date(k+'T00:00:00');
+  if((D.days||[]).indexOf(d.getDay())<0)return {error:'Le '+_aDateFr(k)+' n\'est pas un jour travaillé (jours : '+daysLabel(D.days)+') : l\'appli n\'accepte pas de RDV ce jour-là.'};
+  var t0=todayKey(),past=(k<t0||(k===t0&&t<_aNowHm()));
+  if(past)w.push('date ou heure déjà passée');
+  var hol=frenchHolidayName(k);if(hol&&!(D.openHolidays&&D.openHolidays[k]))w.push('jour férié ('+hol+')');
+  if(_aVac(k))w.push('pendant vos congés');
+  var dayAps=(D.appointments||[]).filter(function(a){return a&&a.date===k&&!a.cancelled&&a.id!==o.excludeApId&&a.type!=='bilan'});
+  var allAbs=dayAps.find(function(a){return a.type==='absence'&&a.allDay});if(allAbs)w.push('absence toute la journée ('+(allAbs.label||'Absence')+')');
+  var tm=t2m(t),te=tm+(o.duration||30);
+  var ops=(D.openings||[]).filter(function(op){return op.day===d.getDay()});
+  if(ops.length&&!ops.some(function(op){return tm>=t2m(op.start)&&te<=t2m(op.end)}))w.push('en dehors des horaires d\'ouverture');
+  var abs=dayAps.filter(function(a){return a.type==='absence'&&!a.allDay&&tm<t2m(a.time)+(a.duration||30)&&te>t2m(a.time)});
+  if(abs.length)w.push('pendant une absence ('+abs.map(function(a){return a.time+' '+(a.label||'Absence')}).join(', ')+')');
+  if(o.patient){var same=dayAps.filter(function(a){return a.patientId===o.patient.id&&a.type!=='absence'});if(same.length)w.push(_aPName(o.patient)+' a déjà un RDV ce jour-là à '+same.map(function(a){return a.time}).join(', '));}
+  if(o.motif){
+    var cap=slotOccupancy(k,o.motif,t,o.excludeApId);
+    if(cap.free<=0)w.push('créneau complet ('+cap.taken+'/'+cap.max+' place'+(cap.max>1?'s':'')+' prise'+(cap.taken>1?'s':'')+')');
+    else if(!past){
+      try{
+        var eng=_asstEng(o.patient),m2=eng.motifForDate(o.motif,k)||o.motif;
+        var s=eng.slotsFor(k,m2,{rescheduleApId:o.excludeApId||null}).find(function(x){return x.time===t});
+        var typical=(o.motif.times||[]).filter(Boolean);
+        if(!s&&typical.length)w.push('horaire hors des heures habituelles de « '+o.motif.label+' »');
+        else if(s&&!s.free)w.push('créneau non proposé aux patients (chevauchement, pause ou place réservée)');
+      }catch(e){console.warn('[assistant] créneau',e);}
+    }
+  }
+  return {warnings:w};
+}
+function _asstFree(q){
+  var t0=todayKey();
+  var from=_aKey(q.du)||t0;if(from<t0)from=t0;
+  var dw=_aDowCheck(_aKey(q.du),q.jour_du);if(dw)return {erreur:dw};
+  var to=_aKey(q.au)||_aAdd(from,13);if(to<from)to=from;if(_aDiff(from,to)>62)to=_aAdd(from,62);
+  var p=q.patient_id?gp(q.patient_id):null;
+  if(q.patient_id&&!p)return {erreur:'patient_id inconnu'};
+  var motifs=null;
+  if(q.motif_id){var m0=_aMotif(q.motif_id,from)||_aMotif(q.motif_id,to);if(!m0)return {erreur:'motif_id inconnu. Motifs : '+_aMotifList(from)};motifs=[m0];}
+  var dows=Array.isArray(q.jours_semaine)&&q.jours_semaine.length?q.jours_semaine.map(Number):null;
+  var hMin=q.heure_min&&_aHm(q.heure_min)?t2m(_aHm(q.heure_min)):0,hMax=q.heure_max&&_aHm(q.heure_max)?t2m(_aHm(q.heure_max)):1440;
+  var lim=Math.max(1,Math.min(parseInt(q.limite,10)||12,40));
+  var eng=_asstEng(p),out=[],k=from;
+  while(k<=to&&out.length<lim){
+    var d=new Date(k+'T00:00:00');
+    if((!dows||dows.indexOf(d.getDay())>=0)&&(D.days||[]).indexOf(d.getDay())>=0){
+      var day=[];
+      (motifs||getEffectiveMotifs(k)||[]).forEach(function(m){
+        var mm=eng.motifForDate(m,k);if(!mm)return;
+        var ctx={rescheduleApId:q.exclure_rdv_id||null};
+        if(!eng.dateOpen(k,mm,ctx))return;
+        eng.slotsFor(k,mm,ctx).forEach(function(s){var tm=t2m(s.time);if(!s.free||tm<hMin||tm>hMax)return;day.push({quand:_aQuand(k,s.time),date:k,heure:s.time,motif_id:mm.id,motif:mm.label,duree:mm.duration,places_restantes:s.remaining});});
+      });
+      day.sort(function(a,b){return t2m(a.heure)-t2m(b.heure)});
+      if(p&&day.length&&(D.appointments||[]).some(function(a){return a&&a.patientId===p.id&&a.date===k&&!a.cancelled&&_aIsSess(a)&&a.id!==q.exclure_rdv_id}))day.forEach(function(x){x.patient_deja_rdv_ce_jour=true});
+      day.slice(0,lim-out.length).forEach(function(x){out.push(x)});
+    }
+    k=_aAdd(k,1);
+  }
+  return {creneaux:out,periode:{du:from,au:to},message:out.length?'':'Aucune place libre sur cette période.'};
+}
+
+/* ─────────── outils de lecture ─────────── */
+function _asstDay(q){
+  var k=_aKey(q.date);if(!k)return {erreur:'date invalide (AAAA-MM-JJ)'};
+  var dw=_aDowCheck(k,q.jour);if(dw)return {erreur:dw};
+  var d=new Date(k+'T00:00:00'),o={date:k,jour:_aDateFr(k)};o.jour_semaine=_A_DJ[d.getDay()];
+  o.jour_travaille=(D.days||[]).indexOf(d.getDay())>=0;
+  var hol=frenchHolidayName(k);if(hol)o.ferie=hol+((D.openHolidays&&D.openHolidays[k])?' (ouvert)':' (fermé)');
+  if(_aVac(k))o.conges=true;
+  var aps=(D.appointments||[]).filter(function(a){return a&&a.date===k&&a.type!=='bilan'}).sort(function(a,b){return t2m(a.time)-t2m(b.time)});
+  o.rdv=aps.filter(function(a){return a.type!=='absence'}).map(function(a){return _aApOut(a,true)});
+  o.absences=aps.filter(function(a){return a.type==='absence'&&!a.cancelled}).map(function(a){return {rdv_id:a.id,libelle:a.label||'Absence',heure:a.time,duree:a.duration,journee_entiere:!!a.allDay}});
+  o.nb_rdv_actifs=o.rdv.filter(function(x){return x.statut==='actif'}).length;
+  if(o.jour_travaille&&k>=todayKey()){var f=_asstFree({du:k,au:k,limite:40});o.places_libres=(f.creneaux||[]).map(function(c){return c.heure+' '+c.motif+(c.places_restantes>1?' ('+c.places_restantes+' places)':'')});}
+  return o;
+}
+function _asstList(q){
+  var t0=todayKey(),p=q.patient_id?gp(q.patient_id):null;
+  if(q.patient_id&&!p)return {erreur:'patient_id inconnu'};
+  var from=_aKey(q.du)||(p?'0000-01-01':t0),to=_aKey(q.au)||(p?'9999-12-31':_aAdd(from,6));
+  var st=q.statut||'actifs',ty=q.type||'rdv';
+  var l=(D.appointments||[]).filter(function(a){
+    if(!a||a.date<from||a.date>to)return false;
+    if(p&&a.patientId!==p.id)return false;
+    if(ty==='rdv'&&!_aIsSess(a))return false;
+    if(ty==='absence'&&a.type!=='absence')return false;
+    if(ty==='tous'&&a.type==='bilan')return false;
+    if(st==='actifs'&&a.cancelled)return false;
+    if(st==='annules'&&!a.cancelled)return false;
+    if(q.motif_id&&a.motifId!==q.motif_id)return false;
+    if(q.facturee===true&&!a.billed)return false;
+    if(q.facturee===false&&a.billed)return false;
+    return true;
+  }).sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)});
+  var lim=Math.max(1,Math.min(parseInt(q.limite,10)||60,120));
+  var pick=(p&&!q.du&&!q.au)?l.slice(-lim):l.slice(0,lim);
+  return {total:l.length,affiches:pick.length,rdv:pick.map(function(a){return _aApOut(a,true)}),periode:{du:from==='0000-01-01'?'début':from,au:to==='9999-12-31'?'fin':to}};
+}
+function _asstPat(q){
+  var p=gp(q.patient_id);if(!p)return {erreur:'patient_id inconnu : utilise chercher_patients'};
+  var o=_aPOut(p),s=_aPStats(p);
+  if(p.dob)o.date_naissance=p.dob;
+  if((p.extraPhones||[]).length)o.autres_telephones=p.extraPhones;
+  if(p.notes)o.notes=String(p.notes).slice(0,600);
+  var docs=[];if(p.needOrdo)docs.push('ordonnance');if(p.needMut)docs.push('mutuelle');if(p.needSecu)docs.push('carte vitale / sécu');if(docs.length)o.documents_a_fournir=docs;
+  o.documents_enregistres=(p.documents||[]).length;
+  o.tarif_seance=Number(p.sessionFee!==undefined?p.sessionFee:18.2);
+  if(p.prescribedSessions)o.seances_prescrites=p.prescribedSessions;
+  if(p.linkedTo){var lp=gp(p.linkedTo);if(lp)o.lie_a=_aPName(lp);}
+  o.annulations=s.aps.filter(function(a){return a.cancelled}).length;
+  o.absences_signalees=s.aps.filter(function(a){return a.patientAbsence}).length;
+  o.seances_non_facturees=unbilledCount(p.id);o.montant_non_facture=_aEuro(unbilledAmount(p.id));
+  if(p.lastBillAt)o.derniere_facturation=p.lastBillAt;
+  if(s.aps.length){var first=s.aps.slice().sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)})[0];o.premier_rdv=_aDateFr(first.date);}
+  if(p.addedAt)o.fiche_creee_le=String(p.addedAt).slice(0,10);
+  o.rdv_a_venir_liste=s.fut.slice(0,10).map(function(a){return {rdv_id:a.id,quand:_aQuand(a.date,a.time),date:a.date,heure:a.time,motif:_aMotifLabel(a.motifId)}});
+  o.dernieres_seances=s.past.slice(-8).reverse().map(function(a){return {rdv_id:a.id,quand:_aQuand(a.date,a.time),date:a.date,heure:a.time,motif:_aMotifLabel(a.motifId),facturee:!!a.billed}});
+  return o;
+}
+function _asstStats(q){
+  var t0=todayKey(),from=_aKey(q.du)||(t0.slice(0,8)+'01'),to=_aKey(q.au)||t0;
+  var aps=(D.appointments||[]).filter(function(a){return a&&a.date>=from&&a.date<=to});
+  var sess=aps.filter(_aIsSess);
+  var done=sess.filter(function(a){return !a.cancelled&&!a.patientAbsence&&a.date<=t0});
+  var billed=(D.appointments||[]).filter(function(a){return a&&a.billed&&a.billedAt&&a.billedAt>=from&&a.billedAt<=to});
+  var parMotif={};done.forEach(function(a){var l=_aMotifLabel(a.motifId)||'?';parMotif[l]=(parMotif[l]||0)+1});
+  var pats={};done.forEach(function(a){if(a.patientId)pats[a.patientId]=(pats[a.patientId]||0)+1});
+  var top=Object.keys(pats).sort(function(a,b){return pats[b]-pats[a]}).slice(0,5).map(function(id){return {patient:_aPName(gp(id))||'?',seances:pats[id]}});
+  return {periode:{du:from,au:to},seances_effectuees:done.length,rdv_a_venir:sess.filter(function(a){return !a.cancelled&&a.date>t0}).length,
+    annulations_par_les_patients:sess.filter(function(a){return a.cancelled&&a.cancelledBy!=='pro'}).length,annulations_par_le_kine:sess.filter(function(a){return a.cancelled&&a.cancelledBy==='pro'}).length,
+    absences_signalees:sess.filter(function(a){return a.patientAbsence}).length,actes_factures:billed.length,montant_facture:_aEuro(billed.reduce(function(s,a){return s+(Number(a.billedAmount)||0)},0)),
+    seances_passees_non_facturees:sess.filter(function(a){return !a.cancelled&&!a.billed&&a.date<=t0}).length,patients_distincts:Object.keys(pats).length,
+    nouveaux_patients:(D.patients||[]).filter(function(p){return p.addedAt&&String(p.addedAt).slice(0,10)>=from&&String(p.addedAt).slice(0,10)<=to}).length,
+    par_motif:parMotif,patients_les_plus_vus:top,reste_a_facturer_tous_patients:_aEuro(typeof totalUnbilledAmount==='function'?totalUnbilledAmount():0),patients_enregistres:(D.patients||[]).length};
+}
+function _asstPatList(q){
+  var f=q.filtre||'tous',jm=Math.max(1,parseInt(q.jours_min,10)||60),lim=Math.max(1,Math.min(parseInt(q.limite,10)||30,80)),t0=todayKey(),out=[];
+  (D.patients||[]).forEach(function(p){
+    var s=_aPStats(p),n=s.last?_aDiff(s.last.date,t0):null,x={p:p,s:s,n:n};
+    if(f==='inactifs'){if(s.fut.length||n===null||n<jm)return;}
+    else if(f==='jamais_venus'){if(s.last)return;}
+    else if(f==='ordonnance_a_fournir'){if(!p.needOrdo)return;}
+    else if(f==='mutuelle_a_fournir'){if(!p.needMut)return;}
+    else if(f==='carte_vitale_a_fournir'){if(!p.needSecu)return;}
+    else if(f==='non_factures'){x.nb=unbilledCount(p.id);if(!x.nb)return;x.mt=_aEuro(unbilledAmount(p.id));}
+    else if(f==='nouveaux'){if(!(p.addedAt&&String(p.addedAt).slice(0,10)>=_aAdd(t0,-jm)))return;}
+    else if(f==='sans_telephone'){if(p.phone)return;}
+    out.push(x);
+  });
+  if(f==='inactifs')out.sort(function(a,b){return b.n-a.n});
+  else if(f==='non_factures')out.sort(function(a,b){return b.mt-a.mt});
+  else out.sort(function(a,b){return _aPName(a.p).localeCompare(_aPName(b.p))});
+  return {filtre:f,total:out.length,affiches:Math.min(lim,out.length),patients:out.slice(0,lim).map(function(x){
+    var o={patient_id:x.p.id,nom:x.p.lastName||'',prenom:x.p.firstName||''};if(x.p.phone)o.telephone=x.p.phone;
+    o.derniere_venue=x.s.last?_aQuand(x.s.last.date,x.s.last.time):null;if(x.n!==null)o.depuis=_aSince(x.n);
+    o.prochain_rdv=x.s.next?_aQuand(x.s.next.date,x.s.next.time):null;
+    if(x.nb){o.seances_non_facturees=x.nb;o.montant_non_facture=x.mt;}
+    return o;})};
+}
+function _asstWait(){return {liste:(D.waitlist||[]).map(function(w){return {id:w.timestamp,patient:w.patientName,telephone:w.patientPhone||'',motif:w.motifLabel||'',inscrit_le:w.addedDate||''}})};}
+function _asstJ(q){
+  var L=_asstLog().slice(-Math.max(1,Math.min(parseInt(q.limite,10)||15,40))).reverse();
+  return {actions:L.map(function(e){return {action_id:e.id,quand:new Date(e.at).toLocaleString('fr-FR',{weekday:'short',day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}),action:e.label,statut:e.status==='defait'?'défaite':'faite',annulable:!!(e.undo&&e.undo.length&&e.status!=='defait')}})};
+}
+function _asstMsgs(q){
+  var p=gp(q.patient_id);if(!p)return Promise.resolve({erreur:'patient_id inconnu'});
+  var n=_proNormPhone(p.phone||''),out={patient:_aPName(p)};
+  var c=(PROCONV||[]).find(function(x){return n.length>=8&&x.phone===n});
+  out.messages_appli=c?c.messages.slice(-10).map(function(m){return {de:m.from==='pro'?'kiné':'patient',texte:String(m.text||'').slice(0,400),le:String(m.sentAt||'').slice(0,16).replace('T',' ')}}):[];
+  if(n.length<9){out.sms=[];return Promise.resolve(out);}
+  return secrApi('GET','threads/'+encodeURIComponent(n)).then(function(r){
+    out.sms=((r.thread&&r.thread.messages)||[]).slice(-12).map(function(m){return {de:m.dir==='in'?'patient':(m.by==='kine'?'kiné':'secrétaire IA'),texte:String(m.text||'').slice(0,400),le:new Date(m.at).toLocaleString('fr-FR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}});
+    return out;
+  }).catch(function(){out.sms=[];return out;});
+}
+
+/* ─────────── enregistrement (mêmes appels que les boutons) ─────────── */
+function _aSave(push){sv();if(push)fbPush();try{if(typeof invalidateBillCache==='function')invalidateBillCache();}catch(e){}try{R();}catch(e){}try{if(typeof refreshHistIfOpen==='function')refreshHistIfOpen();}catch(e){}}
+function _aSet(kind,obj,changes){
+  var before={},absent=[],after={};
+  Object.keys(changes).forEach(function(k){if(obj[k]!==undefined)before[k]=_aClone(obj[k]);else absent.push(k);});
+  Object.keys(changes).forEach(function(k){if(changes[k]===undefined)delete obj[k];else obj[k]=changes[k];after[k]=changes[k]===undefined?null:_aClone(changes[k]);});
+  return {op:'set',kind:kind,id:obj.id,before:before,absent:absent,after:after};
+}
+function _asstLog(){if(!Array.isArray(D.assistantLog))D.assistantLog=[];return D.assistantLog;}
+function _asstSendSms(phone,text,name){return secrApi('POST','sms',{phone:phone,texte:text,name:name||''});}
+function _asstAppMsg(p,text,notif){
+  var n=_proNormPhone(p.phone||''),tk=null,at=new Date().toISOString();
+  (PROCONV||[]).forEach(function(c){if(n.length>=8&&c.phone===n&&c.threadKey)tk=c.threadKey});
+  if(!tk){var ref=FB_REF.child('patientMessages').push({lastName:p.lastName||'',firstName:p.firstName||'',phone:p.phone||'',subject:'',message:'',sentAt:at,read:true});tk=ref.key;}
+  FB_REF.child('patientMessages/'+tk+'/replies').push({from:'pro',text:text,sentAt:at});
+  FB_REF.child('notifyPatient').push(notif||{type:'proMessage',patientId:p.id,patientPhone:p.phone||'',message:'Nouveau message de votre kiné'});
+}
+function _asstCancelMsg(p,ap,motif,tu){var PH='\u0001',m=buildCancelMsg(p,ap,motif||PH,tu);return motif?m:m.replace(' pour le motif suivant : '+PH,'');}
+function _aNeedAp(id,opts){
+  var ap=_aAp(id);opts=opts||{};
+  if(!ap)return {error:'rdv_id inconnu : retrouve le RDV avec lister_rdv, agenda_jour ou chercher_patients.'};
+  if(ap.type==='bilan'&&!opts.bilanOk)return {error:'Cet élément est un bilan rattaché à une séance : agis sur la séance elle-même.'};
+  return {ap:ap};
+}
+
+/* ─────────── outils d'action : prep() vérifie et décrit, exec() fait ─────────── */
+function _prepCreerRdv(i){
+  var p=gp(i.patient_id);if(!p)return {error:'patient_id inconnu : cherche le patient (chercher_patients) ou crée sa fiche (creer_patient).'};
+  var k=_aKey(i.date),t=_aHm(i.heure);if(!k||!t)return {error:'date (AAAA-MM-JJ) ou heure (HH:MM) invalide'};
+  var dw=_aDowCheck(k,i.jour);if(dw)return {error:dw};
+  var m=_aMotif(i.motif_id,k);if(!m)return {error:'motif_id inconnu pour cette date. Motifs : '+_aMotifList(k)};
+  var dur=parseInt(i.duree,10)||m.duration||30;
+  var chk=_aSlotCheck({motif:m,date:k,time:t,duration:dur,patient:p});if(chk.error)return {error:chk.error};
+  var note=String(i.note||'').trim();
+  return {label:'📅 Nouveau RDV — '+_aPName(p)+' · '+m.label+' · '+_aDateFr(k)+' à '+t+' ('+dur+' min)',warnings:chk.warnings,exec:function(){
+    if(!gp(p.id))return {ok:false,msg:'fiche patient introuvable'};
+    var ap={id:uid(),type:'rdv',motifId:m.id,patientId:p.id,label:'',date:k,time:t,duration:dur,notes:note,cancelled:false,bookedAt:new Date().toISOString(),patientPhone:p.phone||'',patientName:p.lastName+' '+p.firstName,source:'pro',billed:false,billedAt:'',billedAmount:0,isBilan:false};
+    D.appointments.push(ap);_aSave();
+    return {ok:true,msg:'RDV créé le '+_aDateFr(k)+' à '+t,ref:{rdv_id:ap.id},undo:[{op:'del_ap',id:ap.id}]};
+  }};
+}
+function _prepDeplacer(i){
+  var g=_aNeedAp(i.rdv_id);if(g.error)return g;var ap=g.ap;
+  if(ap.cancelled)return {error:'Ce RDV est annulé : rétablis-le d\'abord (retablir_rdv) si le kiné le souhaite.'};
+  var k=_aKey(i.date),t=_aHm(i.heure);if(!k||!t)return {error:'date (AAAA-MM-JJ) ou heure (HH:MM) invalide'};
+  var dw=_aDowCheck(k,i.jour);if(dw)return {error:dw};
+  var dur=parseInt(i.duree,10)||ap.duration||30;
+  if(k===ap.date&&t===ap.time&&dur===ap.duration)return {error:'Le RDV est déjà à cet horaire.'};
+  var p=ap.patientId?gp(ap.patientId):null;
+  var chk=ap.type==='absence'?_aSlotCheck({date:k,time:t,duration:dur,excludeApId:ap.id}):_aSlotCheck({motif:_aMotif(ap.motifId,k),date:k,time:t,duration:dur,patient:p,excludeApId:ap.id});
+  if(chk.error)return {error:chk.error};
+  if(ap.type!=='absence'&&!_aMotif(ap.motifId,k))chk.warnings.push('le motif « '+_aMotifLabel(ap.motifId)+' » n\'existe plus dans l\'agenda à cette date');
+  if(ap.billed)chk.warnings.push('séance déjà facturée');
+  var from=ap.date+'|'+ap.time;
+  return {label:'🔄 Déplacer '+_aWho(ap)+' : '+_aDateS(ap.date)+' '+ap.time+' → '+_aDateFr(k)+' à '+t+(dur!==ap.duration?' ('+dur+' min)':''),warnings:chk.warnings,exec:function(){
+    var a=_aAp(ap.id);if(!a||a.cancelled||(a.date+'|'+a.time)!==from)return {ok:false,msg:'le RDV a changé entre-temps : rien n\'a été fait'};
+    var ch={date:k,time:t,duration:dur};
+    if(a.source==='patient'){ch.proModified=true;if(a.notes&&a.notes.indexOf('🛠')<0&&a.notes.indexOf('🌐')===0)ch.notes='🌐 Réservé en ligne mais modifié dans l\'application pro 🛠';}
+    var undo=[_aSet('ap',a,ch)];
+    (D.appointments||[]).forEach(function(b){if(b&&b.type==='bilan'&&b.parentApId===a.id)undo.push(_aSet('ap',b,{date:k,time:t}));});
+    _aSave();
+    return {ok:true,msg:'RDV déplacé au '+_aDateFr(k)+' à '+t+' (patient non prévenu)',undo:undo};
+  }};
+}
+function _prepAnnuler(i){
+  var g=_aNeedAp(i.rdv_id);if(g.error)return g;var ap=g.ap;
+  if(ap.type==='absence')return {error:'C\'est une absence : pour la retirer, utilise supprimer_rdv.'};
+  if(ap.cancelled)return {error:'Ce RDV est déjà annulé.'};
+  var p=ap.patientId?gp(ap.patientId):null,w=[];
+  var prev=i.prevenir||(p&&p.phone?'sms':'non');
+  if(['sms','appli','non'].indexOf(prev)<0)prev='non';
+  if(prev!=='non'&&!p)return {error:'Pas de fiche patient liée à ce RDV : impossible de le prévenir (prevenir : non).'};
+  if(prev==='sms'&&!p.phone)return {error:'Pas de numéro sur la fiche de '+_aPName(p)+' : choisis prevenir « appli » ou « non ».'};
+  if(prev==='appli'&&!p.phone)w.push('pas de numéro sur la fiche : le patient ne verra peut-être pas le message dans l\'appli');
+  if(ap.billed)w.push('séance déjà facturée');
+  var motif=String(i.motif||'').trim().slice(0,120);
+  var tu=(i.tutoyer===true||i.tutoyer===false)?i.tutoyer:!!(p&&(p.tutoie||p.cool));
+  var msg=prev==='sms'?_asstCancelMsg(p,ap,motif,tu):'';
+  var appMsg=prev==='appli'?(tu?('Salut '+p.firstName+', ta séance du '+fmtS(ap.date)+' à '+ap.time+' est annulée'+(motif?' ('+motif+')':'')+'. Peux-tu confirmer la bonne réception ?'):('Bonjour '+(p.firstName||p.lastName)+', votre séance du '+fmtS(ap.date)+' à '+ap.time+' est annulée'+(motif?' ('+motif+')':'')+'. Merci de confirmer la bonne réception.')):'';
+  var st=ap.date+'|'+ap.time;
+  return {label:'🚫 Annuler '+_aWho(ap)+' · '+_aDateFr(ap.date)+' à '+ap.time+(prev==='sms'?' — prévenir par SMS':(prev==='appli'?' — prévenir dans l\'appli patient':' — sans prévenir le patient')),
+    warnings:w,details:msg||appMsg,irreversible:prev!=='non'?'Le patient sera prévenu : le message ne pourra pas être repris.':'',exec:function(){
+    var a=_aAp(ap.id);if(!a||a.cancelled||(a.date+'|'+a.time)!==st)return Promise.resolve({ok:false,msg:'le RDV a changé entre-temps : rien n\'a été fait'});
+    var ch={cancelled:true,cancelledBy:'pro'};if(motif||prev!=='non')ch.cancelReason=motif;
+    var undo=[_aSet('ap',a,ch)];
+    if(prev==='non'){sv();R();fbPush();return Promise.resolve({ok:true,msg:'RDV annulé (patient non prévenu)',undo:undo});}
+    sv();try{R();}catch(e){}
+    var nowIso=new Date().toISOString();
+    FB_REF.child('proCancellations').push({appointmentId:a.id,date:a.date,time:a.time,reason:motif,patientId:a.patientId||'',cancelledAt:nowIso});
+    if(prev==='appli'){_asstAppMsg(p,appMsg,{type:'proCancelled',patientId:a.patientId,patientPhone:p.phone||'',date:a.date,time:a.time,reason:motif||'Non précisé',message:appMsg});fbPush();
+      return Promise.resolve({ok:true,msg:'RDV annulé, patient prévenu dans l\'appli patient',undo:undo,note:'patient prévenu de l\'annulation'});}
+    FB_REF.child('notifyPatient').push({type:'proCancelled',patientId:a.patientId,date:a.date,time:a.time,reason:motif,createdAt:nowIso});
+    fbPush();
+    return _asstSendSms(p.phone,msg,_aPName(p)).then(function(){return {ok:true,msg:'RDV annulé, SMS d\'annulation envoyé',undo:undo,note:'patient prévenu par SMS de l\'annulation'};},
+      function(e){return {ok:true,msg:'RDV annulé, MAIS le SMS n\'est pas parti ('+e.message+') : dis-le au kiné',undo:undo};});
+  }};
+}
+function _prepRetablir(i){
+  var g=_aNeedAp(i.rdv_id);if(g.error)return g;var ap=g.ap;
+  if(!ap.cancelled)return {error:'Ce RDV n\'est pas annulé.'};
+  var w=[];
+  if(ap.type!=='absence'){var m=_aMotif(ap.motifId,ap.date);if(m){var cap=slotOccupancy(ap.date,m,ap.time,ap.id);if(cap.free<=0)w.push('le créneau a été repris entre-temps ('+cap.taken+'/'+cap.max+')');}}
+  if(ap.date<todayKey())w.push('RDV passé');
+  return {label:'↩️ Rétablir '+_aWho(ap)+' · '+_aDateFr(ap.date)+' à '+ap.time,warnings:w,exec:function(){
+    var a=_aAp(ap.id);if(!a||!a.cancelled)return {ok:false,msg:'le RDV n\'est plus annulé'};
+    var undo=[_aSet('ap',a,{cancelled:false,restoredAt:Date.now()})];_aSave();
+    return {ok:true,msg:'RDV rétabli (patient non prévenu)',undo:undo};
+  }};
+}
+function _prepSupprimer(i){
+  var g=_aNeedAp(i.rdv_id,{bilanOk:true});if(g.error)return g;var ap=g.ap,w=[];
+  if(ap.billed)w.push('séance facturée : sa facturation disparaîtra avec elle');
+  if(ap.type!=='absence'&&ap.type!=='bilan'&&!ap.cancelled&&ap.date>=todayKey())w.push('RDV actif à venir : le patient n\'est pas prévenu (préférer annuler_rdv ?)');
+  return {label:'🗑 Supprimer '+(ap.type==='absence'?'l\'absence « '+(ap.label||'Absence')+' »':(ap.type==='bilan'?'le bilan de '+_aWho(ap):_aWho(ap)))+' · '+_aDateFr(ap.date)+' à '+ap.time,warnings:w,alwaysConfirm:true,exec:function(){
+    var a=_aAp(ap.id);if(!a)return {ok:false,msg:'déjà supprimé'};
+    var snap=_aClone(a);markApDeleted(a.id);D.appointments=D.appointments.filter(function(x){return x.id!==a.id});_aSave(true);
+    return {ok:true,msg:'supprimé',undo:[{op:'restore_ap',ap:snap}]};
+  }};
+}
+function _prepModifierRdv(i){
+  var g=_aNeedAp(i.rdv_id);if(g.error)return g;var ap=g.ap;
+  var ch={},lab=[],w=[],bilan=false,p=ap.patientId?gp(ap.patientId):null;
+  if(i.note!==undefined&&i.note!==null){ch.notes=String(i.note).slice(0,500);lab.push('note « '+ch.notes+' »');}
+  if(i.ajouter_note){ch.notes=((ch.notes!==undefined?ch.notes:(ap.notes||''))?((ch.notes!==undefined?ch.notes:ap.notes)+'\n'):'')+String(i.ajouter_note).slice(0,300);lab.push('ajout à la note « '+String(i.ajouter_note).slice(0,300)+' »');}
+  if(i.motif_id&&ap.type!=='absence'){var m=_aMotif(i.motif_id,ap.date);if(!m)return {error:'motif_id inconnu. Motifs : '+_aMotifList(ap.date)};if(m.id!==ap.motifId){ch.motifId=m.id;if(!i.duree)ch.duration=m.duration;lab.push('motif → '+m.label);var cap=slotOccupancy(ap.date,m,ap.time,ap.id);if(cap.free<=0)w.push('créneau complet pour ce motif ('+cap.taken+'/'+cap.max+')');}}
+  if(i.duree){var du=parseInt(i.duree,10);if(!(du>=5&&du<=480))return {error:'durée invalide'};if(du!==ap.duration){ch.duration=du;lab.push('durée → '+du+' min');}}
+  if(i.facturee===true||i.facturee===false){
+    if(ap.type==='absence')return {error:'Une absence ne se facture pas.'};
+    if(i.facturee&&!ap.billed){if(!isBillable(ap))return {error:'Séance non facturable (annulée ou à venir).'};if(!p)return {error:'Patient introuvable.'};ch.billed=true;ch.billedAt=todayKey();ch.billedAmount=apAmount(ap,p);lab.push('marquer facturée ('+Number(ch.billedAmount).toFixed(2).replace('.',',')+' €)');}
+    else if(!i.facturee&&ap.billed){ch.billed=false;ch.billedAt='';ch.billedAmount=0;lab.push('marquer NON facturée');}
+  }
+  if(i.ajouter_bilan){if(ap.type==='absence'||!ap.patientId)return {error:'Bilan impossible sur cet élément.'};if(apHasBilan(ap))return {error:'Cette séance a déjà un bilan.'};bilan=true;lab.push('ajouter un bilan 🅱️');}
+  if(!lab.length)return {error:'Aucun changement demandé (ou déjà dans cet état).'};
+  if(ap.billed&&ch.billed===undefined&&(ch.duration||ch.motifId))w.push('séance déjà facturée');
+  return {label:'✏️ '+_aWho(ap)+' · '+_aDateS(ap.date)+' '+ap.time+' : '+lab.join(' ; '),warnings:w,exec:function(){
+    var a=_aAp(ap.id);if(!a)return {ok:false,msg:'RDV introuvable'};
+    var undo=[];
+    if(Object.keys(ch).length){if(a.source==='patient'&&(ch.motifId||ch.duration))ch.proModified=true;undo.push(_aSet('ap',a,ch));}
+    if(bilan&&!apHasBilan(a)){var b={id:uid(),type:'bilan',isBilan:true,parentApId:a.id,motifId:a.motifId||'',patientId:a.patientId,date:a.date||todayKey(),time:a.time||'12:00',duration:a.duration||30,notes:'Bilan',cancelled:false,billed:false,billedAt:'',billedAmount:0};D.appointments.push(b);undo.push({op:'del_ap',id:b.id});}
+    _aSave();
+    return {ok:true,msg:'modifié : '+lab.join(' ; '),undo:undo};
+  }};
+}
+function _prepAbsence(i){
+  var k=_aKey(i.date);if(!k)return {error:'date invalide (AAAA-MM-JJ)'};
+  var dw=_aDowCheck(k,i.jour);if(dw)return {error:dw};
+  var d=new Date(k+'T00:00:00');
+  if((D.days||[]).indexOf(d.getDay())<0)return {error:'Le '+_aDateFr(k)+' n\'est pas un jour travaillé : pas besoin d\'absence.'};
+  var all=!!i.journee_entiere||(!i.heure_debut&&!i.heure_fin),t,dur;
+  if(all){var ops=(D.openings||[]).filter(function(o){return o.day===d.getDay()});var s=(D.startH||8)*60,e=(D.endH||19)*60;if(ops.length){s=Math.min.apply(null,ops.map(function(o){return t2m(o.start)}));e=Math.max.apply(null,ops.map(function(o){return t2m(o.end)}));}t=m2t(s);dur=e-s;}
+  else{t=_aHm(i.heure_debut);var tf=_aHm(i.heure_fin);if(!t||!tf||t2m(tf)<=t2m(t))return {error:'heure_debut et heure_fin (HH:MM) requises, fin après début'};dur=t2m(tf)-t2m(t);}
+  var lab=String(i.libelle||'Absence').trim().slice(0,60)||'Absence';
+  var tm=t2m(t),te=tm+dur;
+  var hit=(D.appointments||[]).filter(function(a){return a&&a.date===k&&!a.cancelled&&_aIsSess(a)&&t2m(a.time)<te&&t2m(a.time)+(a.duration||30)>tm}).sort(function(a,b){return t2m(a.time)-t2m(b.time)});
+  var w=hit.length?[hit.length+' RDV pendant cette absence (non annulés) : '+hit.map(function(a){return a.time+' '+_aWho(a)}).join(', ')]:[];
+  return {label:'⛔ Absence « '+lab+' » — '+_aDateFr(k)+(all?' (toute la journée)':' de '+t+' à '+m2t(te)),warnings:w,exec:function(){
+    var ap={id:uid(),type:'absence',motifId:null,patientId:'',label:lab,date:k,time:t,duration:dur,notes:'',cancelled:false,bookedAt:new Date().toISOString(),patientPhone:'',patientName:'',source:'pro',allDay:all,isHoliday:false};
+    D.appointments.push(ap);_aSave();
+    return {ok:true,msg:'absence posée'+(hit.length?' ; '+hit.length+' RDV restent à annuler ou déplacer : '+hit.map(function(a){return a.time+' '+_aWho(a)}).join(', '):''),ref:hit.length?{rdv_id:ap.id,rdv_a_traiter:hit.map(function(a){return a.id})}:{rdv_id:ap.id},undo:[{op:'del_ap',id:ap.id}]};
+  }};
+}
+function _prepCreerPatient(i){
+  var ln=String(i.nom||'').trim().toUpperCase(),fn=toTitleCase(String(i.prenom||'').trim());
+  if(!ln)return {error:'nom requis'};
+  var tel=String(i.telephone||'').trim(),nt=_proNormPhone(tel),w=[];
+  if(tel&&nt.length<9)return {error:'numéro de téléphone invalide'};
+  var dob=i.date_naissance?_aKey(i.date_naissance):'';if(i.date_naissance&&!dob)return {error:'date_naissance invalide (AAAA-MM-JJ)'};
+  var same=(D.patients||[]).filter(function(p){return _aNorm(p.lastName)===_aNorm(ln)&&_aNorm(p.firstName)===_aNorm(fn)});
+  if(same.length&&(!nt||same.some(function(p){return !p.phone||_proNormPhone(p.phone)===nt})))return {error:'Ce patient existe déjà : '+same.map(function(p){return _aPName(p)+' (patient_id '+p.id+')'}).join(', ')+'. Utilise sa fiche.'};
+  if(same.length)w.push('homonyme déjà enregistré : '+same.map(_aPName).join(', '));
+  if(nt){var ph=(D.patients||[]).filter(function(p){return [p.phone].concat(p.extraPhones||[]).some(function(x){return _proNormPhone(x)===nt})});if(ph.length)w.push('ce numéro est déjà sur la fiche de '+ph.map(_aPName).join(', '));}
+  return {label:'👤 Nouveau patient : '+ln+' '+fn+(tel?' · '+tel:'')+(dob?' · né(e) le '+dob.split('-').reverse().join('/'):''),warnings:w,exec:function(){
+    var p={id:uid(),lastName:ln,firstName:fn,dob:dob||'',phone:tel,notes:String(i.notes||'').slice(0,600),needOrdo:false,needMut:false,needSecu:false,rejectReason:'',rejectCount:0,sessionFee:18.20,cool:false,tutoie:!!i.tutoiement,lastBillAt:'',addedAt:new Date().toISOString(),documents:[],billMode:'each',billEvery:3,extraPhones:[]};
+    D.patients.push(p);_aSave();try{if(typeof rPats==='function')rPats();}catch(e){}
+    return {ok:true,msg:'fiche créée',ref:{patient_id:p.id},undo:[{op:'del_pat',id:p.id}]};
+  }};
+}
+function _prepModifierPatient(i){
+  var p=gp(i.patient_id);if(!p)return {error:'patient_id inconnu'};
+  var ch={},lab=[];
+  function set(k,v,l){if(JSON.stringify(p[k]===undefined?null:p[k])!==JSON.stringify(v)){ch[k]=v;lab.push(l);}}
+  if(i.nom)set('lastName',String(i.nom).trim().toUpperCase(),'nom → '+String(i.nom).trim().toUpperCase());
+  if(i.prenom)set('firstName',toTitleCase(String(i.prenom).trim()),'prénom → '+toTitleCase(String(i.prenom).trim()));
+  if(i.telephone!==undefined){var t=String(i.telephone||'').trim();if(t&&_proNormPhone(t).length<9)return {error:'numéro invalide'};set('phone',t,'téléphone → '+(t||'(aucun)'));}
+  if(Array.isArray(i.autres_telephones))set('extraPhones',i.autres_telephones.map(String).map(function(x){return x.trim()}).filter(Boolean).slice(0,5),'autres numéros → '+i.autres_telephones.join(', '));
+  if(i.date_naissance){var dob=_aKey(i.date_naissance);if(!dob)return {error:'date_naissance invalide'};set('dob',dob,'naissance → '+dob.split('-').reverse().join('/'));}
+  if(i.notes!==undefined&&i.notes!==null)set('notes',String(i.notes).slice(0,1000),'notes remplacées');
+  if(i.ajouter_note){var nn=(ch.notes!==undefined?ch.notes:(p.notes||''));set('notes',(nn?nn+'\n':'')+String(i.ajouter_note).slice(0,400),'ajout aux notes « '+String(i.ajouter_note).slice(0,400)+' »');}
+  if(i.tutoiement===true||i.tutoiement===false)set('tutoie',!!i.tutoiement,i.tutoiement?'tutoiement':'vouvoiement');
+  if(i.ordonnance_a_fournir===true||i.ordonnance_a_fournir===false)set('needOrdo',!!i.ordonnance_a_fournir,'ordonnance '+(i.ordonnance_a_fournir?'à fournir':'reçue'));
+  if(i.mutuelle_a_fournir===true||i.mutuelle_a_fournir===false)set('needMut',!!i.mutuelle_a_fournir,'mutuelle '+(i.mutuelle_a_fournir?'à fournir':'reçue'));
+  if(i.carte_vitale_a_fournir===true||i.carte_vitale_a_fournir===false)set('needSecu',!!i.carte_vitale_a_fournir,'carte vitale '+(i.carte_vitale_a_fournir?'à fournir':'reçue'));
+  if(i.tarif_seance!==undefined&&i.tarif_seance!==null){var f=parseFloat(i.tarif_seance);if(!(f>=0&&f<1000))return {error:'tarif invalide'};set('sessionFee',f,'tarif → '+f.toFixed(2).replace('.',',')+' €');}
+  if(i.seances_prescrites!==undefined&&i.seances_prescrites!==null){var sp=parseInt(i.seances_prescrites,10);if(!(sp>=0&&sp<200))return {error:'nombre de séances invalide'};set('prescribedSessions',sp,'séances prescrites → '+sp);}
+  if(!lab.length)return {error:'Aucun changement (fiche déjà dans cet état).'};
+  var w=[];
+  if(ch.phone){var nt=_proNormPhone(ch.phone),o=(D.patients||[]).filter(function(x){return x.id!==p.id&&_proNormPhone(x.phone)===nt});if(o.length)w.push('ce numéro est aussi sur la fiche de '+o.map(_aPName).join(', '));}
+  return {label:'👤 '+_aPName(p)+' : '+lab.join(' ; '),warnings:w,exec:function(){
+    var q=gp(p.id);if(!q)return {ok:false,msg:'fiche introuvable'};
+    var undo=[_aSet('pat',q,ch)];_aSave();try{if(typeof rPats==='function')rPats();}catch(e){}
+    return {ok:true,msg:'fiche modifiée : '+lab.join(' ; '),undo:undo};
+  }};
+}
+function _prepMessage(i){
+  var p=i.patient_id?gp(i.patient_id):null;
+  if(i.patient_id&&!p)return {error:'patient_id inconnu'};
+  var phone=p?(p.phone||''):String(i.telephone||'').trim();
+  var txt=String(i.texte||'').trim();if(!txt)return {error:'texte vide'};if(txt.length>900)return {error:'message trop long (900 caractères max)'};
+  var canal=i.canal==='appli'?'appli':'sms';
+  if(!p&&canal==='appli')return {error:'La messagerie de l\'appli nécessite une fiche patient.'};
+  if(_proNormPhone(phone).length<9)return {error:p?('Pas de numéro valide sur la fiche de '+_aPName(p)+'.'):'Donne patient_id ou un numéro de téléphone.'};
+  var who=p?_aPName(p):phone;
+  return {label:(canal==='sms'?'✉️ SMS':'💬 Message dans l\'appli patient')+' à '+who+(canal==='sms'?' ('+phone+')':''),details:txt,irreversible:'Un message envoyé ne peut pas être repris.',exec:function(){
+    if(canal==='appli'){_asstAppMsg(p,txt);return Promise.resolve({ok:true,msg:'message envoyé dans l\'appli patient',note:'message envoyé'});}
+    return _asstSendSms(phone,txt,p?_aPName(p):'').then(function(){return {ok:true,msg:'SMS envoyé',note:'message envoyé'}},function(e){return {ok:false,msg:'SMS non envoyé : '+e.message}});
+  }};
+}
+function _prepAttenteAjout(i){
+  var p=i.patient_id?gp(i.patient_id):null;if(i.patient_id&&!p)return {error:'patient_id inconnu'};
+  var name=p?_aPName(p):(String(i.nom||'').trim());if(!name)return {error:'patient_id ou nom requis'};
+  var phone=p?(p.phone||''):String(i.telephone||'').trim();
+  var motif=String(i.motif||'').trim().slice(0,80);
+  if((D.waitlist||[]).some(function(w){return w&&_aNorm(w.patientName)===_aNorm(name)&&String(w.motifLabel||'')===motif}))return {error:'Déjà sur la liste d\'attente.'};
+  return {label:'⏳ Liste d\'attente : ajouter '+name+(motif?' ('+motif+')':''),exec:function(){
+    if(!Array.isArray(D.waitlist))D.waitlist=[];
+    var item={patientName:name,patientPhone:phone,motifLabel:motif,addedDate:todayKey(),timestamp:new Date().toISOString()};
+    D.waitlist.push(item);_aSave();
+    return {ok:true,msg:'ajouté à la liste d\'attente',undo:[{op:'del_wait',ts:item.timestamp}]};
+  }};
+}
+function _prepAttenteRetrait(i){
+  var w=(D.waitlist||[]).find(function(x){return x&&x.timestamp===i.id});if(!w)return {error:'id inconnu : utilise liste_attente'};
+  return {label:'⏳ Liste d\'attente : retirer '+w.patientName+(w.motifLabel?' ('+w.motifLabel+')':''),exec:function(){
+    var it=(D.waitlist||[]).find(function(x){return x&&x.timestamp===i.id});if(!it)return {ok:false,msg:'déjà retiré'};
+    var snap=_aClone(it);D.waitlist=D.waitlist.filter(function(x){return x!==it});_aSave();
+    return {ok:true,msg:'retiré de la liste d\'attente',undo:[{op:'add_wait',item:snap}]};
+  }};
+}
+function _prepDefaire(i){
+  var e=_asstLog().find(function(x){return x.id===i.action_id});if(!e)return {error:'action_id inconnu : utilise journal_actions'};
+  if(e.status==='defait')return {error:'Cette action a déjà été défaite.'};
+  if(!e.undo||!e.undo.length)return {error:'Cette action ne peut pas être défaite ('+(e.note||'définitive')+').'};
+  var c=_asstUndoCheck(e);if(c.block.length)return {error:'Impossible de la défaire : '+c.block.join(' ; ')};
+  return {label:'↩️ Défaire : '+e.label,warnings:c.warn,noLog:true,exec:function(){var c2=_asstUndoCheck(e);if(c2.block.length)return {ok:false,msg:c2.block.join(' ; ')};_asstUndoApply(e);return {ok:true,msg:'action défaite'};}};
+}
+
+/* ─────────── journal : défaire / effacer ─────────── */
+function _asstUndoCheck(e){
+  var block=[],warn=[];
+  (e.undo||[]).forEach(function(op){
+    if(op.op==='del_ap'){var a=_aAp(op.id);if(!a)warn.push('le RDV n\'existe déjà plus');else if(a.billed)block.push('la séance a été facturée depuis');}
+    else if(op.op==='restore_ap'){if(_aAp(op.ap.id))warn.push('le RDV est déjà revenu');}
+    else if(op.op==='set'){
+      var o=op.kind==='pat'?gp(op.id):_aAp(op.id);
+      if(!o){block.push(op.kind==='pat'?'la fiche patient n\'existe plus':'le RDV n\'existe plus');return;}
+      var ch=Object.keys(op.after||{}).filter(function(k){var cur=o[k]===undefined?null:o[k];return JSON.stringify(cur)!==JSON.stringify(op.after[k])});
+      if(ch.length)warn.push('modifié depuis par ailleurs ('+ch.join(', ')+')');
+    }
+    else if(op.op==='del_pat'){if(!gp(op.id))warn.push('la fiche n\'existe déjà plus');else if((D.appointments||[]).some(function(a){return a&&a.patientId===op.id}))block.push('ce patient a maintenant des RDV');}
+  });
+  if(e.note)warn.push(e.note+' : pensez à le prévenir si besoin');
+  return {block:block,warn:warn};
+}
+function _asstUndoApply(e){
+  (e.undo||[]).slice().reverse().forEach(function(op){
+    if(op.op==='del_ap'){if(_aAp(op.id)){markApDeleted(op.id);D.appointments=D.appointments.filter(function(x){return x.id!==op.id});}}
+    else if(op.op==='restore_ap'){if(!_aAp(op.ap.id)){D.appointments.push(_aClone(op.ap));D.deletedApIds=(D.deletedApIds||[]).filter(function(x){return x&&x.id!==op.ap.id});}}
+    else if(op.op==='set'){
+      var o=op.kind==='pat'?gp(op.id):_aAp(op.id);if(!o)return;
+      Object.keys(op.before||{}).forEach(function(k){o[k]=_aClone(op.before[k])});
+      (op.absent||[]).forEach(function(k){delete o[k]});
+      if(op.kind==='ap'&&op.after&&op.after.cancelled===true&&!o.cancelled)o.restoredAt=Date.now();
+    }
+    else if(op.op==='del_pat'){if(gp(op.id)&&!(D.appointments||[]).some(function(a){return a&&a.patientId===op.id}))D.patients=D.patients.filter(function(p){return p.id!==op.id});}
+    else if(op.op==='del_wait'){D.waitlist=(D.waitlist||[]).filter(function(w){return w.timestamp!==op.ts});}
+    else if(op.op==='add_wait'){if(!Array.isArray(D.waitlist))D.waitlist=[];if(!D.waitlist.some(function(w){return w.timestamp===op.item.timestamp}))D.waitlist.push(_aClone(op.item));}
+  });
+  e.status='defait';e.undoneAt=Date.now();
+  _aSave(true);try{if(typeof rPats==='function')rPats();}catch(x){}
+}
+function asstUndo(id){
+  var e=_asstLog().find(function(x){return x.id===id});if(!e||e.status==='defait'||!e.undo||!e.undo.length)return;
+  var c=_asstUndoCheck(e);
+  if(c.block.length){alert('Impossible d\'annuler : '+c.block.join(' ; '));return;}
+  if(!confirm('Annuler cette action ?\n\n'+e.label+(c.warn.length?'\n\n⚠️ '+c.warn.join('\n⚠️ '):'')))return;
+  _asstUndoApply(e);toast('↩️ Action annulée');
+  ASST.ui.push({kind:'info',text:'↩️ Action annulée depuis le journal : '+e.label});
+  _asstNoteForModel('(Info : le kiné a annulé depuis le journal l\'action « '+e.label+' ».)');
+  secrRender();
+}
+function asstDelLog(id){
+  var e=_asstLog().find(function(x){return x.id===id});if(!e)return;
+  if(!confirm('Effacer cette ligne du journal ?\n\n'+e.label+'\n\n(Les données de l\'agenda ne changent pas ; l\'action ne pourra plus être annulée d\'ici.)'))return;
+  D.assistantLog=_asstLog().filter(function(x){return x.id!==id});sv();secrRender();
+}
+function asstClearLog(){
+  if(!_asstLog().length)return;
+  if(!confirm('Vider tout le journal de l\'assistant ('+_asstLog().length+' lignes) ?\n\nLes données de l\'agenda ne changent pas ; ces actions ne pourront plus être annulées d\'ici.'))return;
+  D.assistantLog=[];sv();secrRender();
+}
+/* une info pour l'IA, ajoutée au prochain message du kiné */
+function _asstNoteForModel(t){ASST.pendingNote=(ASST.pendingNote?ASST.pendingNote+'\n':'')+t;}
+
+/* ─────────── catalogue des outils ─────────── */
+var ASST_T={
+  chercher_patients:{info:function(i){return '🔎 Recherche : '+(i.texte||'')},run:function(i){var r=_aSearch(i.texte,Math.min(parseInt(i.limite,10)||6,10));if(!r.length)return {patients:[],message:'Aucun patient ne correspond à « '+(i.texte||'')+' ».',noms_proches:_aNear(i.texte)};return {patients:r.map(_aPOut),total:r.length};},
+    d:'Cherche des patients par nom et/ou prénom (orthographe approchée acceptée, utile en dictée vocale) ou par numéro de téléphone. Renvoie pour chacun : patient_id, âge, téléphone, dernière venue (jours_depuis_derniere_venue, depuis), prochain RDV (rdv_id), nombre de séances.',
+    s:{texte:{type:'string',description:'nom, prénom ou téléphone'},limite:{type:'integer'}},r:['texte']},
+  fiche_patient:{info:function(i){var p=gp(i.patient_id);return '🗂 Fiche : '+(p?_aPName(p):'?')},run:_asstPat,
+    d:'Fiche complète d\'un patient : coordonnées, notes, documents à fournir, tarif, facturation (non facturé), annulations, dernières séances et RDV à venir (avec rdv_id).',s:{patient_id:{type:'string'}},r:['patient_id']},
+  lister_rdv:{info:function(i){return '📋 RDV'+(i.du?' du '+_aDateS(i.du):'')+(i.au?' au '+_aDateS(i.au):'')},run:_asstList,
+    d:'Liste des RDV avec filtres. Sans dates : les 7 prochains jours, ou tout l\'historique si patient_id est donné. statut : actifs (défaut), annules, tous. type : rdv (défaut), absence, tous.',
+    s:{du:{type:'string',description:'AAAA-MM-JJ'},au:{type:'string',description:'AAAA-MM-JJ'},patient_id:{type:'string'},motif_id:{type:'string'},statut:{type:'string',enum:['actifs','annules','tous']},type:{type:'string',enum:['rdv','absence','tous']},facturee:{type:'boolean'},limite:{type:'integer'}},r:[]},
+  agenda_jour:{info:function(i){return '📅 Agenda du '+_aDateFr(i.date||'')},run:_asstDay,
+    d:'Agenda d\'une journée : RDV (avec rdv_id, patient, statut), absences, places encore libres, jour férié ou congés.',s:{date:{type:'string',description:'AAAA-MM-JJ'},jour:{type:'string',description:'jour de la semaine de cette date, en toutes lettres (ex. mercredi) : sert de contrôle'}},r:['date']},
+  places_libres:{info:function(i){return '🕒 Places libres'+(i.du?' à partir du '+_aDateS(i.du):'')},run:_asstFree,
+    d:'Créneaux libres selon les règles de l\'agenda (heures habituelles des motifs, places par créneau, pauses, absences, congés, fériés). Sans motif_id : tous les motifs. Période par défaut : 14 jours.',
+    s:{motif_id:{type:'string'},du:{type:'string',description:'AAAA-MM-JJ'},jour_du:{type:'string',description:'jour de la semaine de « du », en toutes lettres (contrôle)'},au:{type:'string',description:'AAAA-MM-JJ'},jours_semaine:{type:'array',items:{type:'integer'},description:'0=dimanche, 1=lundi … 6=samedi'},heure_min:{type:'string',description:'HH:MM'},heure_max:{type:'string',description:'HH:MM'},patient_id:{type:'string',description:'pour tenir compte des places réservées à ce patient'},exclure_rdv_id:{type:'string',description:'RDV que l\'on veut déplacer (sa place compte comme libre)'},limite:{type:'integer'}},r:[]},
+  statistiques:{info:function(){return '📊 Statistiques'},run:_asstStats,
+    d:'Chiffres du cabinet sur une période (défaut : mois en cours jusqu\'à aujourd\'hui) : séances effectuées, annulations, absences, facturation, reste à facturer, nouveaux patients, répartition par motif, patients les plus vus.',s:{du:{type:'string'},au:{type:'string'}},r:[]},
+  liste_patients:{info:function(i){return '👥 Patients'+(i.filtre&&i.filtre!=='tous'?' : '+String(i.filtre).replace(/_/g,' '):'')},run:_asstPatList,
+    d:'Liste de patients selon un filtre : inactifs (pas venus depuis au moins jours_min jours et sans RDV à venir — pour les relances), jamais_venus, ordonnance_a_fournir, mutuelle_a_fournir, carte_vitale_a_fournir, non_factures (séances passées non facturées), nouveaux (fiches créées depuis jours_min jours), sans_telephone, tous.',
+    s:{filtre:{type:'string',enum:['inactifs','jamais_venus','ordonnance_a_fournir','mutuelle_a_fournir','carte_vitale_a_fournir','non_factures','nouveaux','sans_telephone','tous']},jours_min:{type:'integer',description:'défaut 60'},limite:{type:'integer'}},r:['filtre']},
+  liste_attente:{info:function(){return '⏳ Liste d\'attente'},run:_asstWait,d:'Patients inscrits sur la liste d\'attente (avec id).',s:{},r:[]},
+  messages_patient:{info:function(i){var p=gp(i.patient_id);return '💬 Messages de '+(p?_aPName(p):'?')},run:_asstMsgs,
+    d:'Derniers messages échangés avec un patient : SMS (secrétaire) et messagerie de l\'appli patient.',s:{patient_id:{type:'string'}},r:['patient_id']},
+  journal_actions:{info:function(){return '📜 Journal'},run:_asstJ,d:'Dernières actions faites par l\'assistant (action_id, annulable ou non).',s:{limite:{type:'integer'}},r:[]},
+  afficher_jour:{info:function(i){return '👀 Affichage du '+_aDateFr(i.date||'')},run:function(i){var k=_aKey(i.date);if(!k)return {erreur:'date invalide'};cD=new Date(k+'T00:00:00');try{R();}catch(e){}setTimeout(function(){clM('mSECR');toast('📅 '+_aDateFr(k));},900);return {resultat:'agenda affiché'};},
+    d:'Affiche à l\'écran l\'agenda de ce jour (ferme l\'assistant). Seulement si le kiné demande à VOIR l\'agenda.',s:{date:{type:'string',description:'AAAA-MM-JJ'}},r:['date']},
+  creer_rdv:{w:1,prep:_prepCreerRdv,d:'Crée un RDV pour un patient ayant une fiche (sinon crée d\'abord la fiche avec creer_patient). L\'appli vérifie la place et affiche les alertes au kiné.',
+    s:{patient_id:{type:'string'},motif_id:{type:'string'},date:{type:'string',description:'AAAA-MM-JJ'},jour:{type:'string',description:'jour de la semaine de cette date, en toutes lettres (ex. mercredi) : sert de contrôle'},heure:{type:'string',description:'HH:MM'},duree:{type:'integer',description:'minutes (défaut : durée du motif)'},note:{type:'string'}},r:['patient_id','motif_id','date','jour','heure']},
+  deplacer_rdv:{w:1,prep:_prepDeplacer,d:'Déplace un RDV ou une absence (même séance, nouvelle date/heure). Le patient n\'est pas prévenu automatiquement.',
+    s:{rdv_id:{type:'string'},date:{type:'string',description:'AAAA-MM-JJ'},jour:{type:'string',description:'jour de la semaine de cette date, en toutes lettres (ex. mercredi) : sert de contrôle'},heure:{type:'string',description:'HH:MM'},duree:{type:'integer'}},r:['rdv_id','date','jour','heure']},
+  annuler_rdv:{w:1,prep:_prepAnnuler,d:'Annule un RDV (il reste visible barré et peut être rétabli). prevenir : « sms » (défaut si le patient a un numéro : message d\'annulation de l\'appli envoyé par SMS), « appli » (notification et message dans l\'appli patient) ou « non ».',
+    s:{rdv_id:{type:'string'},motif:{type:'string',description:'facultatif ; de préférence : Maladie/Problème de santé, Panne de Véhicule, Impossibilité Matérielle de se déplacer, Urgence Professionnelle, Urgence Personnelle — ou un texte court'},prevenir:{type:'string',enum:['sms','appli','non']},tutoyer:{type:'boolean'}},r:['rdv_id']},
+  retablir_rdv:{w:1,prep:_prepRetablir,d:'Rétablit un RDV annulé.',s:{rdv_id:{type:'string'}},r:['rdv_id']},
+  supprimer_rdv:{w:1,prep:_prepSupprimer,d:'Supprime définitivement un RDV, un bilan ou une absence (pour un RDV de patient, préférer annuler_rdv).',s:{rdv_id:{type:'string'}},r:['rdv_id']},
+  modifier_rdv:{w:1,prep:_prepModifierRdv,d:'Modifie une séance : note (remplace), ajouter_note, duree, motif_id, facturee (true = marquer facturée, false = non facturée), ajouter_bilan.',
+    s:{rdv_id:{type:'string'},note:{type:'string'},ajouter_note:{type:'string'},duree:{type:'integer'},motif_id:{type:'string'},facturee:{type:'boolean'},ajouter_bilan:{type:'boolean'}},r:['rdv_id']},
+  creer_absence:{w:1,prep:_prepAbsence,d:'Pose une absence qui bloque l\'agenda : journée entière (défaut) ou de heure_debut à heure_fin. Les RDV déjà pris ne sont PAS annulés (ils sont signalés).',
+    s:{date:{type:'string',description:'AAAA-MM-JJ'},jour:{type:'string',description:'jour de la semaine de cette date, en toutes lettres (ex. mercredi) : sert de contrôle'},journee_entiere:{type:'boolean'},heure_debut:{type:'string'},heure_fin:{type:'string'},libelle:{type:'string'}},r:['date']},
+  creer_patient:{w:1,prep:_prepCreerPatient,d:'Crée une fiche patient.',s:{nom:{type:'string'},prenom:{type:'string'},telephone:{type:'string'},date_naissance:{type:'string',description:'AAAA-MM-JJ'},notes:{type:'string'},tutoiement:{type:'boolean'}},r:['nom','prenom']},
+  modifier_patient:{w:1,prep:_prepModifierPatient,d:'Modifie une fiche patient (seulement les champs donnés).',
+    s:{patient_id:{type:'string'},nom:{type:'string'},prenom:{type:'string'},telephone:{type:'string'},autres_telephones:{type:'array',items:{type:'string'}},date_naissance:{type:'string'},notes:{type:'string',description:'remplace les notes'},ajouter_note:{type:'string'},tutoiement:{type:'boolean'},ordonnance_a_fournir:{type:'boolean'},mutuelle_a_fournir:{type:'boolean'},carte_vitale_a_fournir:{type:'boolean'},tarif_seance:{type:'number'},seances_prescrites:{type:'integer'}},r:['patient_id']},
+  envoyer_message:{w:1,prep:_prepMessage,d:'Envoie un message à un patient au nom du kiné. canal « sms » (défaut, envoyé par le téléphone du cabinet) ou « appli » (messagerie de l\'appli patient). Sans fiche : donner telephone.',
+    s:{patient_id:{type:'string'},telephone:{type:'string'},texte:{type:'string'},canal:{type:'string',enum:['sms','appli']}},r:['texte']},
+  liste_attente_ajouter:{w:1,prep:_prepAttenteAjout,d:'Inscrit un patient sur la liste d\'attente.',s:{patient_id:{type:'string'},nom:{type:'string'},telephone:{type:'string'},motif:{type:'string'}},r:[]},
+  liste_attente_retirer:{w:1,prep:_prepAttenteRetrait,d:'Retire quelqu\'un de la liste d\'attente.',s:{id:{type:'string',description:'id renvoyé par liste_attente'}},r:['id']},
+  defaire_action:{w:1,prep:_prepDefaire,d:'Défait une action précédente de l\'assistant (voir journal_actions).',s:{action_id:{type:'string'}},r:['action_id']}
+};
+function _asstToolDefs(){
+  if(ASST.defs)return ASST.defs;
+  ASST.defs=Object.keys(ASST_T).map(function(n){var t=ASST_T[n];return {name:n,description:t.d,input_schema:{type:'object',properties:t.s,required:t.r}}});
+  return ASST.defs;
+}
+
+/* ─────────── consignes de l'IA ─────────── */
+function _asstSystem(){
+  var t0=todayKey();
+  var key=t0+'|'+JSON.stringify([D.days,D.openings,(D.motifs||[]).map(function(m){return [m.id,m.label,m.duration,m.slots,m.times]}),D.futureAgenda&&D.futureAgenda.date,D.proName,D.vacationPeriods,(D.patients||[]).length]);
+  if(ASST.sys&&ASST.sysKey===key)return ASST.sys;
+  var pro=D.proName||'le kiné',L=[];
+  L.push('Tu es l\'assistant de '+pro+', masseur-kinésithérapeute, intégré à son application PhysioFlow Pro. Tu parles AU KINÉ lui-même (jamais aux patients), à l\'écrit ou à l\'oral.');
+  L.push('');
+  L.push('Ce que tu fais :');
+  L.push('- Répondre à ses questions sur les données du cabinet (agenda, patients, séances, facturation, messages, liste d\'attente), grâce aux outils de lecture.');
+  L.push('- Agir dans l\'appli exactement comme il le ferait avec les boutons : créer, déplacer, annuler, rétablir ou supprimer un RDV ; poser une absence ; modifier une séance (note, durée, motif, facturée, bilan) ; créer ou modifier une fiche patient ; envoyer un message à un patient (SMS ou appli patient) ; gérer la liste d\'attente ; défaire une de tes actions.');
+  L.push('Ce que tu ne fais pas : modifier les réglages, les motifs, les horaires, les tarifs généraux ou le code de l\'appli ; supprimer une fiche patient ; toucher aux sauvegardes. Dans ces cas, dis-lui en une phrase où le faire lui-même dans l\'appli.');
+  L.push('');
+  L.push('Méthode :');
+  L.push('0. Appelle directement les outils, sans annoncer ce que tu vas faire (« je cherche… ») : l\'appli montre déjà tes recherches.');
+  L.push('1. Identifie toujours le patient avec chercher_patients (ou le RDV avec lister_rdv / agenda_jour / fiche_patient) avant d\'agir. N\'utilise que les identifiants renvoyés par les outils (patient_id, rdv_id), jamais inventés.');
+  L.push('2. Plusieurs patients possibles : demande lequel en citant ce qui les distingue (prénom, âge, prochain RDV). Aucun : dis-le et cite les noms proches renvoyés.');
+  L.push('3. Pour trouver un créneau, utilise places_libres (avec exclure_rdv_id pour un déplacement). Si le kiné impose l\'horaire, appelle directement l\'outil d\'action : l\'appli vérifie la place et lui montre les alertes.');
+  L.push('4. Chaque modification est présentée au kiné sur une carte qu\'il confirme ou refuse avant qu\'elle soit faite. Donc ne pose JAMAIS de question de confirmation (« voulez-vous vraiment… ? », « je le fais ? ») : si la demande est claire, appelle l\'outil tout de suite. Ne pose une question que s\'il manque une information indispensable ou si plusieurs patients ou RDV correspondent. Plusieurs actions demandées ensemble : appelle tous les outils dans la même réponse.');
+  L.push('4 bis. « Le même jour », « même heure », « son RDV » se rapportent au RDV du patient dont on parle (s\'il n\'en a qu\'un à venir, c\'est celui-là).');
+  L.push('5. Résultat « REFUSÉ par le kiné » : ne recommence pas ; s\'il a dit autre chose, suis sa nouvelle indication.');
+  L.push('6. Après un déplacement ou un rétablissement, le patient n\'est pas prévenu : propose de lui envoyer un message.');
+  L.push('7. Messages aux patients : rédigés au nom du kiné, courts et polis, vouvoiement (tutoiement si la fiche l\'indique), signés « '+pro+' ». Jamais de mention d\'IA ni d\'assistant. SMS par défaut ; « appli » seulement si le kiné le demande.');
+  L.push('8. Chiffres et durées : reprends ceux des outils (jours_depuis_derniere_venue, depuis, totaux, montants) au lieu de calculer toi-même.');
+  L.push('9. N\'invente jamais une information absente des outils (ni heure, ni chiffre, ni menu de l\'appli). Pour dire quand, reprends le texte « quand » renvoyé par les outils. En cas de doute sur la demande, pose UNE question courte.');
+  L.push('10. Liste d\'attente : un patient peut y être inscrit même s\'il a déjà des RDV (il attend une place plus tôt ou en plus).');
+  L.push('11. Vouvoie toujours le kiné.');
+  L.push('');
+  L.push('Où le kiné fait lui-même ce qui ne t\'est pas permis (ne cite que ces chemins) :');
+  L.push('- horaires, jours travaillés, motifs (durées, places, heures) : bouton ⚙ Paramètres, rubriques « Mon agenda » et « Motifs de consultation » ;');
+  L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
+  L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
+  L.push('- supprimer une fiche patient : ouvrir la fiche du patient, bouton 🗑 en bas ; documents (ordonnance, photos) : fiche du patient, rubrique « Documents ».');
+  L.push('');
+  L.push('Style : français, vouvoiement du kiné, 1 à 3 phrases, sans markdown, sans astérisques, sans liste à puces (sauf si le kiné demande une liste). N\'écris JAMAIS d\'identifiant (rdv_id, patient_id, action_id, codes entre parenthèses) ni de date AAAA-MM-JJ : dates en toutes lettres (« jeudi 1er octobre à 10 h 30 »). Tes réponses peuvent être lues à voix haute.');
+  L.push('Dans les outils : dates AAAA-MM-JJ, heures HH:MM, et toujours le jour de la semaine correspondant (paramètre jour), lu dans le calendrier ci-dessous — ne calcule jamais une date de tête.');
+  L.push('');
+  L.push('Cabinet : '+(D.proName||'(nom non renseigné)')+'. Jours travaillés : '+sortDows(D.days||[]).map(function(d){return _A_DJ[d]}).join(', ')+'.');
+  var ops={};(D.openings||[]).forEach(function(o){(ops[o.day]=ops[o.day]||[]).push(o.start+'-'+o.end)});
+  L.push('Horaires : '+Object.keys(ops).map(Number).sort(function(a,b){return (a||7)-(b||7)}).map(function(d){return _A_DJ[d]+' '+ops[d].join(' et ')}).join(' ; ')+'.');
+  L.push('Motifs (motif_id — nom — durée — places par créneau — heures habituelles) :');
+  (D.motifs||[]).forEach(function(m){L.push('- '+m.id+' — '+m.label+' — '+m.duration+' min — '+(m.slots||1)+' place(s) — '+((m.times||[]).filter(Boolean).length?(m.times||[]).filter(Boolean).slice().sort().join(' '):'selon les horaires d\'ouverture'));});
+  if(D.futureAgenda&&D.futureAgenda.date&&Array.isArray(D.futureAgenda.motifs)){L.push('À partir du '+_aDateFr(D.futureAgenda.date)+', agenda futur : motifs '+D.futureAgenda.motifs.map(function(m){return m.id+' ('+m.label+', '+m.duration+' min)'}).join(', ')+'.');}
+  var vac=(D.vacationPeriods||[]).filter(function(v){return v&&v.to&&v.to>=t0});if(vac.length)L.push('Congés prévus : '+vac.map(function(v){return 'du '+_aDateFr(v.from)+' au '+_aDateFr(v.to)}).join(' ; ')+'.');
+  L.push('Tarif séance par défaut 18,20 € ; bilan '+String(D.bilanFee||30).replace('.',',')+' €. Patients enregistrés : '+(D.patients||[]).length+'.');
+  L.push('');
+  L.push('Calendrier (chaque ligne : jour = date) :');
+  var seen={};
+  for(var off=-14;off<=56;off++){
+    var dd=new Date(t0+'T00:00:00');dd.setDate(dd.getDate()+off);var kk=dk(dd),dw=dd.getDay(),tag='';
+    if(off===0)tag=' ← AUJOURD\'HUI';else if(off===1)tag=' ← demain (« '+_A_DJ[dw]+' »)';else if(off===2)tag=' ← après-demain (« '+_A_DJ[dw]+' »)';else if(off===-1)tag=' ← hier';
+    else if(off>0&&!seen[dw]){tag=' ← « '+_A_DJ[dw]+' » ou « '+_A_DJ[dw]+' prochain »';seen[dw]=1;}
+    else if(off>0&&seen[dw]===1){tag=' ← « '+_A_DJ[dw]+' en huit »';seen[dw]=2;}
+    if(off===1||off===2)seen[dw]=seen[dw]||1;
+    L.push(_A_DJ[dw]+' '+(dd.getDate()===1?'1er':dd.getDate())+' '+_A_MO[dd.getMonth()]+' '+dd.getFullYear()+' = '+kk+tag);
+  }
+  L.push('Aujourd\'hui : '+_aDateFr(t0)+' '+new Date().getFullYear()+' ('+t0+'). L\'heure exacte figure au début de chaque message du kiné.');
+  ASST.sys=L.join('\n');ASST.sysKey=key;
+  return ASST.sys;
+}
+
+/* ─────────── boucle de conversation ─────────── */
+function _asstTR(id,obj,err){var s;try{s=JSON.stringify(obj);}catch(e){s='{"erreur":"résultat illisible"}';}if(s.length>14000)s=s.slice(0,14000)+'…(tronqué)';var r={type:'tool_result',tool_use_id:id,content:s};if(err)r.is_error=true;return r;}
+function _asstTrim(){
+  var a=ASST.api,size=function(x){try{return JSON.stringify(x).length}catch(e){return 0}};
+  while((a.length>40||size(a)>240000)&&a.length>2){
+    var i=1;while(i<a.length&&!(a[i].role==='user'&&Array.isArray(a[i].content)&&!a[i].content.some(function(b){return b.type==='tool_result'})))i++;
+    if(i>=a.length-1)break;
+    a=a.slice(i);
+  }
+  ASST.api=a;return a;
+}
+function _asstRunTools(uses){
+  var results={},batch=[];
+  var chain=Promise.resolve();
+  uses.forEach(function(u){
+    chain=chain.then(function(){
+      var T=ASST_T[u.name],inp=(u.input&&typeof u.input==='object')?u.input:{};
+      if(!T){results[u.id]=_asstTR(u.id,{erreur:'outil inconnu'},true);return;}
+      if(!T.w){
+        try{if(T.info){ASST.ui.push({kind:'info',text:T.info(inp)});_asstRenderMsgs();}}catch(e){}
+        return Promise.resolve().then(function(){return T.run(inp)}).then(function(out){results[u.id]=_asstTR(u.id,out,!!(out&&out.erreur));},function(e){results[u.id]=_asstTR(u.id,{erreur:String(e&&e.message||e)},true);});
+      }
+      var pr;try{pr=T.prep(inp)||{error:'rien à faire'};}catch(e){console.error('[assistant]',e);pr={error:'erreur interne : '+(e&&e.message||e)};}
+      if(pr.error){results[u.id]=_asstTR(u.id,{erreur:pr.error},true);return;}
+      pr.use=u;pr.tool=u.name;pr.warnings=pr.warnings||[];batch.push(pr);
+    });
+  });
+  return chain.then(function(){
+    if(!batch.length)return;
+    var c=_asstCfg();
+    var need=c.confirm||batch.some(function(b){return b.irreversible||b.warnings.length||b.alwaysConfirm});
+    var ask=need?asstAskConfirm(batch):Promise.resolve({ok:true,checked:batch.map(function(){return true}),auto:true});
+    return ask.then(function(dec){
+      var grp='g'+uid(),seq=Promise.resolve();
+      batch.forEach(function(b,i){
+        seq=seq.then(function(){
+          if(!dec.ok||!dec.checked[i]){results[b.use.id]=_asstTR(b.use.id,{resultat:'REFUSÉ par le kiné : action non faite.'+(dec.comment?' Il a répondu : « '+dec.comment+' ». Si c\'est une nouvelle consigne claire (autre heure, autre jour…), applique-la tout de suite par un nouvel appel d\'outil, sans reposer de question.':' Ne la refais pas sans nouvelle demande.')});return;}
+          return Promise.resolve().then(function(){return b.exec()}).then(function(r){
+            r=r||{ok:false,msg:'rien'};
+            if(r.ok){
+              if(!b.noLog){_asstLog().push({id:'j'+uid(),at:Date.now(),groupe:grp,demande:ASST.lastDemande,label:b.label,tool:b.tool,status:'fait',undo:r.undo&&r.undo.length?r.undo:null,note:r.note||'',auto:!!dec.auto});if(D.assistantLog.length>300)D.assistantLog=D.assistantLog.slice(-300);}
+              results[b.use.id]=_asstTR(b.use.id,Object.assign({resultat:'FAIT : '+r.msg},r.ref||{}));
+              if(dec.auto)ASST.ui.push({kind:'info',text:'✅ '+b.label});
+            }else results[b.use.id]=_asstTR(b.use.id,{erreur:'Échec : '+r.msg},true);
+          },function(e){console.error('[assistant]',e);results[b.use.id]=_asstTR(b.use.id,{erreur:'Échec : '+(e&&e.message||e)},true);});
+        });
+      });
+      return seq.then(function(){sv();_asstRenderMsgs();});
+    });
+  }).then(function(){return uses.map(function(u){return results[u.id]||_asstTR(u.id,{erreur:'non traité'},true)});});
+}
+function asstAskConfirm(batch){
+  return new Promise(function(resolve){
+    var card={kind:'confirm',id:'c'+uid(),state:'wait',items:batch.map(function(b){return {label:b.label,details:b.details||'',warnings:b.warnings||[],irreversible:b.irreversible||''}}),checked:batch.map(function(){return true})};
+    card.resolve=function(ok,comment){
+      if(card.state!=='wait')return;
+      if(ok&&!card.checked.some(Boolean))ok=false;
+      card.state=ok?'ok':'no';ASST.confirm=null;_asstRenderMsgs();
+      resolve({ok:ok,checked:card.checked.slice(),comment:comment||''});
+    };
+    ASST.ui.push(card);ASST.confirm=card;_asstRenderMsgs();
+    if(ASST.voiceTurn&&_asstOpen()){
+      var n=card.items.length;
+      _asstSpeak((n>1?'Je vais faire '+n+' actions : ':'Je vais : ')+card.items.map(function(it){return _asstSpeechLabel(it.label)+(it.warnings.length?'. Attention : '+it.warnings.join(', '):'')}).join('. ')+'. Je confirme ?',function(){if(card.state==='wait'&&_asstOpen())asstListen();});
+    }
+  });
+}
+function asstConfirmResolve(ok,comment){if(ASST.confirm)ASST.confirm.resolve(ok,comment);}
+function asstCk(cid,i,v){var c=ASST.ui.find(function(x){return x.id===cid});if(c&&c.state==='wait')c.checked[i]=!!v;}
+
+function asstSubmit(){var el=document.getElementById('asstIn');var t=el?el.value:ASST.draft;ASST.draft='';if(el){el.value='';_asstGrow(el);}asstSend(t,false);}
+function asstStop(){ASST.abort=true;if(ASST.confirm)asstConfirmResolve(false);_asstStopSpeak();toast('⏹ Interrompu');}
+function asstSend(text,voice){
+  text=String(text||'').trim();if(!text)return;
+  if(ASST.confirm&&ASST.confirm.state==='wait'){ASST.ui.push({kind:'user',text:text,voice:!!voice});asstConfirmResolve(false,text);_asstRenderMsgs();return;}
+  if(ASST.busy)return;
+  if(!_secrCfg()){toast('Secrétaire non connecté');return;}
+  ASST.voiceTurn=!!voice;ASST.lastDemande=text.slice(0,200);ASST.abort=false;
+  ASST.ui.push({kind:'user',text:text,voice:!!voice});
+  var st=new Date(),head='['+_A_DJ[st.getDay()]+' '+dk(st)+' '+_aNowHm()+'] ';
+  var blocks=[];if(ASST.pendingNote){blocks.push({type:'text',text:ASST.pendingNote});ASST.pendingNote='';}
+  blocks.push({type:'text',text:head+text});
+  var last=ASST.api[ASST.api.length-1];
+  if(last&&last.role==='user'){if(typeof last.content==='string')last.content=[{type:'text',text:last.content}];last.content=last.content.concat(blocks);}
+  else ASST.api.push({role:'user',content:blocks});
+  ASST.busy=true;_asstRenderAll();
+  var finalTxt='',turn=0;
+  function step(){
+    if(ASST.abort||turn>=ASST_MAX_TURNS)return Promise.resolve();
+    turn++;
+    return secrApi('POST','assistant',{system:_asstSystem(),tools:_asstToolDefs(),messages:_asstTrim(),max_tokens:1200}).then(function(r){
+      if(r.calls){ASST.usage=Object.assign(ASST.usage||{},{today:r.calls,limit:r.limit});}
+      var content=(r.content||[]).filter(function(b){return b&&((b.type==='text'&&String(b.text||'').trim())||b.type==='tool_use')}).map(function(b){return b.type==='text'?{type:'text',text:b.text}:{type:'tool_use',id:b.id,name:b.name,input:b.input||{}}});
+      if(!content.length)content=[{type:'text',text:'…'}];
+      ASST.api.push({role:'assistant',content:content});
+      var txt=content.filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('\n').trim();
+      finalTxt=_asstClean(txt);
+      var uses=content.filter(function(b){return b.type==='tool_use'});
+      if(txt&&txt!=='…'){ASST.ui.push({kind:uses.length?'info':'ai',text:_asstClean(txt)});_asstRenderMsgs();}
+      if(!uses.length||ASST.abort)return;
+      return _asstRunTools(uses).then(function(res){ASST.api.push({role:'user',content:res});return step();});
+    });
+  }
+  step().catch(function(e){
+    var m=String(e&&e.message||e);
+    if(/Route inconnue/.test(m))m='Le secrétaire (serveur) n\'est pas encore à jour : déployez la version 96 pour utiliser l\'assistant.';
+    else if(/Failed to fetch|NetworkError|Load failed/i.test(m))m='Pas de connexion au secrétaire. Vérifiez internet puis réessayez.';
+    ASST.ui.push({kind:'err',text:m});finalTxt='';
+  }).then(function(){
+    var la=ASST.api[ASST.api.length-1];
+    if(la&&la.role==='assistant'&&Array.isArray(la.content)&&la.content.some(function(b){return b.type==='tool_use'}))
+      ASST.api.push({role:'user',content:la.content.filter(function(b){return b.type==='tool_use'}).map(function(b){return _asstTR(b.id,{erreur:'Interrompu par le kiné : rien n\'a été fait.'},true)})});
+    ASST.busy=false;_asstRenderAll();
+    var c=_asstCfg();
+    if(ASST.voiceTurn&&_asstOpen()){
+      if(c.speak&&finalTxt)_asstSpeak(finalTxt,function(){if(c.handsFree&&_asstOpen()&&!ASST.busy)asstListen();});
+      else if(c.handsFree)asstListen();
+    }
+  });
+}
+function asstNew(){
+  if(ASST.busy&&!ASST.confirm){toast('Attendez la fin de la réponse (ou ⏹)');return;}
+  if(ASST.confirm)asstConfirmResolve(false);
+  ASST.ui=[];ASST.api=[];ASST.pendingNote='';ASST.sys=null;_asstStopSpeak();asstStopListen();secrRender();
+}
+
+/* ─────────── voix : dictée (reconnaissance vocale) et lecture ─────────── */
+function _asstSR(){return window.SpeechRecognition||window.webkitSpeechRecognition||null;}
+function asstMic(){if(ASST.listening){asstStopListen();return;}ASST.noSpeech=0;asstListen();}
+function asstStopListen(){var r=ASST.rec;ASST.rec=null;ASST.listening=false;ASST.cancelVoice=true;if(r){try{r.abort();}catch(e){}}_asstMicUi();}
+function asstListen(){
+  var SR=_asstSR();
+  if(!SR){alert('La dictée vocale n\'est pas disponible sur ce navigateur. Utilisez Chrome (Android) ou écrivez votre demande.');return;}
+  if(ASST.listening)return;
+  _asstStopSpeak();
+  var r;try{r=new SR();}catch(e){alert('Micro indisponible : '+(e&&e.message||e));return;}
+  r.lang='fr-FR';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
+  var finalTxt='';ASST.cancelVoice=false;ASST.srErr=null;
+  r.onresult=function(e){var interim='';for(var i=e.resultIndex;i<e.results.length;i++){var tr=e.results[i][0].transcript;if(e.results[i].isFinal)finalTxt+=tr;else interim+=tr;}var inp=document.getElementById('asstIn');if(inp){inp.value=(finalTxt+' '+interim).replace(/\s+/g,' ').trim();_asstGrow(inp);}};
+  r.onerror=function(e){ASST.srErr=e&&e.error||'erreur';};
+  r.onend=function(){
+    if(ASST.rec===r)ASST.rec=null;ASST.listening=false;_asstMicUi();
+    var txt=finalTxt.replace(/\s+/g,' ').trim();
+    if(ASST.cancelVoice)return;
+    var inp=document.getElementById('asstIn');
+    if(txt){ASST.noSpeech=0;if(inp){inp.value='';_asstGrow(inp);}ASST.draft='';asstVoiceInput(txt);return;}
+    var er=ASST.srErr;
+    if(er==='not-allowed'||er==='service-not-allowed'){alert('🎤 Micro refusé : autorisez le micro pour PhysioFlow dans le navigateur.');return;}
+    if(er==='network'){toast('🎤 Dictée indisponible (pas de réseau)');return;}
+    if(_asstCfg().handsFree&&_asstOpen()&&(!er||er==='no-speech')&&++ASST.noSpeech<3)setTimeout(function(){if(_asstOpen()&&!ASST.listening&&!ASST.busy)asstListen();},250);
+  };
+  try{r.start();ASST.rec=r;ASST.listening=true;_asstMicUi();}catch(e){ASST.listening=false;_asstMicUi();}
+}
+function _asstYesNo(t){
+  var s=_aNorm(t);
+  if(/^(oui|ouais|ouai|ok|okay|d accord|dac|vas y|va y|allez y|confirme|je confirme|confirmer|c est bon|c est parfait|parfait|valide|je valide|go|yes|bien sur|exactement|affirmatif|tout a fait|super|nickel|fais le|fait le)\b/.test(s))return true;
+  if(/^(non|nan|pas|annule|annuler|stop|attends|attend|laisse|refuse|surtout pas|n annule|ne fais pas|arrete)\b/.test(s))return false;
+  return null;
+}
+function asstVoiceInput(txt){
+  if(ASST.confirm&&ASST.confirm.state==='wait'){
+    ASST.ui.push({kind:'user',text:txt,voice:true});
+    var yn=_asstYesNo(txt);
+    if(yn===true)asstConfirmResolve(true);else if(yn===false&&_aNorm(txt).split(' ').length<=3)asstConfirmResolve(false);else asstConfirmResolve(false,txt);
+    _asstRenderMsgs();return;
+  }
+  if(_asstCfg().handsFree&&/^(stop|termine|c est tout|merci c est tout|fin de la conversation|au revoir|arrete)\b/.test(_aNorm(txt))){
+    ASST.ui.push({kind:'user',text:txt,voice:true});ASST.ui.push({kind:'info',text:'🎧 Mains libres en pause (touchez 🎤 pour reprendre)'});_asstRenderMsgs();_asstSpeak('D\'accord.');return;
+  }
+  asstSend(txt,true);
+}
+var _asstVoiceCache=null;
+function _asstVoice(){
+  if(!('speechSynthesis' in window))return null;
+  if(_asstVoiceCache)return _asstVoiceCache;
+  var vs=speechSynthesis.getVoices()||[];
+  _asstVoiceCache=vs.find(function(v){return /^fr[-_]FR/i.test(v.lang)&&/google|natural|neural|premium|enhanced/i.test(v.name)})||vs.find(function(v){return /^fr[-_]FR/i.test(v.lang)})||vs.find(function(v){return /^fr/i.test(v.lang)})||null;
+  return _asstVoiceCache;
+}
+try{if('speechSynthesis' in window&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',function(){_asstVoiceCache=null;});}catch(e){}
+function _asstSpeechLabel(t){return String(t||'').replace(/\s*·\s*/g,', ').replace(/\s*→\s*/g,' vers ').replace(/—/g,',').trim();}
+var _A_DS={lun:'lundi',mar:'mardi',mer:'mercredi',jeu:'jeudi',ven:'vendredi',sam:'samedi',dim:'dimanche'};
+function _asstSpeechText(t){
+  return String(t||'').replace(/[*_#`>]/g,'').replace(/\((?:rdv|patient)_id[^)]*\)/gi,'')
+    .replace(/\b(lun|mar|mer|jeu|ven|sam|dim)\.\s*(\d{1,2})\/(\d{1,2})\b/g,function(m,j,d,mo){return _A_DS[j]+' '+(+d===1?'1er':+d)+' '+(_A_MO[(+mo)-1]||'')})
+    .replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g,function(m,d,mo,y){return (+d===1?'1er':+d)+' '+(_A_MO[(+mo)-1]||'')+' '+y})
+    .replace(/\b(\d{1,2}):(\d{2})\b/g,function(m,h,mi){return (+h)+' h'+(mi==='00'?'':' '+mi)})
+    .replace(/\b(\d{4})-(\d{2})-(\d{2})\b/g,function(m,y,mo,d){return (+d)+' '+_A_MO[(+mo)-1]})
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim();
+}
+function _asstSpeak(text,then){
+  var done=false,fin=function(){if(done)return;done=true;ASST.speaking=false;if(then)then();};
+  if(!('speechSynthesis' in window)){fin();return;}
+  var t=_asstSpeechText(text);if(!t){fin();return;}
+  try{
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';var v=_asstVoice();if(v)u.voice=v;u.rate=1.05;
+    u.onend=fin;u.onerror=fin;ASST.speaking=true;speechSynthesis.speak(u);
+    setTimeout(fin,Math.min(60000,1500+t.length*85)); /* filet : certains navigateurs n'annoncent pas la fin */
+  }catch(e){fin();}
+}
+function _asstStopSpeak(){try{if('speechSynthesis' in window)speechSynthesis.cancel();}catch(e){}ASST.speaking=false;}
+function _asstMicUi(){var b=document.getElementById('asstMic');if(b){b.classList.toggle('on',!!ASST.listening);b.title=ASST.listening?'Arrêter l\'écoute':'Parler';}}
+
+/* ─────────── affichage ─────────── */
+function _asstGrow(el){if(!el)return;el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function _asstClean(t){return String(t||'').replace(/\s*\((?:rdv_id|patient_id|action_id|id)\s*:?\s*[\w-]+\)/gi,'').replace(/\s*\((?:p|a|j|x|t)[0-9]{2,4}\)/g,'').replace(/\b(?:rdv_id|patient_id|action_id)\s*:?\s*[\w-]+,?\s*/gi,'').replace(/[ \t]{2,}/g,' ').trim();}
+function _asstFmt(t){return esc(t).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');}
+function _asstCardHtml(c){
+  var multi=c.items.length>1;
+  var h='<div class="asstcard'+(c.state!=='wait'?' done':'')+'"><div class="asstct">'+(c.state==='wait'?'✋ À confirmer'+(multi?' ('+c.items.length+' actions)':''):(c.state==='ok'?'✅ Confirmé':'✖ Refusé'))+'</div>';
+  c.items.forEach(function(it,i){
+    var box=(multi&&c.state==='wait')?'<input type="checkbox" '+(c.checked[i]?'checked':'')+' onchange="asstCk(\''+c.id+'\','+i+',this.checked)">':((multi&&c.state==='ok')?(c.checked[i]?'✔️':'—'):'');
+    h+='<div class="asstit">'+box+'<div><div>'+esc(it.label)+'</div>'+
+      it.warnings.map(function(w){return '<div class="secrnote">⚠️ '+esc(w)+'</div>'}).join('')+
+      (it.details?'<div class="secrin" style="font-size:12px;margin:4px 0">'+esc(it.details)+'</div>':'')+
+      (it.irreversible&&c.state==='wait'?'<div class="secrmeta" style="margin:2px 0 0">🔒 '+esc(it.irreversible)+'</div>':'')+'</div></div>';
+  });
+  if(c.state==='wait')h+='<div style="display:flex;gap:6px;margin-top:8px"><button class="btn bp" style="flex:2" onclick="asstConfirmResolve(true)">✅ Confirmer</button><button class="btn" style="flex:1" onclick="asstConfirmResolve(false)">✖ Refuser</button></div>';
+  return h+'</div>';
+}
+function _asstMsgsHtml(){
+  if(!ASST.ui.length){
+    var sug=['Qui vient demain ?','Depuis quand M. … n\'est pas venu ?','Trouve une place jeudi matin pour …','Combien de séances ce mois-ci ?','Pose une absence vendredi après-midi'];
+    return '<div class="asstinfo" style="margin-top:14px;font-size:12px;line-height:1.5">✨ Posez une question ou demandez une action, par écrit ou avec 🎤.<br>Rien n\'est modifié sans votre confirmation ; tout est consigné dans le 📜 journal.</div>'+
+      '<div class="asstsug">'+sug.map(function(s){return '<button onclick="asstSug(this)">'+esc(s)+'</button>'}).join('')+'</div>';
+  }
+  return ASST.ui.map(function(m){
+    if(m.kind==='user')return '<div class="secrb out kine">'+esc(m.text)+(m.voice?'<small>🎤</small>':'')+'</div>';
+    if(m.kind==='ai')return '<div class="secrb in">'+_asstFmt(m.text)+'</div>';
+    if(m.kind==='info')return '<div class="asstinfo">'+esc(m.text)+'</div>';
+    if(m.kind==='err')return '<div class="asstinfo err">⚠️ '+esc(m.text)+'</div>';
+    if(m.kind==='confirm')return _asstCardHtml(m);
+    return '';
+  }).join('')+((ASST.busy&&!ASST.confirm)?'<div class="asstinfo asstdots">● ● ●</div>':'');
+}
+function asstSug(b){var t=b.textContent,el=document.getElementById('asstIn');if(t.indexOf('…')<0){asstSend(t,false);return;}if(el){el.value=t.replace(' …','').replace('…','');ASST.draft=el.value;el.focus();try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}_asstGrow(el);}}
+function _asstScroll(){var el=document.getElementById('asstMsgs');if(el)el.scrollTop=el.scrollHeight;}
+function _asstRenderMsgs(){
+  var el=document.getElementById('asstMsgs');if(!el)return;
+  el.innerHTML=_asstMsgsHtml();_asstScroll();
+  var go=document.getElementById('asstGo');if(go){var stop=ASST.busy&&!ASST.confirm;go.textContent=stop?'⏹':'➤';go.title=stop?'Interrompre':'Envoyer';}
+  var us=document.getElementById('asstUse');if(us)us.innerHTML=_asstUseHtml();
+}
+function _asstRenderAll(){if(SECR.tab==='assistant'&&document.getElementById('asstMsgs'))_asstRenderMsgs();}
+function _asstUseHtml(){
+  var u=ASST.usage;if(!u)return '';
+  var m=String(u.model||''),lab=/haiku/.test(m)?'Claude Haiku 4.5':(/sonnet/.test(m)?'Claude Sonnet 5':(/opus/.test(m)?'Claude Opus 5.5':m));
+  return esc(lab)+(u.today!==undefined?' · '+u.today+' échange'+(u.today>1?'s':'')+' aujourd\'hui'+(u.limit?' / '+u.limit:''):'')+(u.monthUsd!==undefined?' · ce mois ≈ '+String(u.monthUsd).replace('.',',')+' $':'');
+}
+function asstView(v){ASST.view=v;secrRender();}
+function asstToggle(k){
+  var c=_asstCfg(),v=!c[k];
+  if(k==='confirm'&&!v&&!confirm('Faire les modifications simples sans vous les montrer d\'abord ?\n\nLes messages aux patients, les suppressions et tout ce qui déclenche une alerte resteront toujours à confirmer. Tout reste consigné et annulable dans le journal.'))return;
+  _asstSetCfg(k,v);
+  if(k==='speak'&&!v)_asstStopSpeak();
+  if(k==='handsFree'){if(v){toast('🎧 Mains libres : parlez après le signal');ASST.noSpeech=0;if(!ASST.busy)asstListen();}else asstStopListen();}
+  secrRender();
+}
+function asstHtml(){
+  if(!_secrCfg())return '<div class="secrcard" style="font-size:13px">Connectez d\'abord le secrétaire (onglet ⚙ Réglages) : l\'assistant passe par lui pour joindre l\'IA.</div>';
+  var c=_asstCfg(),n=_asstLog().length;
+  var h='<div class="asstbar">'+
+    '<button class="asstchip'+(ASST.view==='journal'?' on':'')+'" onclick="asstView(\''+(ASST.view==='journal'?'chat':'journal')+'\')">'+(ASST.view==='journal'?'💬 Conversation':'📜 Journal'+(n?' ('+n+')':''))+'</button>'+
+    '<button class="asstchip'+(c.speak?' on':'')+'" onclick="asstToggle(\'speak\')" title="Lire à voix haute les réponses aux demandes faites à l\'oral">'+(c.speak?'🔊':'🔇')+' Voix</button>'+
+    '<button class="asstchip'+(c.handsFree?' on':'')+'" onclick="asstToggle(\'handsFree\')" title="Conversation à l\'oral sans toucher l\'écran">🎧 Mains libres</button>'+
+    '<button class="asstchip'+(c.confirm?' on':'')+'" onclick="asstToggle(\'confirm\')" title="Vous montrer chaque modification avant de la faire">✋ Confirmer</button>'+
+    '<button class="asstchip" onclick="asstNew()" title="Nouvelle conversation">🆕</button></div>';
+  if(ASST.view==='journal')return h+asstJournalHtml();
+  var stop=ASST.busy&&!ASST.confirm;
+  h+='<div id="asstMsgs" class="asstmsgs">'+_asstMsgsHtml()+'</div>'+
+    '<div class="asstin"><textarea id="asstIn" rows="1" placeholder="Demandez… (ex : depuis quand M. Dupont n\'est pas venu ?)" oninput="ASST.draft=this.value;_asstGrow(this)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();asstSubmit()}">'+esc(ASST.draft)+'</textarea>'+
+    '<button id="asstMic" class="asstmic'+(ASST.listening?' on':'')+'" onclick="asstMic()" title="Parler">🎤</button>'+
+    '<button id="asstGo" class="btn bp asstgo" onclick="if(ASST.busy&&!ASST.confirm)asstStop();else asstSubmit()" title="'+(stop?'Interrompre':'Envoyer')+'">'+(stop?'⏹':'➤')+'</button></div>'+
+    '<div id="asstUse" class="asstuse">'+_asstUseHtml()+'</div>';
+  return h;
+}
+function asstJournalHtml(){
+  var L=_asstLog().slice().reverse();
+  if(!L.length)return '<div class="secrmeta" style="padding:10px 0">Aucune action pour l\'instant. Tout ce que l\'assistant modifie sera consigné ici, avec la possibilité de l\'annuler.</div>';
+  var h='<div class="secrmeta">'+L.length+' action'+(L.length>1?'s':'')+', les plus récentes en premier. ↩️ annule une action (si c\'est encore possible) · 🗑 efface la ligne du journal.</div>';
+  h+=L.map(function(e){
+    var when=new Date(e.at).toLocaleString('fr-FR',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    var tag=e.status==='defait'?'<span class="secrtag">↩️ annulée</span>':((e.undo&&e.undo.length)?'':'<span class="secrtag warn">définitive</span>');
+    return '<div class="asstj'+(e.status==='defait'?' undone':'')+'"><div class="asstjh"><span>'+esc(when)+(e.auto?' · sans confirmation':'')+'</span>'+tag+'</div>'+
+      '<div class="asstjl">'+esc(e.label)+'</div>'+
+      (e.demande?'<div class="secrmeta" style="margin:0">Demande : « '+esc(e.demande)+' »</div>':'')+
+      (e.note?'<div class="secrmeta" style="margin:0">🔒 '+esc(e.note)+'</div>':'')+
+      '<div class="asstjb">'+((e.status!=='defait'&&e.undo&&e.undo.length)?'<button class="btn bs" onclick="asstUndo(\''+e.id+'\')">↩️ Annuler</button>':'')+
+      '<button class="btn" onclick="asstDelLog(\''+e.id+'\')" title="Effacer du journal">🗑</button></div></div>';
+  }).join('');
+  return h+'<div style="text-align:right;margin-top:4px"><button class="secrlink" style="color:var(--text3)" onclick="asstClearLog()">Vider le journal</button></div>';
+}
+function _asstAfterRender(){if(SECR.tab!=='assistant'||ASST.view!=='chat')return;_asstScroll();var el=document.getElementById('asstIn');if(el)_asstGrow(el);}
+/* v96 — moteur de créneaux du secrétaire (mêmes règles que l'appli patient v66) */
+var PFENG=(function(){
+  var module={exports:{}};
+  (function(module){
+/* ═══════════════════════════════════════════════════════════════════
+   FICHIER GÉNÉRÉ — ne pas modifier à la main (tools/gen_engine.py).
+   Copie exacte des règles de créneaux de l'appli patient v66, pour que le
+   secrétaire propose EXACTEMENT les mêmes créneaux que l'appli patient.
+   ═══════════════════════════════════════════════════════════════════ */
+module.exports = function makePatientRules(CFG, APTS, who, opts) {
+  opts = opts || {};
+  /* Contexte normalement fourni par la page de l'appli patient */
+  var SEL = { motif: opts.motif || null, date: opts.date || null, time: null };
+  var window = {
+    _patientDelayDays: opts.delayDays || 0,
+    _reschedExtraOnly: !!opts.reschedExtraOnly,
+    _rescheduleOldApId: opts.rescheduleApId || null,
+    _pfForceNewPatient: !!opts.forceNew
+  };
+  var localStorage = {
+    getItem: function (k) {
+      if (k === 'pf_patient') return JSON.stringify({ phone: who.phone || '', lastName: who.lastName || '', firstName: who.firstName || '', extraPhones: who.extraPhones || [] });
+      if (k === 'pf_patientId') return who.patientId || '';
+      return null;
+    }
+  };
+var PM_START=13*60;
+var _brkSatCache={};
+var _frHolidayCache={};
+function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function t2m(t){var p=t.split(':').map(Number);return p[0]*60+(p[1]||0)}
+function m2t(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function _normPhoneMatch(ph){
+  ph=(ph||'').replace(/\D/g,'');
+  if(ph.indexOf('33')===0&&ph.length>9)ph=ph.substring(2);
+  if(ph.indexOf('0')===0)ph=ph.substring(1);
+  return ph;
+}
+function _extraLinksAt(dateKey){
+  var all=(CFG&&CFG.extraSlots)||{};
+  var list=all[dateKey];
+  return Array.isArray(list)?list:[];
+}
+function isExtraSlot(dateKey,time,motifId){
+  return _extraLinksAt(dateKey).some(function(x){return x&&x.time===time&&x.motifId===motifId});
+}
+function extraTakenForSlot(dateKey,srcMotifId,srcTime,dayApts){
+  var links=_extraLinksAt(dateKey);
+  if(!links.length)return 0;
+  var seen={},n=0;
+  links.forEach(function(x){
+    if(!x||x.srcMotifId!==srcMotifId||x.srcTime!==srcTime)return;
+    dayApts.forEach(function(a){
+      if(!a||seen[a.id])return;
+      if(a.motifId!==x.motifId||a.time!==x.time)return;
+      seen[a.id]=true;n++;
+    });
+  });
+  return n;
+}
+function extraTimeBusy(dateKey,time,dayApts){
+  var all=_extraLinksAt(dateKey).filter(function(x){return x&&x.time===time});
+  if(!all.length)return false;
+  var ids={};all.forEach(function(x){ids[x.motifId]=true});
+  return dayApts.some(function(a){return a&&a.time===time&&ids[a.motifId]});
+}
+function extraSlotOpen(dateKey,time,motifId,dayApts){
+  var links=_extraLinksAt(dateKey).filter(function(x){return x&&x.time===time&&x.motifId===motifId});
+  if(!links.length)return false;
+  /* une seule place par horaire : si un motif l'a prise, les autres ferment */
+  if(extraTimeBusy(dateKey,time,dayApts))return false;
+  return links.some(function(x){
+    var src=(CFG.motifs||[]).find(function(m){return m.id===x.srcMotifId});
+    if(!src)return false;
+    var max=parseInt((src.slotExceptions||{})[x.srcTime]||src.slots||1)||1;
+    /* seuil Y transmis par le kiné ; absent => max-1 (« tant que pas complet ») */
+    var lim=(x.maxTaken===undefined||x.maxTaken===null||x.maxTaken==='')?(max-1):parseInt(x.maxTaken);
+    if(isNaN(lim))lim=max-1;
+    if(lim<0)lim=0;
+    if(lim>max)lim=max;
+    var occ=dayApts.filter(function(a){return a.motifId===src.id&&a.time===x.srcTime}).length
+           +extraTakenForSlot(dateKey,src.id,x.srcTime,dayApts);
+    return occ<=lim;
+  });
+}
+function _halfOf(mins){return mins<PM_START?'am':'pm';}
+function _breakRanges(dateKey){
+  var all=(CFG&&CFG.breaks)||{};
+  var list=all[dateKey];
+  if(!Array.isArray(list))return [];
+  return list.map(function(b){
+    if(!b||!b.from||!b.to)return null;
+    var f=t2m(b.from),t=t2m(b.to);
+    return (t>f)?{f:f,t:t}:null;
+  }).filter(Boolean);
+}
+function _slotInsideBreak(dateKey,startMin,duration){
+  var ranges=_breakRanges(dateKey);
+  if(!ranges.length)return false;
+  var end=startMin+(duration||30);
+  return ranges.some(function(r){return startMin>=r.f && end<=r.t;});
+}
+function _motifTimesFor(dateKey,motif){
+  var times=(motif.times||[]).filter(Boolean).slice();
+  if(!times.length){
+    var dt=new Date(dateKey+'T00:00:00');
+    var dow=dt.getDay();
+    (CFG.openings||[]).filter(function(o){return o.day===dow}).forEach(function(o){
+      var s2=t2m(o.start),e2=t2m(o.end);
+      for(var m=s2;m+motif.duration<=e2;m+=motif.duration)times.push(m2t(m));
+    });
+  }
+  return times.sort(function(a,b){return t2m(a)-t2m(b)});
+}
+function _slotIsFull(motif,t,dayApts,slotEx,maxSlots){
+  var tm=t2m(t);
+  var thisMax=slotEx[t]||maxSlots;
+  var n=dayApts.filter(function(a){return a.motifId===motif.id&&a.time===t}).length;
+  if(n>=thisMax)return true;
+  var overlap=dayApts.some(function(a){
+    if(a.motifId===motif.id)return false;
+    if(motif.allowSimul&&a.motifId===motif.simulWith)return false;
+    var as=t2m(a.time),ae=as+(a.duration||30);
+    return tm<ae && (tm+(motif.duration||30))>as;
+  });
+  return overlap;
+}
+function _breakHalfSaturated(dateKey,motif,half,dayApts){
+  var ck=dateKey+'|'+motif.id+'|'+half+'|'+dayApts.length;
+  if(_brkSatCache[ck]!==undefined)return _brkSatCache[ck];
+  var maxSlots=motif.slots||1;
+  var slotEx=motif.slotExceptions||{};
+  var times=_motifTimesFor(dateKey,motif);
+  var anyFree=false;
+  for(var i=0;i<times.length;i++){
+    var t=times[i],tm=t2m(t);
+    if(_halfOf(tm)!==half)continue;
+    if(_slotInsideBreak(dateKey,tm,motif.duration))continue; /* on ignore le break lui-même */
+    if(!_slotIsFull(motif,t,dayApts,slotEx,maxSlots)){anyFree=true;break;}
+  }
+  var res=!anyFree;
+  _brkSatCache[ck]=res;
+  return res;
+}
+function slotBlockedByBreak(dateKey,t,motif,dayApts){
+  if(!motif)return false;
+  var tm=t2m(t);
+  if(!_slotInsideBreak(dateKey,tm,motif.duration))return false;
+  /* dans le break : on ne le rouvre que si la demi-journée est saturée ailleurs */
+  return !_breakHalfSaturated(dateKey,motif,_halfOf(tm),dayApts);
+}
+function _easterSunday(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,mm=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*mm+114)/31),da=((h+l-7*mm+114)%31)+1;return new Date(y,mo-1,da);}
+function _hkey(y,mo,da){return y+'-'+String(mo).padStart(2,'0')+'-'+String(da).padStart(2,'0');}
+function getFrenchHolidays(year){var H={};H[_hkey(year,1,1)]='Jour de l\'An';H[_hkey(year,5,1)]='Fête du Travail';H[_hkey(year,5,8)]='Victoire 1945';H[_hkey(year,7,14)]='Fête nationale';H[_hkey(year,8,15)]='Assomption';H[_hkey(year,11,1)]='Toussaint';H[_hkey(year,11,11)]='Armistice 1918';H[_hkey(year,12,25)]='Noël';var es=_easterSunday(year);function add(off,nm){var dd=new Date(es);dd.setDate(dd.getDate()+off);H[_hkey(dd.getFullYear(),dd.getMonth()+1,dd.getDate())]=nm;}add(1,'Lundi de Pâques');add(39,'Ascension');add(50,'Lundi de Pentecôte');return H;}
+function frenchHolidayName(dateKey){if(!dateKey||dateKey.length<10)return null;var y=parseInt(dateKey.slice(0,4));if(!y)return null;if(!_frHolidayCache[y])_frHolidayCache[y]=getFrenchHolidays(y);return _frHolidayCache[y][dateKey]||null;}
+function closedHolidayName(dateKey){var nm=frenchHolidayName(dateKey);if(!nm)return null;var open=(CFG&&CFG.openHolidays&&CFG.openHolidays[dateKey]);return open?null:nm;}
+function isDateHoliday(dateKey){
+  return APTS.some(function(a){
+    return a.date===dateKey&&!a.cancelled&&a.type==='absence'&&a.isHoliday;
+  });
+}
+function isDateAllDayAbsence(dateKey){
+  return APTS.some(function(a){
+    return a.date===dateKey&&!a.cancelled&&a.type==='absence'&&a.allDay;
+  });
+}
+function checkDateHasSlots(dateKey){
+  if(!SEL.motif)return true; /* Can't determine without motif */
+  if(closedHolidayName(dateKey))return false; /* Closed French holiday => no availability */
+  var motif=SEL.motif;
+  var maxSlots=motif.slots||1;
+  var slotEx=motif.slotExceptions||{};
+  var times=(motif.times||[]).filter(Boolean).slice();
+  if(!times.length){
+    var dt=new Date(dateKey+'T00:00:00');
+    var dow=dt.getDay();
+    var ops=(CFG.openings||[]).filter(function(o){return o.day===dow});
+    ops.forEach(function(o){
+      var s=t2m(o.start),e=t2m(o.end);
+      for(var m=s;m+motif.duration<=e;m+=motif.duration){times.push(m2t(m))}
+    });
+  }
+  var dayApts=APTS.filter(function(a){return a.date===dateKey&&!a.cancelled});
+  /* v63 — places supplémentaires encore offertes */
+  _extraLinksAt(dateKey).forEach(function(x){
+    if(!x||x.motifId!==motif.id)return;
+    if(times.indexOf(x.time)>=0)return;
+    if(extraSlotOpen(dateKey,x.time,motif.id,dayApts))times.push(x.time);
+  });
+  if(!times.length)return false;
+  _brkSatCache={}; /* v60 */
+  var freeCount=0;
+  for(var i=0;i<times.length;i++){
+    var t=times[i];var tm=t2m(t);
+    var thisMax=slotEx[t]||maxSlots;
+    var bookingsAtSlot=dayApts.filter(function(a){return a.motifId===motif.id&&a.time===t}).length;
+    bookingsAtSlot+=extraTakenForSlot(dateKey,motif.id,t,dayApts); /* v63 */
+    var generalOverlap=false;
+    if(!motif.allowSimul){
+      generalOverlap=dayApts.some(function(a){
+        if(a.motifId===motif.id)return false;
+        var as=t2m(a.time),ae=as+(a.duration||30);
+        var be=tm+(motif.duration||30);
+        return tm<ae&&be>as;
+      });
+    }
+    var _isX=isExtraSlot(dateKey,t,motif.id);
+    if(_isX){
+      var _sIds={};
+      _extraLinksAt(dateKey).forEach(function(x){
+        if(x&&x.time===t&&x.motifId===motif.id)_sIds[x.srcMotifId]=true;
+      });
+      generalOverlap=dayApts.some(function(a){
+        if(a.motifId===motif.id)return false;
+        if(_sIds[a.motifId])return false;
+        var as=t2m(a.time),ae=as+(a.duration||30);
+        return tm<ae && (tm+(motif.duration||30))>as;
+      });
+    }
+    /* v64 — même restriction pour le grisage du calendrier */
+    if(window._reschedExtraOnly&&window._rescheduleOldApId&&!_isX)continue;
+    if(bookingsAtSlot<thisMax&&!generalOverlap&&slotVisibleToMe(dateKey,t,motif.id)
+       &&!slotBlockedByBreak(dateKey,t,motif,dayApts))freeCount++;
+  }
+  return freeCount>0;
+}
+function getPatientUsualMinute(patientPhone){
+  if(!patientPhone||!APTS||!APTS.length)return null;
+  var normPh=patientPhone.replace(/\D/g,'');
+  if(normPh.startsWith('33')&&normPh.length>9)normPh=normPh.substring(2);
+  if(normPh.startsWith('0'))normPh=normPh.substring(1);
+  if(normPh.length<8)return null;
+  var past=APTS.filter(function(a){
+    if(a.cancelled||!a.patientPhone||!a.time)return false;
+    var aPh=a.patientPhone.replace(/\D/g,'');
+    if(aPh.startsWith('33')&&aPh.length>9)aPh=aPh.substring(2);
+    if(aPh.startsWith('0'))aPh=aPh.substring(1);
+    return aPh===normPh&&aPh.length>=8;
+  }).slice(-10);
+  if(past.length<2)return null;
+  var mins=past.map(function(a){return t2m(a.time)}).sort(function(a,b){return a-b});
+  return mins[Math.floor(mins.length/2)];
+}
+function applySingleSlotFilter(allTimes,dayApts,motif,usualMinute){
+  /* Only consider single-slot appointments as "walls" for adjacency */
+  var bookedMins=dayApts.filter(function(a){
+    var m2=CFG.motifs&&CFG.motifs.find(function(mx){return mx.id===a.motifId});
+    return (!m2||(m2.slots||1)<=1);
+  }).map(function(a){return t2m(a.time)});
+
+  if(!bookedMins.length)return allTimes; /* Empty day — show all */
+
+  var sortedMins=allTimes.map(t2m).sort(function(a,b){return a-b});
+
+  var filtered=allTimes.filter(function(t){
+    var tm=t2m(t);
+    /* Find min gap (in available empty slots) to any booked time */
+    var minGap=Infinity;
+    for(var i=0;i<bookedMins.length;i++){
+      var bm=bookedMins[i];
+      if(bm===tm){minGap=0;break;}
+      var lo=Math.min(tm,bm);var hi=Math.max(tm,bm);
+      /* Count available (not booked) slots strictly between tm and bm */
+      var between=sortedMins.filter(function(sm){
+        return sm>lo&&sm<hi&&!bookedMins.includes(sm);
+      }).length;
+      if(between<minGap)minGap=between;
+    }
+    /* Block only if exactly 1 empty slot sits between T and nearest booking */
+    return minGap!==1;
+  });
+
+  /* Patient habit safety net: if usual time is far from smart slots, include ±60 min window */
+  if(usualMinute!==null&&filtered.length<allTimes.length){
+    allTimes.forEach(function(t){
+      if(Math.abs(t2m(t)-usualMinute)<=60&&!filtered.includes(t)){
+        /* Still exclude if it creates the 1-gap problem with EVERY booked slot */
+        var tm=t2m(t);
+        var wouldIsolate=bookedMins.every(function(bm){
+          var lo=Math.min(tm,bm);var hi=Math.max(tm,bm);
+          var between=sortedMins.filter(function(sm){return sm>lo&&sm<hi&&!bookedMins.includes(sm)}).length;
+          return between===1;
+        });
+        if(!wouldIsolate)filtered.push(t);
+      }
+    });
+    filtered.sort(function(a,b){return t2m(a)-t2m(b)});
+  }
+
+  return filtered.length>0?filtered:allTimes;
+}
+function applyMultiSlotFilter(allTimes,motif,dayApts,slotEx,maxSlots,usualMinute){
+  var motifApts=dayApts.filter(function(a){return a.motifId===motif.id});
+  if(!motifApts.length)return allTimes; /* No bookings yet — show all */
+
+  var sortedTimes=allTimes.slice().sort(function(a,b){return t2m(a)-t2m(b)});
+  var slotInfo={};
+  sortedTimes.forEach(function(t){
+    var thisMax=slotEx[t]||maxSlots;
+    var count=motifApts.filter(function(a){return a.time===t}).length;
+    var remaining=thisMax-count;
+    slotInfo[t]={count:count,max:thisMax,remaining:remaining,full:remaining<=0,nearlyFull:remaining>0&&remaining<=2,partial:count>0&&remaining>0,empty:count===0};
+  });
+
+  /* Split into half-days: AM (before 13:00) and PM (13:00+) */
+  var midday=13*60;
+  var amTimes=sortedTimes.filter(function(t){return t2m(t)<midday});
+  var pmTimes=sortedTimes.filter(function(t){return t2m(t)>=midday});
+
+  function filterHalfDay(times){
+    return times.filter(function(t,idx){
+      var si=slotInfo[t];
+      if(!si)return true;
+      /* Always show partial or full slots (full blocked later by taken logic) */
+      if(!si.empty)return true;
+      /* This slot is empty — check adjacent slots in this half-day */
+      var prevT=idx>0?times[idx-1]:null;
+      var nextT=idx<times.length-1?times[idx+1]:null;
+      var prevInfo=prevT?slotInfo[prevT]:null;
+      var nextInfo=nextT?slotInfo[nextT]:null;
+      /* Rule 1: Hide if ANY adjacent is nearly full (1-2 places remaining) */
+      if(prevInfo&&prevInfo.nearlyFull)return false;
+      if(nextInfo&&nextInfo.nearlyFull)return false;
+      /* Rule 2: Hide if BOTH adjacent are partial (at least 1 booking on each) — NOT if only one is */
+      var prevPartial=!!(prevInfo&&prevInfo.partial);
+      var nextPartial=!!(nextInfo&&nextInfo.partial);
+      if(prevPartial&&nextPartial)return false;
+      /* Otherwise show */
+      return true;
+    });
+  }
+
+  var filtered=filterHalfDay(amTimes).concat(filterHalfDay(pmTimes));
+
+  /* Patient habit safety net */
+  if(usualMinute!==null&&filtered.length<sortedTimes.length){
+    sortedTimes.forEach(function(t){
+      if(!filtered.includes(t)&&Math.abs(t2m(t)-usualMinute)<=60){
+        filtered.push(t);
+      }
+    });
+    filtered.sort(function(a,b){return t2m(a)-t2m(b)});
+  }
+
+  return filtered.length>0?filtered:allTimes;
+}
+function applySmartDistrib(times,motif,dayApts,patientPhone){
+  var sd=CFG&&CFG.smartDistrib;
+  if(!sd||!sd.enabled)return times;
+
+  /* Check start date — empty fromDate means "always active" */
+  if(sd.fromDate&&SEL.date<sd.fromDate)return times;
+
+  var maxSlots=motif.slots||1;
+  /* Single-slot motifs: skip smart distrib entirely */
+  if(maxSlots<=1)return times;
+
+  /* Determine which motif list applies: future agenda or current */
+  var fa=CFG.futureAgenda;
+  var isFutureDate=fa&&fa.date&&SEL.date>=fa.date;
+  var activeMotifIds=isFutureDate
+    ?(sd.futureMotifIds&&sd.futureMotifIds.length>0?sd.futureMotifIds:null)
+    :(sd.motifIds&&sd.motifIds.length>0?sd.motifIds:null);
+
+  /* If a list is configured and this motif isn't in it, skip filtering */
+  if(activeMotifIds&&!activeMotifIds.includes(motif.id))return times;
+
+  var slotEx=motif.slotExceptions||{};
+  var usualMinute=getPatientUsualMinute(patientPhone);
+
+  return applyMultiSlotFilter(times,motif,dayApts,slotEx,maxSlots,usualMinute);
+}
+function slotVisibleToMe(dateKey,time,motifId){
+  var rules=(CFG&&CFG.slotVisibility)||{};
+  var r=rules[dateKey+'|'+time+'|'+motifId];
+  if(!r)return true; /* no rule => visible to everyone */
+  var myPh=getMyNormPhone();
+  var myName=getMyNormName();
+  var inList=false;
+  if(myPh&&myPh.length>=8&&r.phones&&r.phones.indexOf(myPh)>=0)inList=true;
+  if(!inList&&myName&&myName.length>2&&r.names&&r.names.length){
+    inList=r.names.some(function(n){return n&&(n===myName||myName.indexOf(n)>=0||n.indexOf(myName)>=0)});
+  }
+  if(r.mode==='except')return !inList; /* hidden for listed patients */
+  return inList; /* 'only' => visible only to listed patients */
+}
+function reschedMinHours(){
+  var r=CFG.bookingRules||{};
+  if(r.minHoursReschedule!==undefined&&r.minHoursReschedule!==null&&r.minHoursReschedule!=='')
+    return parseInt(r.minHoursReschedule)||0;
+  return (r.minHoursCancel===undefined)?24:(parseInt(r.minHoursCancel)||0);
+}
+function _hoursUntilApt(ap){
+  if(!ap||!ap.date||!ap.time)return Infinity;
+  var hh=parseInt(ap.time.split(':')[0]),mm=parseInt(ap.time.split(':')[1]||'0');
+  var ms=new Date(ap.date+'T00:00:00').getTime()+(hh*60+mm)*60000;
+  return (ms-Date.now())/3600000;
+}
+function _apSlotMax(ap){
+  var motif=(CFG.motifs||[]).find(function(m){return m.id===ap.motifId});
+  if(!motif)return 1;
+  return parseInt((motif.slotExceptions||{})[ap.time]||motif.slots||1)||1;
+}
+function _reschedEmptiesSlot(ap){
+  if(_apSlotMax(ap)<=1)return false; /* pas un créneau multi-places */
+  var dayApts=APTS.filter(function(a){return a&&!a.cancelled&&a.date===ap.date});
+  var others=dayApts.filter(function(a){
+    return a.motifId===ap.motifId&&a.time===ap.time&&a.id!==ap.id;
+  }).length;
+  /* une place supplémentaire prise occupe aussi ce créneau */
+  others+=extraTakenForSlot(ap.date,ap.motifId,ap.time,dayApts);
+  return others===0;
+}
+function _hasOpenExtraSlotFor(motifId){
+  var all=(CFG&&CFG.extraSlots)||{};
+  var keys=Object.keys(all);
+  if(!keys.length)return false;
+  var todayK=dk(new Date());
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];
+    if(k<todayK)continue;
+    var list=all[k]||[];
+    if(!list.some(function(x){return x&&x.motifId===motifId}))continue;
+    var dayApts=APTS.filter(function(a){return a&&!a.cancelled&&a.date===k});
+    for(var j=0;j<list.length;j++){
+      var x=list[j];
+      if(!x||x.motifId!==motifId)continue;
+      if(extraSlotOpen(k,x.time,motifId,dayApts))return true;
+    }
+  }
+  return false;
+}
+function _pfPatientIsKnown(){
+  if(window._pfForceNewPatient)return false;
+  var nums=[],m=getMyNormPhone();
+  if(m&&m.length>=8)nums.push(m);
+  try{var o=JSON.parse(localStorage.getItem('pf_patient')||'{}');(o.extraPhones||[]).forEach(function(ep){var n=_normPhoneMatch(ep);if(n.length>=8&&nums.indexOf(n)<0)nums.push(n);});}catch(e){}
+  if(!nums.length)return false;
+  var kp=(CFG&&CFG.knownPatients)||[];
+  if(kp.some(function(k){return k&&k.ph&&nums.indexOf(k.ph)>=0}))return true;
+  return (APTS||[]).some(function(a){if(!a||a.cancelled||!a.patientPhone)return false;var n=_normPhoneMatch(a.patientPhone);return n.length>=8&&nums.indexOf(n)>=0;});
+}
+function _pfMotifForMe(m,known){
+  var a=m&&m.audience;
+  return !a||a==='all'||(a==='new'&&!known)||(a==='known'&&known);
+}
+function findPatientsForPhone(phone){
+  if(!phone||!APTS||!APTS.length)return [];
+  var normPh=phone.replace(/[\s\-\.]/g,'').replace(/\D/g,'');
+  if(normPh.startsWith('33')&&normPh.length>9)normPh=normPh.substring(2);
+  if(normPh.startsWith('0'))normPh=normPh.substring(1);
+  if(normPh.length<8)return [];
+  var seen={};var patients=[];
+  APTS.forEach(function(a){
+    if(a.cancelled||!a.patientPhone||!a.patientName)return;
+    var aPh=(a.patientPhone||'').replace(/\D/g,'');
+    if(aPh.startsWith('33')&&aPh.length>9)aPh=aPh.substring(2);
+    if(aPh.startsWith('0'))aPh=aPh.substring(1);
+    if(aPh!==normPh||aPh.length<8)return;
+    /* Extract name parts */
+    var ln=(a.patientLastName||a.patientName.split(' ')[0]||'').trim().toUpperCase();
+    var fn=(a.patientFirstName||a.patientName.split(' ').slice(1).join(' ')||'').trim();
+    var key=(ln+' '+fn).toLowerCase();
+    if(!seen[key]&&ln){
+      seen[key]=true;
+      patients.push({lastName:ln,firstName:fn,patientId:a.patientId||''});
+    }
+  });
+  return patients;
+}
+  /* Identité du patient : son numéro (au lieu du champ de saisie de l'appli) */
+  function getMyNormPhone() { return _normPhoneMatch(who.phone || ''); }
+  function getMyNormName() { return ((who.lastName || '') + ' ' + (who.firstName || '')).trim().toLowerCase(); }
+  return {
+    SEL: SEL, window: window,
+    dk: dk, t2m: t2m, m2t: m2t, normPhone: _normPhoneMatch,
+    extraLinksAt: _extraLinksAt, isExtraSlot: isExtraSlot, extraTakenForSlot: extraTakenForSlot, extraSlotOpen: extraSlotOpen,
+    slotBlockedByBreak: slotBlockedByBreak, resetBreakCache: function () { _brkSatCache = {}; },
+    closedHolidayName: closedHolidayName, frenchHolidayName: frenchHolidayName,
+    isDateHoliday: isDateHoliday, isDateAllDayAbsence: isDateAllDayAbsence,
+    checkDateHasSlots: checkDateHasSlots, applySmartDistrib: applySmartDistrib, slotVisibleToMe: slotVisibleToMe,
+    reschedMinHours: reschedMinHours, hoursUntilApt: _hoursUntilApt, apSlotMax: _apSlotMax,
+    reschedEmptiesSlot: _reschedEmptiesSlot, hasOpenExtraSlotFor: _hasOpenExtraSlotFor,
+    patientIsKnown: _pfPatientIsKnown, motifForMe: _pfMotifForMe, findPatientsForPhone: findPatientsForPhone
+  };
+};
+module.exports.PATIENT_APP_VERSION = 66;
+
+  })(module);
+  var _mpr=module.exports,module2={exports:{}};
+  (function(module,require){
+/* ═══════════════════════════════════════════════════════════════════
+   Moteur de disponibilités du secrétaire.
+   Reproduit à l'identique ce que l'appli patient affiche (renderCal,
+   renderSlots, tryStartBooking, doBook) en s'appuyant sur la copie exacte
+   de ses règles (patient_rules.js). Aucune règle de créneau n'est
+   « inventée » ici : si l'appli patient ne propose pas un créneau, le
+   secrétaire ne le propose pas non plus.
+   ═══════════════════════════════════════════════════════════════════ */
+'use strict';
+const makePatientRules = require('./patient_rules');
+
+const DL = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+const MN = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+
+function normPhone(ph) {
+  ph = String(ph || '').replace(/\D/g, '');
+  if (ph.indexOf('33') === 0 && ph.length > 9) ph = ph.substring(2);
+  if (ph.indexOf('0') === 0) ph = ph.substring(1);
+  return ph;
+}
+/* Format national (06…) pour les numéros français : c'est le format des fiches
+   patients côté Pro, indispensable pour que l'appli Pro rattache le RDV au bon patient. */
+function displayPhone(raw) {
+  const d = String(raw || '').replace(/\D/g, '');
+  if (d.length === 11 && d.indexOf('33') === 0) return '0' + d.substring(2);
+  if (d.length === 10 && d[0] === '0') return d;
+  if (d.length === 9) return '0' + d;
+  return String(raw || '').trim();
+}
+function dateLabel(dateKey) {
+  const d = new Date(dateKey + 'T00:00:00');
+  return DL[d.getDay()] + ' ' + d.getDate() + ' ' + MN[d.getMonth()];
+}
+function startOfDay(d) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
+
+/**
+ * @param {object} CFG   physioflow/config (publié par l'appli Pro)
+ * @param {Array}  APTS  physioflow/appointments
+ * @param {object} who   {phone, lastName, firstName, extraPhones, patientId}
+ * @param {object} o     {now: Date, forceNew: bool}
+ */
+function createEngine(CFG, APTS, who, o) {
+  o = o || {};
+  CFG = CFG || {};
+  APTS = Array.isArray(APTS) ? APTS.filter(Boolean) : (APTS ? Object.values(APTS).filter(Boolean) : []);
+  who = who || {};
+  const nowFn = () => (o.now ? new Date(o.now) : new Date());
+  const base = makePatientRules(CFG, APTS, who, { forceNew: !!o.forceNew });
+  const t2m = base.t2m, m2t = base.m2t, dk = base.dk;
+
+  /* ── Identité : patient connu ? (même logique que l'appli patient v66) ── */
+  function isKnown() { return base.patientIsKnown(); }
+
+  /* ── tryStartBooking : fermeture, refus des nouveaux patients, délai ── */
+  function eligibility() {
+    const res = { ok: true, delayDays: 0, known: isKnown(), inactive: false, reason: null };
+    const vac = CFG.vacationMode || {};
+    const todayK = dk(nowFn());
+    if (vac.enabled && todayK >= vac.from && todayK <= vac.to) {
+      res.ok = false; res.reason = 'vacation'; res.message = vac.msg || 'Le cabinet est fermé pour congés.'; return res;
+    }
+    const rules = CFG.bookingRules || {};
+    const needsCheck = !!(rules.refuseNewPatients || CFG.refuseNewPatients || rules.refuseNewTreatments || CFG.refuseNewTreatments || rules.delayNewPatients || CFG.delayNewPatients);
+    if (!needsCheck) return res;
+    const normPh = normPhone(who.phone);
+    const knownPats = CFG.knownPatients || [];
+    let known = knownPats.some(kp => kp && kp.ph && kp.ph === normPh);
+    const inactive = knownPats.some(kp => kp && kp.ph && kp.ph === normPh && kp.inactive);
+    if (!known) {
+      known = APTS.some(a => {
+        if (a.cancelled || !a.patientPhone) return false;
+        const aPh = normPhone(a.patientPhone);
+        return aPh === normPh && aPh.length >= 8;
+      });
+    }
+    const enteredName = ((who.lastName || '') + ' ' + (who.firstName || '')).trim().toLowerCase();
+    if (!known && enteredName.length > 4) {
+      known = knownPats.some(kp => kp && kp.name && (kp.name === enteredName || enteredName.indexOf(kp.name) >= 0 || kp.name.indexOf(enteredName) >= 0));
+    }
+    res.inactive = inactive;
+    if (rules.refuseNewPatients || CFG.refuseNewPatients) {
+      if (!known) { res.ok = false; res.reason = 'newPatient'; return res; }
+    }
+    if (rules.refuseNewTreatments || CFG.refuseNewTreatments) {
+      if (!known || inactive) {
+        const inactiveMonths = (rules.refuseInactiveMonths || CFG.refuseInactiveMonths || 3);
+        const cutoff = nowFn(); cutoff.setMonth(cutoff.getMonth() - inactiveMonths);
+        const cutoffKey = dk(cutoff);
+        const hasRecent = APTS.some(a => {
+          if (a.cancelled || !a.patientPhone) return false;
+          const aPh = normPhone(a.patientPhone);
+          return aPh === normPh && aPh.length >= 8 && a.date >= cutoffKey;
+        });
+        if (!hasRecent) { res.ok = false; res.reason = known ? 'newTreatment' : 'newPatient'; return res; }
+      }
+    }
+    if (rules.delayNewPatients || CFG.delayNewPatients) {
+      if (!known || inactive) res.delayDays = (rules.delayNewDays || CFG.delayNewDays || 14);
+    }
+    return res;
+  }
+
+  /* ── Motifs proposés à ce patient (renderMotifs) ── */
+  function visibleMotifs(useFuture) {
+    const fa = CFG.futureAgenda;
+    const src = (useFuture && fa && fa.motifs) ? fa.motifs : (CFG.motifs || []);
+    const known = isKnown();
+    return src.filter(m => m && !m.hiddenForPatient && base.motifForMe(m, known));
+  }
+  /* Motif effectif pour une date (bascule sur l'agenda futur comme l'appli patient) */
+  function motifForDate(motif, dateKey) {
+    if (!motif) return null;
+    const fa = CFG.futureAgenda;
+    if (fa && fa.date && fa.motifs && fa.motifs.length > 0 && dateKey >= fa.date) {
+      return fa.motifs.find(m => m.id === motif.id) || fa.motifs.find(m => m.label === motif.label) || null;
+    }
+    return (CFG.motifs || []).find(m => m.id === motif.id) || (CFG.motifs || []).find(m => m.label === motif.label) || motif;
+  }
+  function findMotif(idOrLabel) {
+    if (!idOrLabel) return null;
+    const all = (CFG.motifs || []).concat((CFG.futureAgenda && CFG.futureAgenda.motifs) || []);
+    const s = String(idOrLabel).toLowerCase();
+    return all.find(m => m.id === idOrLabel) || all.find(m => (m.label || '').toLowerCase() === s) || null;
+  }
+
+  /* ── renderCal : bornes de réservation ── */
+  function window_(delayDays) {
+    const rules = CFG.bookingRules || {};
+    const minH = rules.minHoursBefore || 2;
+    const maxD = rules.maxDaysAhead || 60;
+    const now = nowFn();
+    let minDate = new Date(now.getTime() + minH * 3600000);
+    if (delayDays > 0) {
+      const delayDate = new Date(now); delayDate.setDate(delayDate.getDate() + delayDays); delayDate.setHours(0, 0, 0, 0);
+      if (delayDate > minDate) minDate = delayDate;
+    }
+    const maxDate = new Date(now); maxDate.setDate(maxDate.getDate() + maxD);
+    let vac = CFG.vacationPeriods || [];
+    if (CFG.vacationMode && CFG.vacationMode.enabled && !vac.length) vac = [{ from: CFG.vacationMode.from, to: CFG.vacationMode.to, msg: CFG.vacationMode.msg }];
+    return { minH, minDate, maxDate, vac, today: startOfDay(now) };
+  }
+
+  /* Une date est-elle réservable pour ce motif ? (grisage + halo du calendrier) */
+  function dateOpen(dateKey, motif, ctx) {
+    ctx = ctx || {};
+    const w = window_(ctx.delayDays || 0);
+    const dt = new Date(dateKey + 'T00:00:00');
+    const ok = (CFG.days || []).indexOf(dt.getDay()) >= 0;
+    const tooSoon = dt < new Date(w.minDate.getFullYear(), w.minDate.getMonth(), w.minDate.getDate());
+    const tooLate = dt > w.maxDate;
+    const past = dt < w.today;
+    let onVacation = false;
+    w.vac.forEach(v => { if (v.from && v.to && dateKey >= v.from && dateKey <= v.to) onVacation = true; });
+    if (!ok || tooSoon || tooLate || past || onVacation) return false;
+    if (base.closedHolidayName(dateKey) || base.isDateHoliday(dateKey) || base.isDateAllDayAbsence(dateKey)) return false;
+    const r = makePatientRules(CFG, APTS, who, { forceNew: !!o.forceNew, motif: motif, date: dateKey, delayDays: ctx.delayDays || 0,
+      reschedExtraOnly: !!ctx.extraOnly, rescheduleApId: ctx.rescheduleApId || null });
+    return r.checkDateHasSlots(dateKey);
+  }
+
+  /* ── renderSlots : horaires affichés et horaires cliquables ── */
+  function slotsFor(dateKey, motif, ctx) {
+    ctx = ctx || {};
+    if (!motif) return [];
+    if (base.closedHolidayName(dateKey) || base.isDateHoliday(dateKey) || base.isDateAllDayAbsence(dateKey)) return [];
+    const r = makePatientRules(CFG, APTS, who, { forceNew: !!o.forceNew, motif: motif, date: dateKey, delayDays: ctx.delayDays || 0,
+      reschedExtraOnly: !!ctx.extraOnly, rescheduleApId: ctx.rescheduleApId || null });
+    const maxSlots = motif.slots || 1;
+    const slotEx = motif.slotExceptions || {};
+    let times = (motif.times || []).filter(Boolean).slice().sort((a, b) => t2m(a) - t2m(b));
+    if (!times.length) {
+      const dow = new Date(dateKey + 'T00:00:00').getDay();
+      (CFG.openings || []).filter(op => op.day === dow).forEach(op => {
+        const s = t2m(op.start), e = t2m(op.end);
+        for (let m = s; m + motif.duration <= e; m += motif.duration) times.push(m2t(m));
+      });
+    }
+    const rules = CFG.bookingRules || {};
+    const minH = rules.minHoursBefore || 2;
+    const minTime = new Date(nowFn().getTime() + minH * 3600000);
+    const selDate = new Date(dateKey + 'T00:00:00');
+    const dayApts = APTS.filter(a => {
+      if (a.date !== dateKey || a.cancelled) return false;
+      if (ctx.rescheduleApId && a.id === ctx.rescheduleApId) return false;
+      return true;
+    });
+    const candidates = times.slice();
+    times = r.applySmartDistrib(times, motif, dayApts, who.phone || '');
+    candidates.forEach(t => { if (times.indexOf(t) < 0 && !r.slotVisibleToMe(dateKey, t, motif.id)) times.push(t); });
+    r.extraLinksAt(dateKey).forEach(x => {
+      if (!x || x.motifId !== motif.id) return;
+      if (times.indexOf(x.time) >= 0) return;
+      if (r.extraSlotOpen(dateKey, x.time, motif.id, dayApts)) times.push(x.time);
+    });
+    times.sort((a, b) => t2m(a) - t2m(b));
+    r.resetBreakCache();
+    return times.map(t => {
+      const tm = t2m(t);
+      const thisMax = slotEx[t] || maxSlots;
+      let booked = dayApts.filter(a => a.motifId === motif.id && a.time === t).length;
+      booked += r.extraTakenForSlot(dateKey, motif.id, t, dayApts);
+      let overlap = false;
+      if (!motif.allowSimul) {
+        overlap = dayApts.some(a => {
+          if (a.motifId === motif.id) return false;
+          const as = t2m(a.time), ae = as + (a.duration || 30), be = tm + (motif.duration || 30);
+          return tm < ae && be > as;
+        });
+      } else {
+        overlap = dayApts.some(a => {
+          if (a.motifId === motif.id) return false;
+          if (a.motifId === motif.simulWith) return false;
+          const as = t2m(a.time), ae = as + (a.duration || 30), be = tm + (motif.duration || 30);
+          return tm < ae && be > as;
+        });
+      }
+      const hidden = !r.slotVisibleToMe(dateKey, t, motif.id);
+      const brk = r.slotBlockedByBreak(dateKey, t, motif, dayApts);
+      const isExtra = r.isExtraSlot(dateKey, t, motif.id);
+      if (isExtra) {
+        const srcIds = {};
+        r.extraLinksAt(dateKey).forEach(x => { if (x && x.time === t && x.motifId === motif.id) srcIds[x.srcMotifId] = true; });
+        overlap = dayApts.some(a => {
+          if (a.motifId === motif.id) return false;
+          if (srcIds[a.motifId]) return false;
+          const as = t2m(a.time), ae = as + (a.duration || 30);
+          return tm < ae && (tm + (motif.duration || 30)) > as;
+        });
+      }
+      const restrictedOut = !!(ctx.extraOnly && ctx.rescheduleApId && !isExtra);
+      const taken = booked >= thisMax || overlap || hidden || brk || restrictedOut;
+      const slotDate = new Date(selDate); slotDate.setHours(Math.floor(tm / 60), tm % 60, 0, 0);
+      const tooSoon = slotDate < minTime;
+      return { time: t, free: !(taken || tooSoon), remaining: Math.max(0, thisMax - booked), max: thisMax, extra: isExtra };
+    });
+  }
+
+  /* ── Recherche de créneaux libres pour le secrétaire ── */
+  function findSlots(q) {
+    q = q || {};
+    const elig = eligibility();
+    if (!elig.ok) return { ok: false, reason: elig.reason, message: elig.message || null, slots: [] };
+    let motif = q.motifId ? findMotif(q.motifId) : null;
+    if (!motif) return { ok: false, reason: 'motif_inconnu', slots: [] };
+    const allowed = visibleMotifs(false).concat(visibleMotifs(true));
+    if (!q.rescheduleApId && !allowed.some(m => m.id === motif.id || m.label === motif.label)) {
+      return { ok: false, reason: 'motif_non_propose', slots: [] };
+    }
+    const w = window_(elig.delayDays);
+    const from = q.from ? new Date(q.from + 'T00:00:00') : startOfDay(nowFn());
+    let to = q.to ? new Date(q.to + 'T00:00:00') : new Date(w.maxDate);
+    if (to > w.maxDate) to = new Date(w.maxDate);
+    if (q.maxDate) { const md = new Date(q.maxDate + 'T00:00:00'); md.setDate(md.getDate() - 1); if (md < to) to = md; }
+    const dows = Array.isArray(q.weekdays) && q.weekdays.length ? q.weekdays : null;
+    const hMin = q.timeMin ? t2m(q.timeMin) : 0, hMax = q.timeMax ? t2m(q.timeMax) : 24 * 60;
+    const limit = Math.max(1, Math.min(q.limit || 8, 30));
+    const out = [];
+    for (let d = new Date(Math.max(from.getTime(), startOfDay(nowFn()).getTime())); d <= to && out.length < limit; d.setDate(d.getDate() + 1)) {
+      const k = dk(d);
+      if (dows && dows.indexOf(d.getDay()) < 0) continue;
+      const m = motifForDate(motif, k);
+      if (!m) continue;
+      const ctx = { delayDays: elig.delayDays, rescheduleApId: q.rescheduleApId || null, extraOnly: !!q.extraOnly };
+      if (!dateOpen(k, m, ctx)) continue;
+      const free = slotsFor(k, m, ctx).filter(s => s.free && t2m(s.time) >= hMin && t2m(s.time) <= hMax);
+      for (const s of free) {
+        out.push({ date: k, jour: dateLabel(k), heure: s.time, motifId: m.id, motif: m.label, duree: m.duration, placesRestantes: s.remaining });
+        if (out.length >= limit) break;
+      }
+    }
+    return { ok: true, slots: out, delayDays: elig.delayDays };
+  }
+
+  /* ── Vérification avant réservation (doBook + calendrier) ── */
+  function checkBookable(motifIdOrLabel, dateKey, time, ctx) {
+    ctx = ctx || {};
+    const elig = eligibility();
+    if (!elig.ok) return { ok: false, reason: elig.reason };
+    const m0 = findMotif(motifIdOrLabel);
+    const motif = motifForDate(m0, dateKey);
+    if (!motif) return { ok: false, reason: 'motif_inconnu' };
+    if (!ctx.rescheduleApId) {
+      const allowed = visibleMotifs(!!(CFG.futureAgenda && CFG.futureAgenda.date && dateKey >= CFG.futureAgenda.date));
+      if (!allowed.some(m => m.id === motif.id)) return { ok: false, reason: 'motif_non_propose' };
+    }
+    const c = { delayDays: elig.delayDays, rescheduleApId: ctx.rescheduleApId || null, extraOnly: !!ctx.extraOnly };
+    if (!dateOpen(dateKey, motif, c)) return { ok: false, reason: 'date_indisponible' };
+    const s = slotsFor(dateKey, motif, c).find(x => x.time === time);
+    if (!s) return { ok: false, reason: 'horaire_inexistant' };
+    if (!s.free) return { ok: false, reason: 'creneau_pris' };
+    return { ok: true, motif: motif };
+  }
+
+  /* ── Règles de décalage / annulation (appli patient) ── */
+  function rescheduleRule(ap) {
+    const minH = base.reschedMinHours();
+    if (minH <= 0) return { ok: true, extraOnly: false };
+    const left = base.hoursUntilApt(ap);
+    if (left >= minH) return { ok: true, extraOnly: false };
+    const br = CFG.bookingRules || {};
+    if (br.reschedFreeIfEmptiesSlot && base.reschedEmptiesSlot(ap)) return { ok: true, extraOnly: false };
+    if (br.reschedFreeToExtraSlot && base.apSlotMax(ap) <= 1 && base.hasOpenExtraSlotFor(ap.motifId)) return { ok: true, extraOnly: true };
+    return { ok: false, minHours: minH, hoursLeft: left };
+  }
+  function cancelRule(ap) {
+    const r = CFG.bookingRules || {};
+    const minH = r.minHoursCancel === undefined ? 24 : (parseInt(r.minHoursCancel) || 0);
+    const left = base.hoursUntilApt(ap);
+    return { ok: left >= minH, minHours: minH, hoursLeft: left };
+  }
+
+  /* ── RDV de ce patient (par numéro) ── */
+  function myAppointments(includePast) {
+    const nums = [normPhone(who.phone)].concat((who.extraPhones || []).map(normPhone)).filter(n => n.length >= 8);
+    const todayK = dk(nowFn());
+    return APTS.filter(a => a && a.patientPhone && nums.indexOf(normPhone(a.patientPhone)) >= 0 && a.type !== 'absence')
+      .filter(a => includePast || a.date >= todayK)
+      .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  }
+
+  return {
+    normPhone, displayPhone, dateLabel, t2m, m2t, dk,
+    isKnown, eligibility, visibleMotifs, motifForDate, findMotif,
+    dateOpen, slotsFor, findSlots, checkBookable, rescheduleRule, cancelRule, myAppointments,
+    rules: base, CFG, APTS
+  };
+}
+
+module.exports = { createEngine, normPhone, displayPhone, dateLabel };
+
+  })(module2,function(){return _mpr;});
+  return module2.exports;
+})();
+/* v96 — même objet que la configuration publiée par fbPush (lecture seule) */
+function _asstPublicCfg(){return {
+      days:D.days||[],
+      motifs:(D.motifs||[]).map(function(m){return{id:m.id,label:m.label,duration:m.duration,ci:m.ci,times:m.times||[],slots:m.slots||1,allowSimul:!!m.allowSimul,simulWith:m.simulWith||'',hiddenForPatient:!!m.hiddenForPatient,description:m.description||'',slotExceptions:m.slotExceptions||{},audience:(m.audience==='new'||m.audience==='known')?m.audience:'all'}}),
+      openings:D.openings||[],
+      startH:D.startH||8,
+      endH:D.endH||19,
+      bookingRules:_publicBookingRules(),
+      proPhone:D.proPhone||'',
+      proName:D.proName||'',
+      proPhoto:D.proPhoto||'',
+      refuseNewPatients:!!(D.bookingRules&&D.bookingRules.refuseNewPatients),
+      refuseNewTreatments:!!(D.bookingRules&&D.bookingRules.refuseNewTreatments),
+      refuseInactiveMonths:(D.bookingRules&&D.bookingRules.refuseInactiveMonths)||3,
+      delayNewPatients:!!(D.bookingRules&&D.bookingRules.delayNewPatients),
+      delayNewDays:(D.bookingRules&&D.bookingRules.delayNewDays)||14,
+      vacationMode:D.vacationMode||{enabled:false,from:'',to:'',msg:''},
+      vacationPeriods:D.vacationPeriods||[],
+      futureAgenda:D.futureAgenda||null,
+      waitlist:D.waitlist||[],
+      smartDistrib:D.smartDistrib||{enabled:false,motifIds:[],futureMotifIds:[],fromDate:''},
+      slotVisibility:buildSlotVisibilityPublic(),
+      breaks:buildBreaksPublic(),              /* v86 */
+      extraSlots:buildExtraSlotsPublic(),      /* v88 */
+      patientAlerts:buildPatientAlertsPublic(),/* v86 */
+      announcements:buildAnnouncementsPublic(),/* v87 */
+      openHolidays:D.openHolidays||{},
+      knownPatients:(D.patients||[]).map(function(p){
+        var ph=(p.phone||'').replace(/\D/g,'');
+        if(ph.startsWith('33')&&ph.length>9)ph=ph.substring(2);
+        if(ph.startsWith('0'))ph=ph.substring(1);
+        /* Compute inactive status dynamically (same logic as 💤 in patient list) */
+        var _inac=false;
+        var _futN=(D.appointments||[]).filter(function(a){return a.patientId===p.id&&!a.cancelled&&a.type!=='absence'&&a.date>=dk(new Date())}).length;
+        if(_futN===0){
+          var _inacMo=D.inactiveMonths||3;
+          var _lastApt='';
+          (D.appointments||[]).forEach(function(a){if(a.patientId===p.id&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date>_lastApt)_lastApt=a.date});
+          if(_lastApt){var _cutoff=new Date();_cutoff.setMonth(_cutoff.getMonth()-_inacMo);if(_lastApt<dk(_cutoff))_inac=true}
+          else _inac=true;
+        }
+        return{ph:ph,name:((p.lastName||'')+' '+(p.firstName||'')).trim().toLowerCase(),inactive:_inac}
+      }).filter(function(x){return x.ph.length>=8||x.name.length>2})
+    };}
 
 /* Orientation/resize: re-render agenda for optimal display */
 window.addEventListener('resize',function(){if(typeof R==='function')R()});
