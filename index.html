@@ -495,7 +495,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 102 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 102.1 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -13106,7 +13106,7 @@ function ngapStatusSeen(r,live){
   var errSeen=0;try{errSeen=parseInt(localStorage.getItem('pf_ngap_err')||'0',10)||0;}catch(e){}
   if(j&&!j.ok&&j.error&&j.at>(parseInt(D.ngapSeenAt,10)||0)&&j.at>errSeen){
     try{localStorage.setItem('pf_ngap_err',String(j.at));}catch(e){}
-    if(was||live)ngapError(j.error);
+    if(was||live)ngapError(j.error,j.diag);
     else toast('⚠️ NGAP : la dernière consultation a échoué (⚙ › Facturation)',6000);
     return;
   }
@@ -13148,9 +13148,11 @@ function ngapBusyModal(){
     '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
   opM('mM');
 }
-function ngapError(m){
+function ngapError(m,diag){
   var b=document.getElementById('mMB');document.getElementById('mMT').textContent='NGAP — consultation impossible';
+  NGAP.diag=diag||'';
   b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:10px">⚠️ '+esc(m)+'</div>'+
+    (diag?'<details style="margin-bottom:10px"><summary style="font-size:11px;color:var(--text2);cursor:pointer">Détails techniques (à transmettre en cas de souci)</summary><div style="font-size:10px;font-family:monospace;word-break:break-all;background:var(--bg);padding:6px;border-radius:6px;margin-top:4px">'+esc(diag)+'</div><button class="btn bs" style="font-size:11px;padding:4px 8px;margin-top:4px" onclick="try{navigator.clipboard.writeText(NGAP.diag);toast(\'Copié\')}catch(e){}">📋 Copier</button></details>':'')+
     (/Console Claude|recherche web/i.test(m)?'<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Sur <b>platform.claude.com</b> (compte Anthropic du secrétaire) : réglages de l\'organisation → autoriser la recherche web. Puis relancez l\'actualisation.</div>':'')+
     '<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button><button class="btn bp bw" onclick="ngapRefresh()">🔄 Réessayer</button></div>';
   opM('mM');
@@ -13254,6 +13256,10 @@ function ngapReview(doc){
   var h='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Consultée le '+esc(_ngDay(co))+' par le secrétaire IA · '+(R.acts||[]).length+' actes, '+(R.bilans||[]).length+' bilans'+(kv?' · lettre clé '+esc(String(kv.value).replace('.',','))+' €':'')+(doc.costUsd?' · coût ≈ '+String(doc.costUsd).replace('.',',')+' $':'')+'</div>';
   if(R.summary)h+='<div class="ngbox" style="font-size:12px;line-height:1.45;margin-bottom:10px">'+esc(R.summary)+'</div>';
   if(!cur)h+='<div style="font-size:12px;margin-bottom:8px">Première consultation : le référentiel sera enregistré, puis vous pourrez associer une cotation à chaque patient.</div>';
+  /* v102.1 — valeur de la lettre clé non trouvée par le secrétaire (et aucune connue) : le kiné la saisit */
+  NGAP.needKey=!(R.keys||[]).length&&!(cur&&cur.keys&&Object.keys(cur.keys).length);
+  if(NGAP.needKey)h+='<div class="ngbox" style="border-color:#e0a800;margin-bottom:10px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Valeur de la lettre clé à saisir</div><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Le secrétaire a trouvé les actes et leurs coefficients, mais pas la valeur en euros de la lettre clé (AMK et lettres clés descriptives). Indiquez-la : les tarifs en découlent.</div>'+
+    '<div class="fr"><div class="fg"><label>Métropole (€)</label><input id="ngKeyV" type="number" step="0.01" min="0.5" max="20" placeholder="ex. 2,21"></div><div class="fg"><label>Outre-mer (€, facultatif)</label><input id="ngKeyD" type="number" step="0.01" min="0.5" max="20"></div></div></div>';
   if(df.items.length){
     h+='<h4 style="margin:10px 0 6px">Changements ('+df.items.length+')</h4><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Chaque changement s\'applique à partir de sa date d\'effet (modifiable), pour tous les patients.</div>';
     df.items.forEach(function(it,i){
@@ -13281,6 +13287,12 @@ function ngapApplyReview(){
   if(!NGAP.doc)return;
   var bad=(NGAP.items||[]).filter(function(it){return !/^\d{4}-\d{2}-\d{2}$/.test(it.date||'')});
   if(bad.length){toast('Indiquez une date d\'effet pour chaque changement');return}
+  if(NGAP.needKey){
+    var kv=parseFloat(String((document.getElementById('ngKeyV')||{}).value||'').replace(',','.')),kd=parseFloat(String((document.getElementById('ngKeyD')||{}).value||'').replace(',','.'));
+    if(!(kv>=0.5&&kv<=20)){toast('Indiquez la valeur de la lettre clé (ex. 2,21)');var f=document.getElementById('ngKeyV');if(f)f.focus();return}
+    var kk={code:'AMK',label:'Lettre clé des actes de kinésithérapie (saisie par le kiné)',value:Math.round(kv*1000)/1000,history:[]};if(kd>=0.5&&kd<=20)kk.valueDom=Math.round(kd*1000)/1000;
+    NGAP.doc.ref.keys=[kk];
+  }
   var first=!D.ngap;
   D.ngap=ngapMerge(D.ngap||null,NGAP.doc,NGAP.items);
   D.ngapSeenAt=NGAP.doc.at;NGAP.pending=null;
