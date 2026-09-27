@@ -483,6 +483,10 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .ngcat{font-weight:700;font-size:12px;margin:10px 0 4px;color:var(--text2)}
 .ngbox{padding:10px;border:1px solid var(--border2);border-radius:10px;background:var(--bg);margin-top:8px}
 #noAct option{padding:3px 2px}
+.ngprog{height:10px;border-radius:6px;background:var(--border2);overflow:hidden;margin:2px 0 6px}
+.ngprogf{height:100%;background:linear-gradient(90deg,var(--accent),#4fb3a3);border-radius:6px;transition:width .8s ease}
+.ngprogl{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--text2)}
+.ngprogl span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -491,7 +495,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 100 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 102 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -13072,30 +13076,75 @@ function ngapCompact(){
   return {consultedOn:D.ngap.consultedOn||'',keys:Object.keys(D.ngap.keys||{}).map(function(c){var v=_ngVerAt(D.ngap.keys[c].versions,t);return {code:c,value:v?v.value:null}}).filter(function(k){return k.value}),
     acts:cur('acts'),bilans:cur('bilans'),supplements:cur('supplements')};
 }
+/* v100.2 — le bouton lance la consultation sur le serveur ; elle continue seule, même appli quittée.
+   L'appli suit son avancement quand elle est ouverte, et présente le résultat (à valider) dès qu'il est prêt. */
 function ngapRefresh(){
   if(!_secrCfg()){toast('Connectez d\'abord le secrétaire IA (bouton 🤖)');return}
   if(NGAP.busy){ngapBusyModal();return}
-  NGAP.busy=true;NGAP.t0=Date.now();ngapBusyModal();
+  NGAP.busy=true;ngapBusyModal();
   secrApi('POST','ngap/refresh',{zone:D.ngapZone==='dom'?'dom':'metropole',current:ngapCompact()}).then(function(r){
-    NGAP.busy=false;ngapReview(r.ngap);
+    NGAP.t0=r.at||Date.now();NGAP.prog={pct:5,label:'Recherche des sources officielles…'};NGAP.off=0;ngapBusyModal();ngapWatch(0);
   },function(e){
     var m=String(e&&e.message||e);
-    if(/Failed to fetch|NetworkError|Load failed|network|déjà en cours|Erreur 50[34]/i.test(m))return ngapPoll(0,m);
+    if(/déjà en cours/i.test(m)){NGAP.t0=0;ngapBusyModal();ngapWatch(0);return;}
     NGAP.busy=false;ngapError(m);
   });
 }
-function ngapPoll(n,firstErr){
-  return secrApi('GET','ngap').then(function(r){
-    if(r.ngap&&r.ngap.at>=NGAP.t0-5000){NGAP.busy=false;ngapReview(r.ngap);return;}
-    if(r.job&&r.job.running&&n<45){setTimeout(function(){ngapPoll(n+1,firstErr)},10000);return;}
-    NGAP.busy=false;ngapError((r.job&&r.job.error)||firstErr||'La consultation n\'a pas abouti');
-  },function(){if(n<45){setTimeout(function(){ngapPoll(n+1,firstErr)},10000);}else{NGAP.busy=false;ngapError(firstErr);}});
+/* suivi, seulement pendant que l'appli est ouverte (la consultation, elle, ne dépend pas de l'appli) */
+function ngapWatch(n){
+  clearTimeout(NGAP.watchT);
+  NGAP.watchT=setTimeout(function(){
+    secrApi('GET','ngap').then(function(r){ngapStatusSeen(r,true);if(NGAP.busy&&n<180)ngapWatch(n+1);},function(){if(n<180)ngapWatch(n+1);});
+  },n?5000:3000);
 }
+/* état lu sur le serveur : consultation en cours, résultat à valider, ou échec */
+function ngapStatusSeen(r,live){
+  var j=r&&r.job,doc=r&&r.ngap;
+  if(j&&j.running){NGAP.busy=true;NGAP.t0=j.at||NGAP.t0||0;NGAP.prog=j.progress||NGAP.prog||null;if(j.now)NGAP.off=j.now-Date.now();ngapProgPaint();return;}
+  var was=NGAP.busy;NGAP.busy=false;
+  NGAP.pending=(doc&&doc.at>(parseInt(D.ngapSeenAt,10)||0))?doc:null;
+  var errSeen=0;try{errSeen=parseInt(localStorage.getItem('pf_ngap_err')||'0',10)||0;}catch(e){}
+  if(j&&!j.ok&&j.error&&j.at>(parseInt(D.ngapSeenAt,10)||0)&&j.at>errSeen){
+    try{localStorage.setItem('pf_ngap_err',String(j.at));}catch(e){}
+    if(was||live)ngapError(j.error);
+    else toast('⚠️ NGAP : la dernière consultation a échoué (⚙ › Facturation)',6000);
+    return;
+  }
+  if(NGAP.pending){
+    if(was)ngapReview(NGAP.pending);
+    else toast('🔎 NGAP consultée par le secrétaire : touchez ici pour valider',9000,function(){ngapReview(NGAP.pending)});
+  }
+}
+/* au démarrage : une consultation lancée avant de quitter l'appli est reprise ici */
+function ngapStartup(){
+  if(!_secrCfg())return;
+  secrApi('GET','ngap').then(function(r){
+    ngapStatusSeen(r,false);
+    if(NGAP.busy)ngapWatch(1);
+  },function(){});
+}
+setTimeout(ngapStartup,5000);
+/* barre d'avancement : étape annoncée par le serveur + estimation d'après le temps écoulé (1 à 4 min) */
+function ngapProgPct(){
+  var p=(NGAP.prog&&NGAP.prog.pct)||0;
+  var el=NGAP.t0?Math.max(0,(Date.now()+(NGAP.off||0)-NGAP.t0)/1000):0;
+  var est=92*(1-Math.exp(-el/110));
+  return {pct:Math.min(97,Math.max(p,est,3)),el:el,label:(NGAP.prog&&NGAP.prog.label)||'Recherche en cours…'};
+}
+function ngapProgHtml(){
+  var x=ngapProgPct(),m=Math.floor(x.el/60),sec=Math.floor(x.el%60);
+  return '<div class="ngprog"><div class="ngprogf" style="width:'+x.pct.toFixed(1)+'%"></div></div>'+
+    '<div class="ngprogl"><span>⏳ '+esc(x.label)+'</span><span>'+Math.round(x.pct)+' % · '+m+':'+(sec<10?'0':'')+sec+'</span></div>';
+}
+function ngapProgPaint(){
+  document.querySelectorAll('.ngprogbox').forEach(function(el){el.innerHTML=ngapProgHtml();});
+}
+setInterval(function(){if(NGAP.busy&&document.querySelector('.ngprogbox'))ngapProgPaint();},1000);
 function ngapBusyModal(){
   var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔎 NGAP — consultation en cours';
   b.innerHTML='<div style="font-size:13px;line-height:1.5">Le secrétaire IA recherche la NGAP des actes de kinésithérapie en vigueur (ameli.fr, Journal officiel, sources professionnelles) et les évolutions datées.</div>'+
-    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Cela prend en général <b>1 à 4 minutes</b>. Vous pouvez fermer cette fenêtre : le résultat vous sera présenté ici, pour validation, avant d\'être appliqué.</div>'+
-    '<div class="ngbox" style="font-size:12px">⏳ Recherche en cours…</div>'+
+    '<div class="ngbox ngprogbox" style="font-size:12px">'+ngapProgHtml()+'</div>'+
+    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Cela prend en général <b>1 à 4 minutes</b>. La recherche se fait sur le serveur : <b>vous pouvez quitter l\'appli</b>, elle continue. Une notification vous prévient à la fin, et le résultat vous est présenté ici, pour validation, avant d\'être appliqué.</div>'+
     '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
   opM('mM');
 }
@@ -13221,8 +13270,12 @@ function ngapReview(doc){
   if((R.doubts||[]).length)h+='<h4 style="margin:10px 0 6px">⚠️ À vérifier</h4>'+R.doubts.map(function(d){return '<div style="font-size:12px;margin-bottom:4px">• '+esc(d)+'</div>'}).join('');
   if((R.sources||[]).length)h+='<details style="margin:8px 0"><summary style="font-size:12px;cursor:pointer">Sources ('+R.sources.length+')</summary>'+R.sources.map(function(s){return '<div style="font-size:11px;margin:3px 0;word-break:break-all"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title||s.url)+'</a></div>'}).join('')+'</details>';
   h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances déjà facturées ne changent pas. Les séances non facturées sont recalculées selon la date de chaque changement. Vérifiez les points signalés : la cotation reste sous votre responsabilité.</div>'+
-    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button><button class="btn bp bw" onclick="ngapApplyReview()">✅ Appliquer</button></div>';
+    '<div class="br"><button class="btn" onclick="ngapDismiss()">Ne pas appliquer</button><button class="btn bp bw" onclick="ngapApplyReview()">✅ Appliquer</button></div>';
   b.innerHTML=h;opM('mM');
+}
+function ngapDismiss(){
+  if(NGAP.doc){D.ngapSeenAt=NGAP.doc.at;NGAP.pending=null;sv();}
+  NGAP.doc=null;clM('mM');toast('Résultat non appliqué (vous pourrez relancer une consultation)');
 }
 function ngapApplyReview(){
   if(!NGAP.doc)return;
@@ -13230,6 +13283,7 @@ function ngapApplyReview(){
   if(bad.length){toast('Indiquez une date d\'effet pour chaque changement');return}
   var first=!D.ngap;
   D.ngap=ngapMerge(D.ngap||null,NGAP.doc,NGAP.items);
+  D.ngapSeenAt=NGAP.doc.at;NGAP.pending=null;
   NGAP.doc=null;invalidateBillCache();sv();R();cvPlanSoon();
   toast('✅ NGAP appliquée'+((NGAP.items||[]).length?' : '+NGAP.items.length+' changement(s) daté(s)':''),3500);
   /* après la toute première consultation : associer une cotation à chaque patient */
@@ -13495,7 +13549,10 @@ function ngapSettingsHtml(){
   h+='<div class="fr"><div class="fg"><label>Zone</label><select id="sNgapZone" onchange="D.ngapZone=this.value;if(D.ngap)D.ngap.zone=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')"><option value="metropole"'+(D.ngapZone!=='dom'?' selected':'')+'>Métropole</option><option value="dom"'+(D.ngapZone==='dom'?' selected':'')+'>Outre-mer (DOM)</option></select></div>';
   if(has)h+='<div class="fg"><label>🅱️ Bilan par défaut</label><select id="sBilanType" onchange="D.bilanType=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')">'+(D.ngap.bilans||[]).map(function(x){var v=_ngVerAt(x.versions,t)||{},pr=ngapPrice('bilans',x.id,t);return '<option value="'+esc(x.type||'autre')+'"'+((D.bilanType||'general')===x.type?' selected':'')+'>'+esc(x.label+' · '+(v.code||'')+' '+_ngC(v.coef||0)+(pr!==null?' · '+money(pr):''))+'</option>'}).join('')+'</select></div>';
   else h+='<div class="fg"><label>🅱️ Montant des bilans (€)</label><input id="sBilanFee" type="number" step="0.01" value="'+(Number(D.bilanFee||0).toFixed(2))+'" onchange="setBilanFee(this.value)"></div>';
-  h+='</div><div class="cvbar"><button class="btn bp" onclick="ngapRefresh()">🔄 '+(has?'Actualiser':'Consulter')+' la NGAP</button>'+(has?'<button class="btn bs" onclick="ngapOpenActs()">📖 Actes</button><button class="btn bs" onclick="ngapOpenPatients(false)">👥 Cotations des patients</button>':'')+'</div>';
+  if(NGAP.busy)h+='</div><div class="ngbox ngprogbox" style="font-size:12px">'+ngapProgHtml()+'</div><div style="font-size:11px;color:var(--text2);margin-top:4px">Consultation en cours sur le serveur : elle continue même appli quittée.</div><div class="cvbar">';
+  else if(NGAP.pending)h+='</div><div class="cvbar"><button class="btn bp" onclick="ngapReview(NGAP.pending)">📋 Résultat à valider</button>';
+  else h+='</div><div class="cvbar">';
+  h+=(NGAP.busy?'':'<button class="btn '+(NGAP.pending?'bs':'bp')+'" onclick="ngapRefresh()">🔄 '+(has?'Actualiser':'Consulter')+' la NGAP</button>')+(has?'<button class="btn bs" onclick="ngapOpenActs()">📖 Actes</button><button class="btn bs" onclick="ngapOpenPatients(false)">👥 Cotations des patients</button>':'')+'</div>';
   if(!_secrCfg())h+='<div style="font-size:11px;color:#c0392b">Secrétaire IA non connecté : consultation impossible.</div>';
   return h+'</div>';
 }
