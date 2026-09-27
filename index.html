@@ -462,6 +462,27 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .secrb.out{align-self:flex-end;background:#e2f3ef}.secrb.kine{background:#e5edfb}
 .secrb small{display:block;font-size:10px;color:var(--text3);margin-top:3px}
 .pdidel{flex-shrink:0;font-size:13px;line-height:1;padding:5px 7px;border-radius:8px;background:#fce0e8;color:#e74c3c}
+/* v100 — rappels carte Vitale (💵), NGAP, ordonnances */
+.cvrow{display:flex;align-items:flex-start;gap:8px;padding:8px;border:1px solid var(--border2);border-radius:10px;margin-bottom:6px;background:var(--bg);cursor:pointer}
+.cvrow.off{opacity:.6;cursor:default}
+.cvrow input[type=checkbox]{margin-top:3px;width:18px;height:18px;flex:none;accent-color:var(--accent)}
+.cvrow .cvm{flex:1;min-width:0}
+.cvn{font-weight:700;font-size:13px}
+.cvs{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.cvt{font-variant-numeric:tabular-nums;color:var(--text2);font-weight:600;margin-right:6px}
+.cvtag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;background:#e6f7ee;color:#1e8e3e;font-weight:600}
+.cvtag.w{background:#fff3cd;color:#8a6d00}
+.cvtag.r{background:#fce0e8;color:#c0392b}
+.cvprev{font-size:12px;color:var(--text);background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:8px;white-space:pre-wrap;margin:8px 0;line-height:1.45}
+.cvbar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}
+.cvbar .btn{font-size:11px;padding:5px 9px}
+.ngit{padding:8px;border:1px solid var(--border2);border-radius:10px;margin-bottom:6px;font-size:12px;background:var(--bg)}
+.ngit input[type=date]{font-size:12px;padding:2px 4px;border:1px solid var(--border);border-radius:6px}
+.ngact{display:flex;justify-content:space-between;gap:8px;padding:6px 4px;border-bottom:1px solid var(--border2);font-size:12px}
+.ngact b{white-space:nowrap;text-align:right}
+.ngcat{font-weight:700;font-size:12px;margin:10px 0 4px;color:var(--text2)}
+.ngbox{padding:10px;border:1px solid var(--border2);border-radius:10px;background:var(--bg);margin-top:8px}
+#noAct option{padding:3px 2px}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -470,13 +491,13 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 99 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 100 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
     <button class="ib" id="bL" onclick="togV('list')" title="Liste du jour">☰</button>
     <button class="ib" id="bP" onclick="togV('patients')" title="Patients">👥</button>
-    <button class="ib" onclick="reshuffleBills()" title="Changer la sélection 💵">💱</button>
+    <button class="ib" id="btnCv" onclick="openCvModal()" title="Rappel carte Vitale aux patients du jour (secrétaire IA)">💵</button>
     <button class="ib" onclick="openStats()" title="Statistiques">📊</button>
     <button class="ib" onclick="openGroup()" title="Groupe spécial du jour">🏋️</button>
     <button class="ib" onclick="openBillingHistory()" title="Historique facturation">💰</button>
@@ -1512,7 +1533,7 @@ function _pfBootChoice(load){
       if(adopted)return;adopted=true;
       try{if(typeof doAutoLocalBackup==='function')doAutoLocalBackup('avant chargement autre appareil');}catch(e){}
       D=rd;_pfSaveLocal();
-      try{if(typeof checkBillCarryOver==='function')checkBillCarryOver();}catch(e){} /* routine du jour sur les données chargées */
+      /* v100 : plus de report des 💵 de la veille (la règle « toutes les x séances » s'en charge) */
       if(typeof R==='function')R();
       toast('🔄 Données de l\'autre appareil chargées',4000);
       done();
@@ -1591,6 +1612,7 @@ setTimeout(_pfBootOpenGate,12000); /* ne jamais bloquer la synchro plus de 12 s 
 function sv(){
   D._lastSaved=Date.now();
   _pfSaveLocal(); /* v92 — ne lève jamais d'exception */
+  try{if(typeof cvPlanSoon==='function')cvPlanSoon();}catch(e){} /* v100 */
   /* Only push to Firebase if we have real data (not defaults) */
   if(!_loadedFromDefaults || (D.patients && D.patients.length>0) || (D.appointments && D.appointments.length>0)){
     fbPush();
@@ -1708,7 +1730,7 @@ function mselAction(action){
         if(ap&&!ap.billed){
           var pat=ap.patientId?gp(ap.patientId):null;
           ap.billed=true;ap.billedAt=todayKey();
-          ap.billedAmount=(ap.isBilan||ap.type==='bilan')?(D.bilanFee||30):(pat?Number(pat.sessionFee||18.20):18.20);
+          ap.billedAmount=apAmount(ap,pat); /* v100 */
         }
       });sv();R();toast('Facturation forcée');
     }else if(action==='bilan'){
@@ -1866,32 +1888,6 @@ function alrt(p,showTutoie){
 }
 
 /* Session counter */
-function getSessionCount(pid){
-  var p=gp(pid);if(!p)return{done:0,total:0,label:'',needsRenewal:false};
-  var apts=(D.appointments||[]).filter(function(a){return a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date<=todayKey()});
-  var done=apts.length+(parseInt(p.sessionsBeforeApp)||0);
-  var prescribed=parseInt(p.prescribedSessions)||0; /* 0 = illimité */
-  var renewAfterSessions=parseInt(p.renewAfterSessions)||0;
-  var renewAfterMonths=parseInt(p.renewAfterMonths)||0;
-  var needsRenewal=false;
-  var label='';
-  
-  if(prescribed>0){
-    label=done+'/'+prescribed;
-    if(done>=prescribed-2)needsRenewal=true; /* alert 2 sessions before end */
-  } else {
-    label=done+(done<2?' séance':' séances');
-    /* Illimité: check renewal thresholds */
-    if(renewAfterSessions>0 && done>=renewAfterSessions)needsRenewal=true;
-    if(renewAfterMonths>0 && apts.length>0){
-      var firstApt=apts.sort(function(a,b){return a.date.localeCompare(b.date)})[0];
-      var firstDate=new Date(firstApt.date+'T00:00:00');
-      var monthsSince=Math.floor((new Date()-firstDate)/(30.44*24*60*60*1000));
-      if(monthsSince>=renewAfterMonths)needsRenewal=true;
-    }
-  }
-  return{done:done,total:prescribed,label:label,needsRenewal:needsRenewal};
-}
 
 /* ═══ BILLING ═══ */
 function setBilanFee(v){D.bilanFee=parseFloat(v)||0;sv();R();toast('Montant bilan enregistré')}
@@ -1912,10 +1908,6 @@ function isBillable(ap){
   if(ap.type==='absence')return false;
   return ap.date<=todayKey();
 }
-function apAmount(ap,pat){
-  if(ap.isBilan||ap.type==='bilan')return Number(D.bilanFee||0);
-  return Number((pat&&pat.sessionFee!==undefined)?pat.sessionFee:18.20);
-}
 function unbilledApps(pid){
   const t=todayKey();
   return D.appointments.filter(a=>a.patientId===pid && !a.billed && !a.cancelled && a.type!=='absence' && a.date<=t);
@@ -1933,7 +1925,7 @@ function editUnbilledCount(pid,el){
   /* Replace the content with an inline input */
   var oldHtml=ubEl.innerHTML;
   var p=gp(pid);
-  var fee=Number((p&&p.sessionFee!==undefined)?p.sessionFee:18.20);
+  var fee=sessionPrice(p,todayKey()); /* v100 */
   ubEl.innerHTML='Non facturées : <input type="number" min="0" max="999" value="'+curCount+'" style="width:50px;font-size:12px;font-weight:700;border:1.5px solid var(--accent);border-radius:4px;padding:2px 4px;text-align:center" id="_editUb" autofocus> '+
     '<span id="_editUbAmt" style="font-weight:700">· '+money(curCount*fee)+'</span> '+
     '<button onclick="event.stopPropagation();confirmEditUnbilled(\''+pid+'\')" style="font-size:11px;background:var(--accent);color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer">✓</button> '+
@@ -2008,92 +2000,6 @@ function billDue(pid){
   return n>=every;
 }
 
-/* ═══ SIMPLIFIED DAILY BILLING SYSTEM ═══ */
-function computeDayBills(dateKey){
-  if(!D.billsPerDay || D.billsPerDay<1) return new Set();
-  var dayAps=D.appointments.filter(function(a){
-    return a.date===dateKey && !a.cancelled && a.type!=='absence' && a.patientId;
-  }).sort(function(a,b){return t2m(a.time)-t2m(b.time)});
-  if(!dayAps.length) return new Set();
-  
-  /* Get unique patients for this day */
-  var seen={};var dayPats=[];
-  for(var i=0;i<dayAps.length;i++){
-    var ap=dayAps[i];
-    if(seen[ap.patientId])continue;
-    seen[ap.patientId]=true;
-    var p=gp(ap.patientId);
-    if(!p) continue;
-    if(patHasAlert(p)) continue;
-    var ub=unbilledCount(p.id);
-    if(ub<=0) continue;
-    dayPats.push({pid:p.id, ap:ap, time:t2m(ap.time), end:t2m(ap.time)+(ap.duration||30), unbilled:ub});
-  }
-  
-  var maxBills=Math.min(D.billsPerDay, dayPats.length);
-  if(maxBills<=0) return new Set();
-  
-  /* Sort by unbilled count descending (most needy first), with shuffle variation */
-  dayPats.sort(function(a,b){
-    var diff=b.unbilled-a.unbilled;
-    if(diff!==0)return diff;
-    /* When equal, use shuffle to vary the order */
-    var ha=(a.pid.charCodeAt(0)+_billShuffle)%7;
-    var hb=(b.pid.charCodeAt(0)+_billShuffle)%7;
-    return ha-hb;
-  });
-  
-  /* Select candidates respecting simultaneous constraint: max 2 💵 for overlapping slots */
-  var selected=[];
-  for(var j=0;j<dayPats.length&&selected.length<maxBills;j++){
-    var cand=dayPats[j];
-    /* Count how many already-selected overlap with this candidate */
-    var overlapCount=0;
-    for(var k=0;k<selected.length;k++){
-      var s=selected[k];
-      if(cand.time<s.end && cand.end>s.time)overlapCount++;
-    }
-    if(overlapCount>=2)continue; /* skip: already 2 💵 in this time window */
-    selected.push(cand);
-  }
-  
-  var result=new Set();
-  selected.forEach(function(c){result.add(c.pid)});
-  return result;
-}
-
-/* Get today's bill set (cached per render cycle) */
-var _billCache={key:'',set:new Set()};
-function getTodayBillSet(){
-  var k=todayKey();
-  if(_billCache.key!==k){
-    _billCache.key=k;
-    _billCache.set=computeDayBills(k);
-  }
-  return _billCache.set;
-}
-/* Invalidate cache on data change */
-function invalidateBillCache(){_billCache.key='';}
-
-/* 💱 Reshuffle today's billing selection */
-var _billShuffle=0;
-function reshuffleBills(){
-  _billShuffle++;
-  invalidateBillCache();
-  R();
-  toast('💱 Sélection 💵 modifiée (variante '+_billShuffle+')');
-}
-
-function billEmoji(pid,force){
-  if(!pid)return '';
-  const p=gp(pid);if(!p)return '';
-  if(patHasAlert(p))return ''; /* Never show 💵 for patients with alerts */
-  if(unbilledCount(pid)<=0)return '';
-  var billSet=getTodayBillSet();
-  var due=force? true : billSet.has(pid);
-  if(!due)return '';
-  return '<span class="emji" title="Facturation proposée" onclick="event.stopPropagation();billPatient(\''+pid+'\',false)">💵</span>';
-}
 function triEmoji(pid){
   const n=unbilledCount(pid);
   if(n<=0)return '';
@@ -2144,7 +2050,7 @@ function billPatient(pid,force){
     return;
   }
   const sum=aps.reduce((s,a)=>s+apAmount(a,p),0);
-  const fee=Number(p.sessionFee||18.20);
+  const fee=sessionPrice(p,todayKey()); /* v100 */
   /* Show billing dialog with adjustment option */
   var b=document.getElementById('mMB');
   document.getElementById('mMT').textContent='💵 Facturer '+p.lastName+' '+p.firstName;
@@ -2178,7 +2084,7 @@ function updateBillPreview(pid){
   var allUb=unbilledApps(pid);
   var toBill=allUb.filter(function(a){return a.date<=billDate});
   var notBill=allUb.filter(function(a){return a.date>billDate});
-  var fee=Number(p.sessionFee||18.20);
+  var fee=sessionPrice(p,todayKey()); /* v100 */
   var sumBill=toBill.reduce(function(s,a){return s+apAmount(a,p)},0);
   var sumNot=notBill.reduce(function(s,a){return s+apAmount(a,p)},0);
   var el=document.getElementById('billPreview');
@@ -2193,7 +2099,7 @@ function doBill(pid,force){
   if(document.getElementById('billAdj')&&document.getElementById('billAdj').checked){
     adj=parseInt(document.getElementById('billAdjN').value)||0;
   }
-  const fee=Number(p.sessionFee||18.20);
+  const fee=sessionPrice(p,todayKey()); /* v100 */
   var totalAdj=adj*fee;
   /* Only bill sessions on or before billDate */
   var toBill=allUb.filter(function(a){return a.date<=billDate});
@@ -2227,7 +2133,7 @@ function totalUnbilledAmount(){
 /* ── Force billing with 0 sessions ── */
 function openForceBillDialog(pid){
   var p=gp(pid);if(!p)return;
-  var fee=Number(p.sessionFee||18.20);
+  var fee=sessionPrice(p,todayKey()); /* v100 */
   var b=document.getElementById('mMB');
   document.getElementById('mMT').textContent='💵 Facturer — '+p.lastName+' '+p.firstName;
   b.innerHTML='<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Aucune séance non facturée pour ce patient. Vous pouvez facturer en indiquant un nombre de séances.</div>'+
@@ -2255,7 +2161,7 @@ function doForceBill(pid){
   var nInp=document.getElementById('forceBillN');
   var n=parseInt(nInp.value);
   if(!n||n<1){toast('Veuillez indiquer un nombre de séances');nInp.focus();return}
-  var fee=parseFloat(document.getElementById('forceBillFee').value)||Number(p.sessionFee||18.20);
+  var fee=parseFloat(document.getElementById('forceBillFee').value)||sessionPrice(p,todayKey()); /* v100 */
   var billDate=document.getElementById('forceBillDate').value||todayKey();
   var defaultMotif=D.motifs[0]?D.motifs[0].id:'';
   for(var i=0;i<n;i++){
@@ -2310,31 +2216,6 @@ function undoLastBilling(pid){
 
 /* ═══ END-OF-DAY CARRY-OVER ═══ */
 /* Check if yesterday's 💵 were ignored and carry them over */
-function checkBillCarryOver(){
-  var today=new Date();
-  var lastCheck=D._lastBillCheck||'';
-  var todayK=dk(today);
-  if(lastCheck===todayK)return; /* Already checked today */
-  D._lastBillCheck=todayK;
-  /* Find last open day before today */
-  var prevDate=new Date(today);
-  for(var i=1;i<30;i++){
-    prevDate.setDate(prevDate.getDate()-1);
-    if(D.days.includes(prevDate.getDay())){break;}
-  }
-  var prevK=dk(prevDate);
-  var prevBills=computeDayBills(prevK);
-  /* Find which 💵 patients from prevDay were NOT billed on that day */
-  var carry=[];
-  prevBills.forEach(function(pid){
-    var wasBilled=D.appointments.some(function(a){
-      return a.patientId===pid && a.date===prevK && a.billed && !a.cancelled;
-    });
-    if(!wasBilled) carry.push(pid);
-  });
-  D._billCarryOver=carry;
-  sv();
-}
 
 /* ═══ PATIENT NAME NORMALIZATION & AUTO-MERGE ═══ */
 function normName(s){
@@ -3054,6 +2935,8 @@ function showCtx(e,id){
   if(pat && !isAbs)it+='<div class="ci" onclick="lateSMS(\''+ap.id+'\')">⏱️ Signaler un retard</div>';
   if(pat && !isAbs)it+='<div class="ci" onclick="absenceSMS(\''+ap.id+'\')">🚫📩 Signaler une absence</div>';
   if(pat)it+='<div class="ci" onclick="billPatient(\''+pat.id+'\',true);clCtx()">💵 Facturer</div>';
+  if(pat && !isAbs)it+='<div class="ci" onclick="cvCtxSend(\''+ap.id+'\')">💵 SMS carte Vitale (secrétaire)</div>'; /* v100 */
+  if(pat && !isAbs)it+='<div class="ci" onclick="openNewOrdo(\''+pat.id+'\',\''+ap.id+'\')">📄 Nouvelle ordonnance / cotation</div>'; /* v100 */
   if(pat && !isAbs)it+='<div class="ci" onclick="openFixNextRdv(\''+ap.id+'\');clCtx()">📅 Fixer les prochains RDV</div>';
   if(!isAbs && isBillable(ap))it+='<div class="ci" onclick="toggleBillOne(\''+ap.id+'\');clCtx()">'+(ap.billed?'↩️ Annuler facturation':'💵 Marquer facturée')+'</div>';
   if(pat)it+='<div class="ci" onclick="undoLastBilling(\''+pat.id+'\');clCtx()">🔙 Annuler dernière facturation</div>';
@@ -3914,14 +3797,14 @@ function openPC(pid){
 
   const ubN=unbilledCount(pid);
   const ubS=unbilledAmount(pid);
-  const feeS=money(Number(p.sessionFee||18.20));
+  const feeS=money(sessionPrice(p,todayKey())); /* v100 */
   const sc=getSessionCount(pid);
   const scHtml='<div class="ub">Séances : <b>'+sc.label+'</b>'+(sc.needsRenewal?' <span style="color:#e74c3c;font-weight:700">📋 Renouvellement recommandé</span>':'')+'</div>';
   let rejHtml='';
   if(p.needMut||p.needSecu){
     const n=Math.max(0,parseInt(p.rejectCount)||0);
     const part=(p.needMut?0.4:0)+(p.needSecu?0.6:0);
-    const unpaid=n*(Number(p.sessionFee||18.20))*part;
+    const unpaid=n*sessionPrice(p,todayKey())*part; /* v100 */
     rejHtml='<div style="margin-top:10px;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--bg)">'+
       '<div style="font-weight:700;margin-bottom:6px">‼️ Rejet de paiement</div>'+
       '<div style="font-size:12px;color:var(--text2)">'+(p.rejectReason?('Motif : '+esc(p.rejectReason)):'Motif : (non renseigné)')+'</div>'+
@@ -3933,13 +3816,15 @@ function openPC(pid){
     '<div class="pnm">'+allEmojis(pid)+esc(p.lastName)+' '+esc(p.firstName)+' '+alrt(p,true)+'</div>'+
     '<div class="pag">'+(ag?ag+' ans · ':'')+'Né(e) le '+dobD+'</div>'+
     '<div class="ub">Non facturées : <b>'+ubN+'</b> · <b>'+money(ubS)+'</b></div>'+
-    '<div class="ub">Montant séance : <b>'+feeS+'</b></div>'+
+    ordoCardHtml(p)+ /* v100 : montant NGAP + ordonnance en cours */
     scHtml+
     '</div></div>'+
     '<div class="pacts">'+(p.phone?'<a href="tel:'+esc(p.phone)+'" title="Principal">📞 Appeler</a><a href="sms:'+esc(p.phone)+'" title="Principal">💬 SMS</a>':'')+
     (p.extraPhones&&p.extraPhones.length?p.extraPhones.map(function(ep,ei){return ep?'<a href="tel:'+esc(ep)+'" title="Tél '+(ei+2)+'">📞 '+esc(ep)+'</a>':''}).join(''):'')+
     '<button onclick="editPat(\''+pid+'\')">✏️ Modifier</button>'+
-    '<button onclick="billPatient(\''+pid+'\',true)">💵 Facturer</button></div>'+
+    '<button onclick="billPatient(\''+pid+'\',true)">💵 Facturer</button>'+
+    '<button onclick="cvPatSend(\''+pid+'\')">💵 SMS carte Vitale</button>'+
+    '<button onclick="clM(\'mP\');openNewOrdo(\''+pid+'\')">📄 Ordonnance</button></div>'+ /* v100 */
     '<button class="btn bs bw" style="margin-bottom:8px;font-size:12px" onclick="openQuickHide(\''+pid+'\')">🙈 Masquer des créneaux à ce patient</button>'+
     '<div class="pcks"><label><input type="checkbox" '+(p.needOrdo?'checked':'')+' onchange="togFlag(\''+pid+'\',\'needOrdo\',this.checked)"> ❗ Ordonnance</label>'+
     '<label><input type="checkbox" '+(p.needMut?'checked':'')+' onchange="togMutFlag(\''+pid+'\',this.checked)"> ‼️ Mutuelle</label>'+
@@ -4119,7 +4004,7 @@ function editPat(pid){
       h+='</div><button type="button" id="epAddPhone" style="font-size:11px;color:var(--text2);background:none;border:1px solid var(--border2);border-radius:6px;padding:4px 10px;cursor:pointer;margin-bottom:8px" onclick="addEditExtraPhone()">+ Tél. secondaire</button>';
       return h;
     })()+
-    '<div class="fr"><div class="fg"><label>Montant des séances (€)</label><input type="number" step="0.01" id="epFee" value="'+(p.sessionFee!==undefined?Number(p.sessionFee).toFixed(2):'18.20')+'"></div>'+
+    '<div class="fr"><div class="fg"><label>'+((ordoCurrent(p)&&ordoCurrent(p).act&&ngapHas())?('Montant manuel (€) — NGAP : '+money(sessionPrice(p,todayKey()))):'Montant des séances (€)')+'</label><input type="number" step="0.01" id="epFee" value="'+(p.sessionFee!==undefined?Number(p.sessionFee).toFixed(2):'18.20')+'"></div>'+ /* v100 */
     '<div class="fg"><label>Multiplicateur groupe</label><select id="epMultip">'+
       '<option value="0" '+(p.groupMultip===0?'selected':'')+'>0 (gratuit)</option>'+
       '<option value="1" '+(p.groupMultip===1?'selected':'')+'>×1</option>'+
@@ -4130,9 +4015,10 @@ function editPat(pid){
     '<label><input type="checkbox" '+(p.needMut?'checked':'')+' id="epMut"> ‼️ Mutuelle</label>'+
     '<label><input type="checkbox" '+(p.needSecu?'checked':'')+' id="epSec"> ‼️ Sécu</label></div>'+
     '<div style="margin-top:10px;padding:10px;border:1px solid var(--border2);border-radius:10px;background:var(--bg)">'+
-      '<div style="font-weight:700;font-size:12px;margin-bottom:8px">📋 Ordonnance & Séances</div>'+
+      '<div style="font-weight:700;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">📋 Ordonnance & Séances <button type="button" class="btn bs" style="font-size:11px;padding:3px 8px" onclick="clM(\'mA\');openNewOrdo(\''+pid+'\')">📄 Nouvelle ordonnance</button></div>'+
+      (ordoList(p).length?ordoEditHtml(p):( /* v100 : sans ordonnance enregistrée, les réglages d'avant */
       '<div class="fr"><div class="fg"><label>Séances avant l\'appli</label><input type="number" min="0" id="epSessBefore" value="'+(p.sessionsBeforeApp||0)+'"></div>'+
-      '<div class="fg"><label>Séances prescrites (0 = illimité)</label><input type="number" min="0" id="epPrescribed" value="'+(p.prescribedSessions||0)+'"></div></div>'+
+      '<div class="fg"><label>Séances prescrites (0 = illimité)</label><input type="number" min="0" id="epPrescribed" value="'+(p.prescribedSessions||0)+'"></div></div>'))+
       '<div class="fr"><div class="fg"><label>Renouveler après X séances</label><input type="number" min="0" id="epRenewSess" value="'+(p.renewAfterSessions||0)+'" placeholder="0 = désactivé"></div>'+
       '<div class="fg"><label>Renouveler après X mois</label><input type="number" min="0" id="epRenewMo" value="'+(p.renewAfterMonths||0)+'" placeholder="0 = désactivé"></div></div>'+
       '<div style="font-size:10px;color:var(--text3);margin-top:4px">Si prescrit = 0, alerte basée sur le seuil séances/mois. Sinon alerte 2 séances avant la fin.</div>'+
@@ -4177,8 +4063,8 @@ function svPat(pid){
   p.tutoie=(document.getElementById('epTutoie')?document.getElementById('epTutoie').checked:false);
   p.rejectReason=document.getElementById('epRejR')?document.getElementById('epRejR').value.trim():'';
   p.rejectCount=parseInt((document.getElementById('epRejN')&&document.getElementById('epRejN').value)||'0')||0;
-  p.sessionsBeforeApp=parseInt((document.getElementById('epSessBefore')&&document.getElementById('epSessBefore').value)||'0')||0;
-  p.prescribedSessions=parseInt((document.getElementById('epPrescribed')&&document.getElementById('epPrescribed').value)||'0')||0;
+  if(document.getElementById('epSessBefore'))p.sessionsBeforeApp=parseInt(document.getElementById('epSessBefore').value||'0')||0; /* v100 : absent si ordonnance enregistrée */
+  if(document.getElementById('epPrescribed'))p.prescribedSessions=parseInt(document.getElementById('epPrescribed').value||'0')||0;
   p.renewAfterSessions=parseInt((document.getElementById('epRenewSess')&&document.getElementById('epRenewSess').value)||'0')||0;
   p.renewAfterMonths=parseInt((document.getElementById('epRenewMo')&&document.getElementById('epRenewMo').value)||'0')||0;
   /* Extra phones */
@@ -4430,7 +4316,7 @@ function savePastPresences(){
   var dates=window._ppDates;if(!dates.length){toast('Sélectionnez au moins une date');return}
   var motId=(document.getElementById('ppMotif')&&document.getElementById('ppMotif').value)||'';
   var mot=gm(motId);
-  var fee=Number(p.sessionFee||18.20);
+  var fee=sessionPrice(p,todayKey()); /* v100 */
   /* Find last billing date for this patient */
   var lastBill=p.lastBillAt||'';
   
@@ -4441,7 +4327,7 @@ function savePastPresences(){
       date:d,time:'09:00',duration:mot?mot.duration:30,
       notes:'Présence passée ajoutée manuellement',
       cancelled:false,billed:isBilled,billedAt:isBilled?lastBill:'',
-      billedAmount:isBilled?fee:0,source:'manual_past'
+      billedAmount:isBilled?sessionPrice(p,d):0,source:'manual_past'
     });
   });
   sv();clM('mM');openHist(pid);
@@ -4678,33 +4564,8 @@ function openSet(){
       '</div>'+
     '</div>'+
 
-    /* ═══ 6. FACTURATION ═══ */
-    '<div class="ss"><h3>💵 Facturation</h3>'+
-      '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Nombre de patients à facturer (💵) par jour d\'ouverture. Les patients avec ❗ ou ‼️ ne sont pas proposés.</div>'+
-      '<div class="fr">'+
-        '<div class="fg"><label>Facturations 💵 par jour</label>'+
-          '<input type="number" id="sBillsDay" min="0" max="20" value="'+(D.billsPerDay||0)+'" onchange="D.billsPerDay=parseInt(this.value)||0;invalidateBillCache();sv();R();toast(\'Enregistré\')">'+
-        '</div>'+
-        '<div class="fg"><label>🅱️ Montant des bilans (€)</label>'+
-          '<input id="sBilanFee" type="number" step="0.01" value="'+(Number(D.bilanFee||0).toFixed(2))+'" onchange="setBilanFee(this.value)">'+
-        '</div>'+
-      '</div>'+
-      '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Montant utilisé pour les séances 🅱️ ajoutées depuis l\'agenda.</div>'+
-      '<div class="pcks" style="margin-top:6px">'+
-        '<label><input type="checkbox" id="sCarteVitaleSMS" '+(D.carteVitaleSMS!==false?'checked':'')+' onchange="D.carteVitaleSMS=this.checked;sv();var tw=document.getElementById(\'sCvSmsTimeWrap\');if(tw)tw.style.display=this.checked?\'block\':\'none\'"> 💳 Rappel Carte Vitale auto (aux patients 💵)</label>'+
-        '<div id="sCvSmsTimeWrap" style="margin-top:6px;display:'+(D.carteVitaleSMS!==false?'block':'none')+'">'+
-          '<div class="fg"><label>Envoyer le rappel avant le RDV</label>'+
-            '<select id="sCvAdvance" onchange="D.cvAdvanceMinutes=parseInt(this.value)||120;sv()" style="font-size:12px">'+
-              '<option value="60" '+((D.cvAdvanceMinutes||120)===60?'selected':'')+'>1 heure avant</option>'+
-              '<option value="120" '+((D.cvAdvanceMinutes||120)===120?'selected':'')+'>2 heures avant</option>'+
-              '<option value="180" '+((D.cvAdvanceMinutes||120)===180?'selected':'')+'>3 heures avant</option>'+
-              '<option value="360" '+((D.cvAdvanceMinutes||120)===360?'selected':'')+'>Le matin (6h avant)</option>'+
-            '</select>'+
-          '</div>'+
-          '<div style="font-size:10px;color:var(--text3)">Le rappel est proposé individuellement pour chaque patient, au bon moment avant sa séance. Choix SMS ou messagerie intégrée.</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
+    /* ═══ 6. FACTURATION (v100 : rappels carte Vitale par le secrétaire, NGAP) ═══ */
+    cvSettingsHtml()+
 
     /* ═══ 7. SUIVI DES PATIENTS ═══ */
     '<div class="ss"><h3>👥 Suivi des patients</h3>'+
@@ -5694,12 +5555,9 @@ function openBillingHistory(){
   var b=document.getElementById('mMB');
   document.getElementById('mMT').textContent='💰 Historique de facturation';
   var billed=(D.appointments||[]).filter(function(a){return a.billed&&a.billedAt}).sort(function(a,b2){return(b2.billedAt+b2.time).localeCompare(a.billedAt+a.time)});
-  var _cvSent=false;try{_cvSent=localStorage.getItem('pf_cv_sms')===todayKey()||D._cvSmsSentToday===todayKey()}catch(e){}
-  var cvSentBanner=_cvSent?'<div style="padding:6px 10px;background:#e6f7ee;border-radius:8px;font-size:11px;color:#1e8e3e;margin-bottom:8px;text-align:center">✅ SMS Carte Vitale déjà envoyé aujourd\'hui</div>':'';
   var h='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+
-    '<button class="btn bs" onclick="sendBillingCarteVitaleSMS()">💳 SMS Carte Vitale aux 💵</button>'+
     '<button class="btn bs" onclick="exportBillingCSV()">📊 Export CSV</button>'+
-    '</div>'+cvSentBanner+
+    '</div>'+
     '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+billed.length+' actes facturés · '+money(billed.reduce(function(s,a){return s+(a.billedAmount||0)},0))+' total</div>'+
     '<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'+
       '<select id="billGroupBy" onchange="renderBillList()" style="font-size:11px;padding:4px 8px;border-radius:8px;border:1px solid var(--border)">'+
@@ -8536,182 +8394,23 @@ if(!D.proPhone)D.proPhone='';
 if(!D.proName)D.proName='';
 if(D.proPhoto===undefined)D.proPhoto='';
 if(!D.cvAdvanceMinutes)D.cvAdvanceMinutes=120;
-if(!D.billsPerDay && D.billsPerDay!==0)D.billsPerDay=3;
+if(D.billsPerDay===undefined||D.billsPerDay===null)D.billsPerDay=3; /* v100 : '' = sans limite */
+if(!D.cvEvery)D.cvEvery=1;             /* v100 : carte Vitale toutes les x séances non facturées */
+if(!D.cvEarliest)D.cvEarliest='08:00'; /* v100 : pas de rappel avant cette heure */
+if(D.ordoWarn===undefined)D.ordoWarn=2;/* v100 : prévenir quand il reste 2 séances */
+if(!D.bilanType)D.bilanType='general';
+if(!D.ngapZone)D.ngapZone='metropole';
 D.motifs.forEach(function(m){if(!m.slots)m.slots=1;if(!m.allowSimul)m.allowSimul=false;if(!m.simulWith)m.simulWith='';});
 D.patients.forEach(function(p){if(p.groupMultip===undefined)p.groupMultip=2;});
 if(!D.groups)D.groups={};
 if(!D._grpAssoc)D._grpAssoc={};
-checkBillCarryOver();
 checkFutureAgenda();
 R();scrollNow();
 /* Badge + carte vitale SMS check on first load of day (no auto-dashboard) */
-try{var _lastDash=localStorage.getItem('pf_last_dash')||'';if(_lastDash!==todayKey()){localStorage.setItem('pf_last_dash',todayKey());setTimeout(sendCarteVitaleSMS,2000);}}catch(e){}
+try{var _lastDash=localStorage.getItem('pf_last_dash')||'';if(_lastDash!==todayKey()){localStorage.setItem('pf_last_dash',todayKey());}}catch(e){} /* v100 : rappels carte Vitale envoyés par le secrétaire */
 setTimeout(updateMsgBadge,400);
 
-/* ── Carte Vitale SMS auto — refactored: per-patient timing, 2h before appointment ── */
-var _cvTimers=[];
-function sendCarteVitaleSMS(){
-  if(D.carteVitaleSMS===false)return;
-  var today=todayKey();
-  if(!D.days.includes(new Date().getDay()))return;
-  /* Clear previous timers */
-  _cvTimers.forEach(function(t){clearTimeout(t)});
-  _cvTimers=[];
-  var billSet=computeDayBills(today);
-  if(!billSet.size)return;
-  var cvAdvanceMin=parseInt(D.cvAdvanceMinutes)||120; /* default 2 hours before */
-  var now=new Date();
-  var nowMin=now.getHours()*60+now.getMinutes();
-  /* Already sent to these patients today? Track per-patient */
-  var sentKey='pf_cv_sent_'+today;
-  var alreadySent={};
-  try{alreadySent=JSON.parse(localStorage.getItem(sentKey)||'{}')}catch(e){}
-  
-  /* Build per-patient send list with timing */
-  var pending=[];
-  billSet.forEach(function(pid){
-    if(alreadySent[pid])return;
-    var p=gp(pid);if(!p||!p.phone)return;
-    var ph=p.phone.replace(/\s/g,'');
-    if(ph.length<8)return;
-    /* Find earliest appointment today for this patient */
-    var earliest=9999;
-    (D.appointments||[]).forEach(function(a){
-      if(a.patientId===pid&&a.date===today&&!a.cancelled&&a.type!=='absence'){
-        var tm=t2m(a.time);if(tm<earliest)earliest=tm;
-      }
-    });
-    if(earliest===9999)return;
-    var sendAtMin=earliest-cvAdvanceMin;
-    pending.push({pid:pid,pat:p,phone:ph,sendAtMin:sendAtMin,aptMin:earliest});
-  });
-  if(!pending.length)return;
-  /* Process: for each patient, if time has passed, show modal. If not, schedule timer */
-  var readyNow=pending.filter(function(x){return nowMin>=x.sendAtMin});
-  var readyLater=pending.filter(function(x){return nowMin<x.sendAtMin});
-  /* Schedule future sends */
-  readyLater.forEach(function(x){
-    var delayMs=(x.sendAtMin-nowMin)*60*1000;
-    var tm=setTimeout(function(){showCVPromptSingle(x)},Math.max(delayMs,5000));
-    _cvTimers.push(tm);
-  });
-  /* Show prompt for ready-now patients (batch) */
-  if(readyNow.length)showCVPromptBatch(readyNow);
-}
-function showCVPromptBatch(list){
-  var proName=D.proName||'votre kinésithérapeute';
-  var b=document.getElementById('mMB');
-  document.getElementById('mMT').textContent='💳 Rappel Carte Vitale';
-  var h='<div style="font-size:13px;color:var(--text2);margin-bottom:10px">'+list.length+' patient(s) 💵 à prévenir pour la Carte Vitale :</div>';
-  list.forEach(function(x){
-    var isTu=!!(x.pat.tutoie||x.pat.cool);
-    var msg=isTu?
-      ('Salut '+x.pat.firstName+', peux-tu penser à apporter ta Carte Vitale à la séance d\'aujourd\'hui ? Merci ! — '+proName):
-      ('Bonjour '+(x.pat.firstName||x.pat.lastName)+', pourriez-vous apporter votre Carte Vitale à la séance d\'aujourd\'hui ? Merci ! — '+proName);
-    h+='<div style="padding:8px;background:var(--bg);border-radius:8px;margin-bottom:6px">'+
-      '<div style="font-weight:600;font-size:13px">'+esc(x.pat.lastName)+' '+esc(x.pat.firstName)+' <span style="font-size:11px;color:var(--text3)">RDV à '+m2t(x.aptMin)+'</span></div>'+
-      '<div style="font-size:11px;color:var(--text2);margin:4px 0;white-space:pre-wrap">'+esc(msg)+'</div>'+
-      '<div style="display:flex;gap:4px">'+
-        '<button class="btn bp" style="font-size:11px;padding:4px 8px;flex:1" onclick="doSendCVSingle(\''+x.pid+'\',\''+esc(x.phone)+'\')">📤 SMS</button>'+
-        '<button class="btn bs" style="font-size:11px;padding:4px 8px" onclick="doSendCVMessage(\''+x.pid+'\')">💬 Messagerie</button>'+
-        '<button class="btn" style="font-size:11px;padding:4px 8px" onclick="skipCVPatient(\''+x.pid+'\')">Passer</button>'+
-      '</div></div>';
-  });
-  h+='<div style="display:flex;gap:6px;margin-top:8px"><button class="btn bp" style="flex:1" onclick="doSendCVAll()">📤 Tout envoyer par SMS</button>'+
-    '<button class="btn bs" onclick="skipCVAll();clM(\'mM\')">Pas aujourd\'hui</button></div>';
-  b.innerHTML=h;
-  window._cvPending=list;
-  opM('mM');
-}
-function showCVPromptSingle(x){
-  showCVPromptBatch([x]);
-}
-function doSendCVSingle(pid,phone){
-  var p=gp(pid);if(!p)return;
-  var proName=D.proName||'votre kinésithérapeute';
-  var isTu=!!(p.tutoie||p.cool);
-  var msg=isTu?
-    ('[PhysioFlow] Salut '+p.firstName+', peux-tu penser à apporter ta Carte Vitale aujourd\'hui ? Merci ! — '+proName):
-    ('[PhysioFlow] Bonjour '+(p.firstName||p.lastName)+', pourriez-vous apporter votre Carte Vitale aujourd\'hui ? Merci ! — '+proName);
-  window.open('sms:'+phone+'?body='+encodeURIComponent(msg));
-  markCVSent(pid);
-  toast('💳 SMS envoyé à '+p.firstName);
-}
-function doSendCVMessage(pid){
-  var p=gp(pid);if(!p)return;
-  var proName=D.proName||'votre kinésithérapeute';
-  var isTu=!!(p.tutoie||p.cool);
-  var msg=isTu?
-    ('Salut '+p.firstName+', peux-tu penser à apporter ta Carte Vitale à la séance d\'aujourd\'hui ? Merci ! — '+proName):
-    ('Bonjour '+(p.firstName||p.lastName)+', pourriez-vous apporter votre Carte Vitale à la séance d\'aujourd\'hui ? Merci ! — '+proName);
-  /* Send via app messaging */
-  var normPh=_proNormPhone(p.phone||'');
-  var threadKey=null;
-  PROCONV.forEach(function(c){if(c.phone===normPh)threadKey=c.threadKey});
-  function sendMsg(tk){
-    FB_REF.child('patientMessages/'+tk+'/replies').push({from:'pro',text:msg,sentAt:new Date().toISOString()});
-    FB_REF.child('notifyPatient').push({type:'proMessage',patientId:pid,patientPhone:p.phone||'',message:'Rappel Carte Vitale de votre kiné'});
-  }
-  if(threadKey){sendMsg(threadKey)}
-  else{
-    var ref=FB_REF.child('patientMessages').push({lastName:p.lastName||'',firstName:p.firstName||'',phone:p.phone||'',subject:'',message:'',sentAt:new Date().toISOString(),read:true});
-    sendMsg(ref.key);
-  }
-  markCVSent(pid);
-  toast('💳 Message envoyé à '+p.firstName);
-}
-function doSendCVAll(){
-  var list=window._cvPending||[];
-  var phones=[];
-  list.forEach(function(x){
-    phones.push(x.phone);
-    markCVSent(x.pid);
-  });
-  var proName=D.proName||'votre kinésithérapeute';
-  var msg='[PhysioFlow] Bonjour, pourriez-vous apporter votre Carte Vitale à la séance d\'aujourd\'hui ? Merci ! — '+proName;
-  if(phones.length)window.open('sms:'+phones.join(',')+'?body='+encodeURIComponent(msg));
-  clM('mM');
-  toast('💳 SMS envoyé à '+phones.length+' patient(s)');
-}
-function markCVSent(pid){
-  var sentKey='pf_cv_sent_'+todayKey();
-  var sent={};
-  try{sent=JSON.parse(localStorage.getItem(sentKey)||'{}')}catch(e){}
-  sent[pid]=true;
-  try{localStorage.setItem(sentKey,JSON.stringify(sent))}catch(e){}
-}
-function skipCVPatient(pid){markCVSent(pid);toast('Carte Vitale : '+gp(pid).firstName+' passé')}
-function skipCVAll(){
-  var list=window._cvPending||[];
-  list.forEach(function(x){markCVSent(x.pid)});
-}
 
-/* Manual SMS from billing history */
-function sendBillingCarteVitaleSMS(){
-  var today=todayKey();
-  var now=new Date();
-  var nowMin=now.getHours()*60+now.getMinutes();
-  var billSet=getTodayBillSet();
-  if(!billSet.size){toast('Aucun patient 💵 aujourd\'hui');return}
-  var pending=[];
-  billSet.forEach(function(pid){
-    var p=gp(pid);if(!p||!p.phone)return;
-    var hasFutureToday=(D.appointments||[]).some(function(a){
-      return a.patientId===pid&&a.date===today&&!a.cancelled&&a.type!=='absence'&&t2m(a.time)>nowMin;
-    });
-    if(!hasFutureToday)return;
-    var ph=p.phone.replace(/\s/g,'');
-    if(ph.length>=8){
-      var earliest=9999;
-      (D.appointments||[]).forEach(function(a){
-        if(a.patientId===pid&&a.date===today&&!a.cancelled&&a.type!=='absence'){var tm=t2m(a.time);if(tm<earliest)earliest=tm}
-      });
-      pending.push({pid:pid,pat:p,phone:ph,aptMin:earliest,sendAtMin:0});
-    }
-  });
-  if(!pending.length){toast('Aucun patient 💵 avec séance restante');return}
-  showCVPromptBatch(pending);
-}
 /* Request notification permission */
 setTimeout(requestNotifPermission,2000);
 /* Initial push to Firebase — only if we have real data */
@@ -10743,8 +10442,10 @@ function _asstPat(q){
   if(p.notes)o.notes=String(p.notes).slice(0,600);
   var docs=[];if(p.needOrdo)docs.push('ordonnance');if(p.needMut)docs.push('mutuelle');if(p.needSecu)docs.push('carte vitale / sécu');if(docs.length)o.documents_a_fournir=docs;
   o.documents_enregistres=(p.documents||[]).length;
-  o.tarif_seance=Number(p.sessionFee!==undefined?p.sessionFee:18.2);
-  if(p.prescribedSessions)o.seances_prescrites=p.prescribedSessions;
+  o.tarif_seance=_aEuro(sessionPrice(p,todayKey())); /* v100 : NGAP si cotation */
+  var _oc=ordoCurrent(p);
+  if(_oc){var _sc=getSessionCount(p.id);o.ordonnance={debut:_oc.start,date:_oc.date||'',seances:(parseInt(_oc.sessions,10)||'illimité'),faites:_sc.done,cotation:_oc.act?(ordoCotLabel(_oc)+' — '+_oc.act.label):'aucune (montant manuel)',bilan:_oc.bilan||''};}
+  else if(p.prescribedSessions)o.seances_prescrites=p.prescribedSessions;
   if(p.linkedTo){var lp=gp(p.linkedTo);if(lp)o.lie_a=_aPName(lp);}
   o.annulations=s.aps.filter(function(a){return a.cancelled}).length;
   o.absences_signalees=s.aps.filter(function(a){return a.patientAbsence}).length;
@@ -11210,6 +10911,11 @@ var ASST_T={
   ouvrir_creneau:{w:1,prep:_prepOuvrir,d:'Ouverture exceptionnelle : ouvre un créneau d\'un motif en plus des horaires habituels ; il est proposé dans l\'appli patient aux patients à qui ce motif est proposé. Une seule date, ou chaque semaine (chaque_semaine : true, jours_semaine) à partir de cette date, sans fin, jusqu\'à jusqu_au ou pendant nb_semaines.',
     s:{motif_id:{type:'string'},date:{type:'string',description:'AAAA-MM-JJ (première date)'},jour:{type:'string',description:'jour de la semaine de cette date, en toutes lettres (contrôle)'},heure:{type:'string',description:'HH:MM'},places:{type:'integer',description:'défaut 1'},chaque_semaine:{type:'boolean'},jours_semaine:{type:'array',items:{type:'integer'},description:'0=dimanche, 1=lundi … 6=samedi ; défaut : le jour de la date'},jusqu_au:{type:'string',description:'AAAA-MM-JJ'},nb_semaines:{type:'integer'}},r:['motif_id','date','jour','heure']},
   fermer_ouverture:{w:1,prep:_prepFermerOuv,d:'Supprime une ouverture exceptionnelle (toute la série) ou seulement une de ses dates (seulement_date). Les RDV déjà pris restent en place.',s:{ouverture_id:{type:'string'},seulement_date:{type:'string',description:'AAAA-MM-JJ'}},r:['ouverture_id']},
+  cotations_ngap:{info:function(i){return '💶 NGAP : '+(i.texte||'')},run:_asstNgapSearch, /* v100 */
+    d:'Cherche des actes dans la NGAP consultée par le secrétaire (pathologie, région, lettre clé…) : cotation_id, lettre clé et coefficient, tarif du jour.',s:{texte:{type:'string'}},r:['texte']},
+  nouvelle_ordonnance:{w:1,prep:_prepNouvelleOrdo, /* v100 */
+    d:'Enregistre une nouvelle ordonnance pour un patient : cotation (cotation_id trouvé avec cotations_ngap), nombre de séances (0 = illimité), date de début des séances (défaut : aujourd\'hui), type de bilan. Retire l\'alerte ❗ Ordonnance. Les séances non facturées depuis le début prennent ce tarif.',
+    s:{patient_id:{type:'string'},cotation_id:{type:'string'},seances:{type:'integer',description:'0 = illimité'},date_debut:{type:'string',description:'AAAA-MM-JJ'},date_ordonnance:{type:'string',description:'AAAA-MM-JJ'},indication:{type:'string',description:'pathologie / prescription'},bilan:{type:'string',enum:['general','neuro','fragilite','autre']}},r:['patient_id']},
   defaire_action:{w:1,prep:_prepDefaire,d:'Défait une action précédente de l\'assistant (voir journal_actions).',s:{action_id:{type:'string'}},r:['action_id']}
 };
 function _asstToolDefs(){
@@ -11228,7 +10934,7 @@ function _asstSystem(){
   L.push('');
   L.push('Ce que tu fais :');
   L.push('- Répondre à ses questions sur les données du cabinet (agenda, patients, séances, facturation, messages, liste d\'attente), grâce aux outils de lecture.');
-  L.push('- Agir dans l\'appli exactement comme il le ferait avec les boutons : créer, déplacer, annuler, rétablir ou supprimer un RDV ; poser une absence ; modifier une séance (note, durée, motif, facturée, bilan) ; créer ou modifier une fiche patient ; envoyer un message à un patient (SMS ou appli patient) ; gérer la liste d\'attente ; ouvrir un créneau exceptionnel (ouverture exceptionnelle, une date ou chaque semaine) ou en retirer ; défaire une de tes actions.');
+  L.push('- Agir dans l\'appli exactement comme il le ferait avec les boutons : créer, déplacer, annuler, rétablir ou supprimer un RDV ; poser une absence ; modifier une séance (note, durée, motif, facturée, bilan) ; créer ou modifier une fiche patient ; enregistrer une nouvelle ordonnance avec sa cotation NGAP ; envoyer un message à un patient (SMS ou appli patient) ; gérer la liste d\'attente ; ouvrir un créneau exceptionnel (ouverture exceptionnelle, une date ou chaque semaine) ou en retirer ; défaire une de tes actions.');
   L.push('Ce que tu ne fais pas : modifier les réglages, les motifs, les horaires, les tarifs généraux ou le code de l\'appli ; supprimer une fiche patient ; toucher aux sauvegardes. Dans ces cas, dis-lui en une phrase où le faire lui-même dans l\'appli.');
   L.push('');
   L.push('Méthode :');
@@ -11249,6 +10955,7 @@ function _asstSystem(){
   L.push('');
   L.push('Où le kiné fait lui-même ce qui ne t\'est pas permis (ne cite que ces chemins) :');
   L.push('- horaires, jours travaillés, motifs (durées, places, heures) : bouton ⚙ Paramètres, rubriques « Mon agenda » et « Motifs de consultation » ;');
+  L.push('- rappels carte Vitale (envoyés par le secrétaire), NGAP (actualiser, actes, cotations des patients) et bilan : ⚙ Paramètres, rubrique « Facturation » ; envoi immédiat : bouton 💵 en haut de l\'écran ;');
   L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
   L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
   L.push('- supprimer une fiche patient : ouvrir la fiche du patient, bouton 🗑 en bas ; documents (ordonnance, photos) : fiche du patient, rubrique « Documents ».');
@@ -11264,7 +10971,7 @@ function _asstSystem(){
   (D.motifs||[]).forEach(function(m){L.push('- '+m.id+' — '+m.label+' — '+m.duration+' min — '+(m.slots||1)+' place(s) — '+((m.times||[]).filter(Boolean).length?(m.times||[]).filter(Boolean).slice().sort().join(' '):'selon les horaires d\'ouverture'));});
   if(D.futureAgenda&&D.futureAgenda.date&&Array.isArray(D.futureAgenda.motifs)){L.push('À partir du '+_aDateFr(D.futureAgenda.date)+', agenda futur : motifs '+D.futureAgenda.motifs.map(function(m){return m.id+' ('+m.label+', '+m.duration+' min)'}).join(', ')+'.');}
   var vac=(D.vacationPeriods||[]).filter(function(v){return v&&v.to&&v.to>=t0});if(vac.length)L.push('Congés prévus : '+vac.map(function(v){return 'du '+_aDateFr(v.from)+' au '+_aDateFr(v.to)}).join(' ; ')+'.');
-  L.push('Tarif séance par défaut 18,20 € ; bilan '+String(D.bilanFee||30).replace('.',',')+' €. Patients enregistrés : '+(D.patients||[]).length+'.');
+  L.push((ngapHas()?('Tarifs : NGAP consultée le '+_aDateFr(D.ngap.consultedOn)+' (lettre clé '+String(ngapKeyValue('AMK',t0)).replace('.',',')+' €) ; chaque patient a sa cotation (fiche_patient) ; cotations_ngap pour chercher un acte ; bilan '+String(bilanPrice(null,t0)).replace('.',',')+' €.'):('Tarif séance par défaut 18,20 € ; bilan '+String(D.bilanFee||30).replace('.',',')+' €.'))+' Patients enregistrés : '+(D.patients||[]).length+'.'); /* v100 */
   L.push('');
   L.push('Calendrier (chaque ligne : jour = date) :');
   var seen={};
@@ -12862,6 +12569,978 @@ function secrNotifTest(){
 function secrNotifRemove(k){
   if(!confirm('Ne plus envoyer les notifications du secrétaire à cet appareil ?\n(Il se réinscrira s\'il rouvre l\'appli.)'))return;
   secrApi('POST','push/remove',{key:k}).then(function(){toast('Appareil retiré');secrLoad();}).catch(function(e){alert(e.message)});
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v100 — CARTE VITALE : c'est le secrétaire IA qui envoie les rappels
+   - 💵 = patients du jour qui doivent venir avec leur carte Vitale :
+     toutes les x séances non facturées (D.cvEvery), au plus D.billsPerDay par jour
+     (vide = sans limite), jamais les patients avec ❗/‼️, au plus deux 💵 sur des
+     séances qui se chevauchent. Un patient déjà prévenu aujourd'hui garde son 💵.
+   - L'appli publie ce « plan » (7 jours) au secrétaire, qui envoie les SMS à l'heure dite,
+     même appli fermée, et signale les fins d'ordonnance.
+   - Bouton 💵 et menu du patient : envoi immédiat, après confirmation.
+   ═══════════════════════════════════════════════════════════════════ */
+var CV={srv:{date:'',sent:{},pins:{},plan:null,at:0},srvSig:'',pubHash:'',pubAt:0,pubTimer:null,lastErr:'',lastPub:null,rows:[],sending:false};
+var _CV_DJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+var _CV_MO=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+/* « facturations 💵 par jour » = nombre max. de rappels par jour ; vide ('') = sans limite (pas null : la base ne garde pas les null) */
+function cvCap(){var v=D.billsPerDay;if(v===null||v===undefined||v==='')return Infinity;v=parseInt(v,10);return isNaN(v)?Infinity:Math.max(0,v);}
+function cvEvery(){return Math.max(1,parseInt(D.cvEvery,10)||1);}
+function cvOrdoWarn(){return D.ordoWarn===0?0:(parseInt(D.ordoWarn,10)||2);}
+function _cvAddDays(k,n){var d=new Date(k+'T12:00:00');d.setDate(d.getDate()+n);return dk(d);}
+function _cvNowM(){var d=new Date();return d.getHours()*60+d.getMinutes();}
+function _cvTu(p){return !!(p&&(p.tutoie||p.cool));}
+function _cvMobile(ph){var n=_proNormPhone(ph||'');return /^[67]\d{8}$/.test(n)||(n.length>=10&&n.charAt(0)!=='0');}
+function _cvHour(t){var p=String(t||'').split(':');return p.length<2?String(t||''):(parseInt(p[0],10)+'h'+(p[1]==='00'?'':p[1]));}
+function _cvDateLabel(k){var d=new Date(k+'T00:00:00');if(isNaN(d.getTime()))return String(k||'');return _CV_DJ[d.getDay()]+' '+d.getDate()+' '+_CV_MO[d.getMonth()];}
+function _cvName(p){return ((p.lastName||'').toUpperCase()+' '+(p.firstName||'')).trim();}
+/* prochaine séance du patient après ce jour (ou après maintenant si c'est aujourd'hui) */
+function _cvNextAp(pid,day,afterNow){
+  var nowM=_cvNowM(),t=todayKey();
+  return (D.appointments||[]).filter(function(a){
+    if(a.patientId!==pid||a.cancelled||a.type==='absence'||a.type==='bilan'||!a.date)return false;
+    if(a.date>day)return true;
+    return afterNow&&a.date===day&&day===t&&t2m(a.time||'00:00')>nowM;
+  }).sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)})[0]||null;
+}
+/* déjà prévenu pour ce jour ? (envois du secrétaire lus sur le serveur + envois faits depuis l'appli) */
+function cvPinned(pid,day){
+  var loc=(D.cvPins&&D.cvPins[day])||{};
+  if(loc[pid])return loc[pid].k||'manuel';
+  var s=(CV.srv.pins||{})[day]||{};
+  return s[pid]||'';
+}
+function _cvPinSet(day,pid,kind){
+  if(!D.cvPins||typeof D.cvPins!=='object')D.cvPins={};
+  if(!D.cvPins[day])D.cvPins[day]={};
+  D.cvPins[day][pid]={k:kind||'manuel',at:Date.now()};
+  /* ménage : on ne garde que les 10 derniers jours */
+  var lim=_cvAddDays(todayKey(),-10);
+  Object.keys(D.cvPins).forEach(function(d){if(d<lim)delete D.cvPins[d];});
+}
+
+/* ─── qui apporte sa carte Vitale, jour par jour (projection : les 💵 d'un jour sont facturés ce jour-là) ─── */
+function cvSelection(from,nDays){
+  var every=cvEvery(),cap=cvCap(),end=_cvAddDays(from,nDays-1),ub={},byDay={},out={};
+  (D.appointments||[]).forEach(function(a){
+    if(!a||!a.patientId||a.cancelled||a.type==='absence'||a.type==='bilan')return;
+    var d=a.date||'';
+    if(d<from){if(!a.billed)ub[a.patientId]=(ub[a.patientId]||0)+1;return;}
+    if(d>end)return;
+    (byDay[d]=byDay[d]||[]).push(a);
+  });
+  for(var i=0;i<nDays;i++){
+    var d=_cvAddDays(from,i);
+    var aps=(byDay[d]||[]).slice().sort(function(a,b){return t2m(a.time||'00:00')-t2m(b.time||'00:00')});
+    var pats={},order=[];
+    aps.forEach(function(a){
+      var c=pats[a.patientId];
+      if(!c){c=pats[a.patientId]={pid:a.patientId,ap:null,n:0};order.push(c);}
+      if(!a.billed){c.n++;if(!c.ap)c.ap=a;}
+    });
+    var pinned=[],cands=[];
+    order.forEach(function(c){
+      var p=gp(c.pid);c.ub=(ub[c.pid]||0)+c.n;
+      if(!p||c.ub<=0||!c.ap)return;
+      c.p=p;c.time=t2m(c.ap.time||'00:00');c.end=c.time+(parseInt(c.ap.duration,10)||30);
+      c.pin=cvPinned(c.pid,d);
+      if(c.pin)pinned.push(c);
+      else if(!patHasAlert(p)&&c.ub>=every)cands.push(c);
+    });
+    cands.sort(function(a,b){return (b.ub-a.ub)||(a.time-b.time)||(a.pid<b.pid?-1:(a.pid>b.pid?1:0))});
+    var sel=pinned.slice(),autoN=pinned.filter(function(c){return c.pin==='auto'}).length;
+    for(var j=0;j<cands.length;j++){
+      if(autoN>=cap)break;
+      var c=cands[j],ov=0;
+      sel.forEach(function(s){if(c.time<s.end&&c.end>s.time)ov++;});
+      if(ov>=2)continue;   /* déjà deux 💵 sur ce créneau */
+      sel.push(c);autoN++;
+    }
+    sel.sort(function(a,b){return a.time-b.time});
+    out[d]=sel;
+    var chosen={};sel.forEach(function(c){chosen[c.pid]=true;});
+    order.forEach(function(c){ub[c.pid]=chosen[c.pid]?0:((ub[c.pid]||0)+c.n);});
+  }
+  return out;
+}
+var _cvSelCache={k:'',v:null,t:0};
+function cvSel(){
+  var t=todayKey();
+  var k=t+'|'+(D._lastSaved||0)+'|'+(D.appointments||[]).length+'|'+CV.srvSig+'|'+JSON.stringify(D.cvPins||{})+'|'+D.cvEvery+'|'+D.billsPerDay;
+  if(_cvSelCache.v&&_cvSelCache.k===k&&Date.now()-_cvSelCache.t<60000)return _cvSelCache.v;
+  _cvSelCache={k:k,v:cvSelection(t,7),t:Date.now()};
+  return _cvSelCache.v;
+}
+function computeDayBills(dateKey){var s=new Set(),l=cvSel()[dateKey];if(l)l.forEach(function(c){s.add(c.pid)});return s;}
+function getTodayBillSet(){return computeDayBills(todayKey());}
+function invalidateBillCache(){_cvSelCache.k='';}
+function billEmoji(pid,force){
+  if(!pid)return '';
+  var p=gp(pid);if(!p)return '';
+  var t=todayKey(),pin=cvPinned(pid,t);
+  if(patHasAlert(p)&&!pin&&!force)return '';
+  if(unbilledCount(pid)<=0)return '';
+  if(!force&&!getTodayBillSet().has(pid))return '';
+  var info='Doit apporter sa carte Vitale aujourd\'hui'+(pin?(' — prévenu(e) par le secrétaire'+(pin==='auto'?' (rappel automatique)':'')):'');
+  return '<span class="emji" data-info="'+esc(info)+'" title="'+esc(info)+'" onclick="event.stopPropagation();billPatient(\''+pid+'\',false)">💵</span>';
+}
+
+/* ─── texte du SMS (le même que celui du secrétaire) ─── */
+function cvSignature(){
+  var s=(SECR.status&&SECR.status.settings&&SECR.status.settings.signature)||'';
+  return String(s||'— Assistant IA du cabinet {cabinet}').replace('{cabinet}',D.proName||'de kinésithérapie').trim();
+}
+function cvPreview(it){
+  var t=todayKey(),nowHm=m2t(_cvNowM());
+  var variant=it.date>t?'date':((it.date===t&&it.time>nowHm)?'today':'next');
+  var tu=!!it.tu,ta=tu?'ta':'votre',q;
+  if(variant==='today')q=' à '+ta+' séance d\'aujourd\'hui ('+_cvHour(it.time)+')';
+  else if(variant==='date')q=' à '+ta+' séance du '+_cvDateLabel(it.date)+' à '+_cvHour(it.time);
+  else q=' à '+ta+' prochaine séance'+(it.next?' ('+_cvDateLabel(it.next.date)+' à '+_cvHour(it.next.time)+')':'');
+  var who=it.firstName||it.lastName||'';
+  return 'Bonjour'+(who?' '+who:'')+', '+(tu?'pense à apporter ta carte Vitale':'pensez à apporter votre carte Vitale')+q+'. Merci !\n'+cvSignature();
+}
+function cvItem(p,ap,next){
+  return {id:ap.id,date:ap.date,time:ap.time,pid:p.id,firstName:p.firstName||'',lastName:p.lastName||'',phone:p.phone||'',tu:_cvTu(p),next:next?{date:next.date,time:next.time}:null};
+}
+
+/* ─── état du jour lu sur le serveur (rappels déjà envoyés) ─── */
+function cvLoadStatus(){
+  if(!_secrCfg())return Promise.resolve(null);
+  return secrApi('GET','cv/status').then(function(r){
+    var pins={},sent=r.sent||{};
+    Object.keys(sent).forEach(function(apId){
+      var x=sent[apId],ap=(D.appointments||[]).find(function(a){return a.id===apId});
+      if(!ap||!ap.patientId)return;
+      var d=r.date;
+      if(x.variant==='next'){var nx=_cvNextAp(ap.patientId,r.date,false);if(!nx)return;d=nx.date;}
+      else if(x.variant==='date')d=ap.date;
+      (pins[d]=pins[d]||{})[ap.patientId]=x.kind==='auto'?'auto':'manuel';
+    });
+    var sig=JSON.stringify(pins);
+    CV.srv={date:r.date,sent:sent,pins:pins,plan:r.plan||null,at:Date.now()};
+    if(sig!==CV.srvSig){CV.srvSig=sig;invalidateBillCache();try{R();}catch(e){}}
+    CV.lastErr='';
+    return r;
+  }).catch(function(e){CV.lastErr=e.message;return null;});
+}
+
+/* ─── plan transmis au secrétaire (rappels à venir + ordonnances suivies) ─── */
+function cvPlanBuild(){
+  var today=todayKey(),sel=cvSel(),cv=[];
+  Object.keys(sel).sort().forEach(function(d){
+    sel[d].forEach(function(c){
+      if(c.pin)return;   /* déjà prévenu ce jour-là */
+      var p=c.p;if(!p||!p.phone)return;
+      cv.push({id:c.ap.id,date:d,time:c.ap.time,pid:c.pid,firstName:p.firstName||'',lastName:p.lastName||'',phone:p.phone,tu:_cvTu(p),unbilled:c.ub});
+    });
+  });
+  var ordo=[],fut={};
+  (D.appointments||[]).forEach(function(a){if(a&&a.patientId&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date>today)(fut[a.patientId]=fut[a.patientId]||[]).push(a);});
+  (D.patients||[]).forEach(function(p){
+    var up=fut[p.id];if(!up)return;
+    var o=(typeof ordoCurrent==='function')?ordoCurrent(p):null;
+    if(!(o?(parseInt(o.sessions,10)>0):(parseInt(p.prescribedSessions,10)>0)))return;
+    var sc=getSessionCount(p.id);
+    if(!sc.total)return;
+    up=up.slice().sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)}).slice(0,30).map(function(a){return {id:a.id,date:a.date,time:a.time}});
+    ordo.push({key:p.id+'_'+(sc.ordo?sc.ordo.id:('l'+sc.total)),pid:p.id,name:_cvName(p),done:sc.done,total:sc.total,upcoming:up});
+  });
+  var cap=cvCap();
+  return {day:today,cabinet:D.proName||'',
+    settings:{enabled:D.carteVitaleSMS!==false,advanceMin:parseInt(D.cvAdvanceMinutes,10)||120,earliest:D.cvEarliest||'08:00',maxPerDay:cap===Infinity?null:cap,ordoWarn:cvOrdoWarn()},
+    cv:cv,ordo:ordo};
+}
+function cvPlanSoon(){if(!_secrCfg())return;clearTimeout(CV.pubTimer);CV.pubTimer=setTimeout(function(){cvPlanPublish(false)},4000);}
+function cvPlanPublish(force){
+  if(!_secrCfg())return Promise.resolve(null);
+  /* rappels déjà envoyés (entre-temps par le secrétaire) relus d'abord : le plan reste exact */
+  if(Date.now()-(CV.srv.at||0)>20000)return cvLoadStatus().then(function(){return _cvPlanPut(force);});
+  return _cvPlanPut(force);
+}
+function _cvPlanPut(force){
+  var plan;try{plan=cvPlanBuild();}catch(e){console.warn('plan carte Vitale',e);return Promise.resolve(null);}
+  var h=JSON.stringify(plan);
+  if(!force&&h===CV.pubHash&&Date.now()-CV.pubAt<6*3600000)return Promise.resolve(null);
+  return secrApi('PUT','plan',plan).then(function(r){CV.pubHash=h;CV.pubAt=Date.now();CV.lastErr='';CV.lastPub=r;cvStatusBox();return r;},function(e){CV.lastErr=e.message;cvStatusBox();return null;});
+}
+/* au démarrage puis toutes les 5 minutes : état du jour + plan à jour (jour qui change, données reçues d'un autre appareil…) */
+function cvStartup(){if(!_secrCfg())return;cvLoadStatus().then(function(){return _cvPlanPut(false);});}
+setTimeout(cvStartup,3500);
+setInterval(function(){if(document.visibilityState==='visible')cvStartup();},300000);
+
+/* ─── bouton 💵 : rappel immédiat aux patients cochés ─── */
+function cvTodayRows(){
+  var today=todayKey(),nowM=_cvNowM(),sel=cvSel()[today]||[],selM={},byPid={},order=[];
+  sel.forEach(function(c){selM[c.pid]=c;});
+  (D.appointments||[]).filter(function(a){return a.date===today&&a.patientId&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'})
+    .sort(function(a,b){return t2m(a.time||'00:00')-t2m(b.time||'00:00')}).forEach(function(a){
+      var r=byPid[a.patientId];if(!r){r=byPid[a.patientId]={pid:a.patientId,aps:[]};order.push(r);}r.aps.push(a);
+    });
+  return order.map(function(r){
+    var p=gp(r.pid);if(!p)return null;
+    var up=r.aps.filter(function(a){return t2m(a.time||'00:00')>nowM})[0];
+    var ap=up||r.aps[r.aps.length-1];
+    var next=up?null:_cvNextAp(r.pid,today,false);
+    var sentAt='',sk='';
+    Object.keys(CV.srv.sent||{}).forEach(function(apId){if(r.aps.some(function(a){return a.id===apId})){var x=CV.srv.sent[apId];sentAt=x.at;sk=x.kind;}});
+    var loc=(D.cvPins&&D.cvPins[today]&&D.cvPins[today][r.pid])||null;
+    if(!sentAt&&loc){sentAt=loc.at;sk=loc.k;}
+    return {pid:r.pid,p:p,ap:ap,past:!up,next:next,ub:unbilledCount(r.pid),mobile:_cvMobile(p.phone),bill:!!selM[r.pid],alert:patHasAlert(p),sentAt:sentAt,sentKind:sk};
+  }).filter(Boolean);
+}
+function openCvModal(){
+  var b=document.getElementById('mMB');
+  document.getElementById('mMT').textContent='💵 Rappel carte Vitale';
+  if(!_secrCfg()){
+    b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:12px">Les rappels de carte Vitale sont envoyés par le <b>secrétaire IA</b> (SMS du téléphone du cabinet). Connectez-le d\'abord.</div>'+
+      '<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button><button class="btn bp bw" onclick="clM(\'mM\');openSecr(\'settings\')">🤖 Connecter le secrétaire</button></div>';
+    opM('mM');return;
+  }
+  b.innerHTML='<div style="font-size:12px;color:var(--text2)">Chargement…</div>';
+  opM('mM');
+  cvLoadStatus().then(cvRenderModal,cvRenderModal);
+}
+function cvRenderModal(){
+  var b=document.getElementById('mMB');if(!b)return;
+  var rows=cvTodayRows();CV.rows=rows;
+  if(!rows.length){b.innerHTML='<div style="font-size:13px;margin-bottom:12px">Aucun patient aujourd\'hui.</div><div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';return;}
+  var nBill=rows.filter(function(r){return r.bill}).length;
+  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.45">Le secrétaire IA envoie un SMS signé « '+esc(cvSignature())+' ». Cochés par défaut : les patients 💵 qui n\'ont pas encore été prévenus'+(nBill?'':' (aucun 💵 aujourd\'hui)')+'.</div>'+
+    '<div class="cvbar"><button class="btn bs" onclick="cvCheck(\'bill\')">💵 Seulement les 💵</button><button class="btn bs" onclick="cvCheck(\'all\')">Tout cocher</button><button class="btn bs" onclick="cvCheck(\'none\')">Aucun</button></div>';
+  rows.forEach(function(r,i){
+    var ok=r.mobile,def=ok&&r.bill&&!r.sentAt;
+    var sub=[];
+    sub.push(r.ub+' séance'+(r.ub>1?'s':'')+' non facturée'+(r.ub>1?'s':''));
+    if(r.sentAt)sub.push('<span class="cvtag">✓ prévenu'+(r.sentKind==='auto'?' (auto)':'')+' à '+esc(_secrWhen(r.sentAt))+'</span>');
+    if(r.alert)sub.push('<span class="cvtag w">❗ documents à fournir</span>');
+    if(!ok)sub.push('<span class="cvtag r">pas de numéro de mobile</span>');
+    var when=r.past?('Séance passée → rappel pour la prochaine séance'+(r.next?' ('+esc(_cvDateLabel(r.next.date))+' à '+esc(_cvHour(r.next.time))+')':' (aucune prévue)')):'';
+    h+='<label class="cvrow'+(ok?'':' off')+'"><input type="checkbox" data-cvi="'+i+'"'+(def?' checked':'')+(ok?'':' disabled')+' onchange="cvCount()">'+
+      '<div class="cvm"><div class="cvn"><span class="cvt">'+esc(r.ap.time||'')+'</span>'+esc(_cvName(r.p))+(r.bill?' 💵':'')+'</div>'+
+      '<div class="cvs">'+sub.join(' · ')+'</div>'+(when?'<div class="cvs" style="color:#8a6d00">'+when+'</div>':'')+'</div></label>';
+  });
+  var ex=rows.filter(function(r){return r.mobile})[0];
+  if(ex)h+='<div class="cvprev" id="cvPrev"><b>Exemple :</b>\n'+esc(cvPreview(cvItem(ex.p,ex.ap,ex.next)))+'</div>';
+  h+='<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button><button class="btn bp bw" id="cvSendBtn" onclick="cvSendChecked()">📤 Envoyer</button></div>';
+  b.innerHTML=h;
+  cvCount();
+}
+function cvCheck(mode){
+  document.querySelectorAll('#mMB input[data-cvi]').forEach(function(x){
+    var r=CV.rows[+x.getAttribute('data-cvi')];if(!r||!r.mobile)return;
+    x.checked=mode==='all'?true:(mode==='none'?false:(r.bill&&!r.sentAt));
+  });
+  cvCount();
+}
+function cvCount(){
+  var n=document.querySelectorAll('#mMB input[data-cvi]:checked').length,btn=document.getElementById('cvSendBtn');
+  if(btn){btn.textContent='📤 Envoyer '+n+' SMS';btn.disabled=!n||CV.sending;btn.style.opacity=(!n||CV.sending)?'.5':'';}
+}
+function cvSendChecked(){
+  if(CV.sending)return;
+  var items=[],rows=[];
+  document.querySelectorAll('#mMB input[data-cvi]:checked').forEach(function(x){var r=CV.rows[+x.getAttribute('data-cvi')];if(r&&r.mobile){rows.push(r);items.push(cvItem(r.p,r.ap,r.next));}});
+  if(!items.length){toast('Cochez au moins un patient');return}
+  cvSend(items,rows.map(function(r){return r.p})).then(function(ok){if(ok)clM('mM');});
+}
+function cvSend(items,pats){
+  CV.sending=true;cvCount();
+  return secrApi('POST','cv/send',{items:items}).then(function(r){
+    CV.sending=false;
+    var t=todayKey(),okN=0,errs=[];
+    (r.results||[]).forEach(function(x,i){
+      var it=items[i]||{};
+      if(x.ok){okN++;
+        var day=x.variant==='next'?(it.next?it.next.date:''):it.date;
+        if(x.variant==='today')day=t;
+        if(day)_cvPinSet(day,it.pid,'manuel');
+      }else errs.push(((pats&&pats[i])?_cvName(pats[i]):(it.lastName||'?'))+' : '+(x.error||'échec'));
+    });
+    if(okN){invalidateBillCache();sv();R();cvLoadStatus();cvPlanSoon();}
+    if(errs.length)toast('⚠️ '+okN+' SMS envoyé(s) · non envoyé : '+errs.join(' ; '),6000);
+    else toast('💵 '+okN+' rappel'+(okN>1?'s':'')+' carte Vitale envoyé'+(okN>1?'s':'')+' par le secrétaire');
+    return okN>0;
+  },function(e){CV.sending=false;cvCount();toast('⚠️ '+e.message,5000);return false;});
+}
+/* menu d'un patient : rappel à ce patient seulement */
+function cvCtxSend(apId){
+  try{clCtx();}catch(e){}
+  var ap=(D.appointments||[]).find(function(a){return a.id===apId});if(!ap)return;
+  var p=ap.patientId?gp(ap.patientId):null;if(!p)return;
+  cvOpenOne(p,ap);
+}
+function cvPatSend(pid){
+  var p=gp(pid);if(!p)return;
+  var t=todayKey(),nowM=_cvNowM();
+  var mine=(D.appointments||[]).filter(function(a){return a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date});
+  var ap=mine.filter(function(a){return a.date>t||(a.date===t&&t2m(a.time||'00:00')>nowM)}).sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)})[0]
+    ||mine.filter(function(a){return a.date===t}).sort(function(a,b){return (b.time||'').localeCompare(a.time||'')})[0];
+  if(!ap){toast('Aucune séance prévue pour '+_cvName(p));return}
+  cvOpenOne(p,ap);
+}
+function cvOpenOne(p,ap){
+  var b=document.getElementById('mMB');
+  document.getElementById('mMT').textContent='💵 SMS carte Vitale';
+  if(!_secrCfg()){openCvModal();return;}
+  var t=todayKey(),nowM=_cvNowM(),next=null,use=ap;
+  var past=ap.date<t||(ap.date===t&&t2m(ap.time||'00:00')<=nowM);
+  if(past){
+    /* séance passée : une autre séance plus tard aujourd'hui, sinon rappel pour la prochaine séance */
+    var nx=_cvNextAp(p.id,t,true);
+    if(nx&&nx.date===t)use=nx;else next=nx;
+  }
+  var it=cvItem(p,use,next);
+  CV.one={it:it,p:p};
+  if(!_cvMobile(p.phone)){
+    b.innerHTML='<div style="font-size:13px;margin-bottom:12px">'+esc(_cvName(p))+' n\'a pas de numéro de mobile sur sa fiche.</div><div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';opM('mM');return;
+  }
+  var pin=cvPinned(p.id,it.next?it.next.date:it.date);
+  b.innerHTML='<div style="font-size:13px;margin-bottom:6px"><b>'+esc(_cvName(p))+'</b> · '+esc(p.phone)+'</div>'+
+    (pin?'<div class="cvs" style="margin-bottom:6px"><span class="cvtag">✓ déjà prévenu'+(pin==='auto'?' (rappel automatique)':'')+'</span></div>':'')+
+    '<div class="cvprev">'+esc(cvPreview(it))+'</div>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Envoyé par le secrétaire IA, depuis le téléphone du cabinet.</div>'+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button><button class="btn bp bw" id="cvSendBtn" onclick="cvSendOne()">📤 Envoyer le SMS</button></div>';
+  opM('mM');
+}
+function cvSendOne(){
+  if(!CV.one||CV.sending)return;
+  var btn=document.getElementById('cvSendBtn');if(btn){btn.disabled=true;btn.style.opacity='.5';}
+  cvSend([CV.one.it],[CV.one.p]).then(function(ok){if(ok)clM('mM');else if(btn){btn.disabled=false;btn.style.opacity='';}});
+}
+
+/* ─── réglages : ⚙ › 💵 Facturation ─── */
+function cvSet(k,v){
+  D[k]=v;invalidateBillCache();sv();R();cvPlanSoon();cvStatusBox();toast('Enregistré');
+}
+function cvSettingsHtml(){
+  var adv=parseInt(D.cvAdvanceMinutes,10)||120;
+  var advOpts=[[30,'30 min'],[60,'1 heure'],[90,'1 h 30'],[120,'2 heures'],[180,'3 heures'],[240,'4 heures'],[360,'6 heures'],[720,'12 heures']];
+  if(!advOpts.some(function(o){return o[0]===adv}))advOpts.push([adv,adv+' min']);
+  var cap=cvCap(),on=D.carteVitaleSMS!==false,w=cvOrdoWarn();
+  return '<div class="ss"><h3>💵 Facturation · carte Vitale</h3>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.45">💵 = patients du jour qui doivent venir avec leur carte Vitale. C\'est le <b>secrétaire IA</b> qui les prévient par SMS (signé de sa part), même appli fermée. Les patients avec ❗ ou ‼️ ne sont pas proposés.</div>'+
+    '<div class="pcks" style="margin-bottom:8px"><label><input type="checkbox" id="sCarteVitaleSMS" '+(on?'checked':'')+' onchange="cvSet(\'carteVitaleSMS\',this.checked)"> 💳 Rappels automatiques par le secrétaire IA</label></div>'+
+    '<div class="fr">'+
+      '<div class="fg"><label>Carte Vitale : toutes les … séances non facturées</label><input type="number" id="sCvEvery" min="1" max="30" value="'+cvEvery()+'" onchange="cvSet(\'cvEvery\',Math.max(1,Math.min(30,parseInt(this.value,10)||1)))"></div>'+
+      '<div class="fg"><label>Facturations 💵 par jour (SMS max.)</label><input type="number" id="sBillsDay" min="0" max="99" placeholder="sans limite" value="'+(cap===Infinity?'':cap)+'" onchange="var v=this.value.trim();cvSet(\'billsPerDay\',v===\'\'?\'\':Math.max(0,parseInt(v,10)||0))"></div>'+
+    '</div>'+
+    '<div class="fr">'+
+      '<div class="fg"><label>Envoyer le rappel … avant le RDV</label><select id="sCvAdvance" onchange="cvSet(\'cvAdvanceMinutes\',parseInt(this.value,10)||120)">'+
+        advOpts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===adv?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+      '<div class="fg"><label>… mais pas avant</label><input type="time" id="sCvEarliest" value="'+esc(D.cvEarliest||'08:00')+'" onchange="if(/^\\d{2}:\\d{2}$/.test(this.value))cvSet(\'cvEarliest\',this.value)"></div>'+
+    '</div>'+
+    '<div style="font-size:10px;color:var(--text3);margin:-4px 0 8px;line-height:1.4">Si l\'heure du rappel tombe avant cette heure, le SMS part à cette heure-là. Si elle tombe au début de la séance ou après (ex. séance à 8 h, « pas avant 8 h »), pas de rappel automatique : utilisez le bouton 💵. Facturations par jour vide = sans limite ; 0 = aucune.</div>'+
+    '<div class="fg"><label>📋 Me prévenir quand il reste … séances sur l\'ordonnance</label><select id="sOrdoWarn" onchange="cvSet(\'ordoWarn\',parseInt(this.value,10))">'+
+      [[0,'Jamais'],[1,'1 séance'],[2,'2 séances'],[3,'3 séances'],[4,'4 séances']].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===w?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'+
+    '<div id="cvStatusBox" class="ngbox" style="font-size:11px;color:var(--text2)">'+(setTimeout(cvStatusBox,30)?'':'')+'</div>'+
+    (typeof ngapSettingsHtml==='function'?ngapSettingsHtml():'')+
+  '</div>';
+}
+function cvStatusBox(){
+  var el=document.getElementById('cvStatusBox');if(!el)return;
+  if(!_secrCfg()){el.innerHTML='⚠️ Secrétaire IA non connecté : les rappels automatiques ne partent pas. <a href="#" onclick="event.preventDefault();openSecr(\'settings\')">Le connecter</a>';return;}
+  var t=todayKey(),todays=(cvSel()[t]||[]),sentN=Object.keys(CV.srv.sent||{}).length;
+  var h='🤖 Secrétaire connecté · aujourd\'hui : <b>'+todays.length+'</b> patient'+(todays.length>1?'s':'')+' 💵 · <b>'+sentN+'</b> rappel'+(sentN>1?'s':'')+' envoyé'+(sentN>1?'s':'');
+  if(CV.pubAt)h+='<br>Plan transmis au secrétaire à '+esc(_secrWhen(CV.pubAt));
+  if(CV.lastErr)h+='<br><span style="color:#c0392b">⚠️ '+esc(CV.lastErr)+'</span>';
+  if(D.carteVitaleSMS===false)h+='<br>Rappels automatiques désactivés : seul le bouton 💵 envoie des rappels.';
+  el.innerHTML=h;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v100 — NGAP : le secrétaire IA consulte la nomenclature en vigueur
+   - D.ngap : lettres clés (valeur datée), actes / bilans / suppléments (lettre clé +
+     coefficient, datés), déplacements. Le prix d'une séance = coefficient × valeur de
+     la lettre clé À LA DATE DE LA SÉANCE : un changement s'applique à sa date d'effet,
+     pour tous les patients. Les séances déjà facturées gardent leur montant.
+   - Ordonnances (p.ordos) : date de début, nombre de séances (0 = illimité), cotation,
+     suppléments, déplacement, type de bilan. Les séances comptent depuis le début.
+   ═══════════════════════════════════════════════════════════════════ */
+var NGAP={busy:false,doc:null,items:null,newItems:null,sugg:null,filterAct:''};
+function _ngR2(x){return Math.round((Number(x)+Number.EPSILON)*100)/100;}
+function _ngC(x){return String(Math.round(Number(x)*100)/100).replace('.',',');}
+function _ngDay(k){return k?String(k).split('-').reverse().join('/'):'';}
+function ngapHas(){return !!(D.ngap&&Array.isArray(D.ngap.acts)&&D.ngap.acts.length);}
+function _ngVerAt(vs,date){
+  if(!Array.isArray(vs)||!vs.length)return null;
+  var best=null,d=date||'9999-12-31';
+  vs.forEach(function(v){var f=v.from||'';if(f<=d&&(!best||f>=(best.from||'')))best=v;});
+  if(!best){best=vs[0];vs.forEach(function(v){if((v.from||'')<(best.from||''))best=v;});}
+  return best;
+}
+function ngapKeyValue(code,date){
+  var K=(D.ngap&&D.ngap.keys)||{},k=K[code]||K.AMK;
+  if(!k){var c0=Object.keys(K)[0];k=c0?K[c0]:null;}
+  if(!k)return null;
+  var v=_ngVerAt(k.versions,date);if(!v)return null;
+  return (D.ngap.zone==='dom'&&v.valueDom)?v.valueDom:v.value;
+}
+function ngapItem(kind,id){return (((D.ngap&&D.ngap[kind])||[]).filter(function(x){return x.id===id})[0])||null;}
+function ngapVer(kind,id,date,snap){
+  var it=id?ngapItem(kind,id):null,v=it?_ngVerAt(it.versions,date):null;
+  if(!v&&snap&&snap.code&&snap.coef)v={code:snap.code,coef:snap.coef};
+  return v;
+}
+function ngapPrice(kind,id,date,snap){
+  var v=ngapVer(kind,id,date,snap);if(!v)return null;
+  var kv=ngapKeyValue(v.code,date);if(kv===null)return null;
+  return _ngR2(v.coef*kv);
+}
+function ngapTravel(code){var t=((D.ngap&&D.ngap.travel)||[]).filter(function(x){return x.code===code})[0];if(!t)return 0;return (D.ngap.zone==='dom'&&t.amountDom)?t.amountDom:t.amount;}
+function ngapBilanFor(type){var l=(D.ngap&&D.ngap.bilans)||[];return l.filter(function(b){return b.type===type})[0]||l.filter(function(b){return b.type==='general'})[0]||l[0]||null;}
+
+/* ─── ordonnances ─── */
+function ordoList(p){return (p&&Array.isArray(p.ordos))?p.ordos:[];}
+function ordoAt(p,date){var best=null;ordoList(p).forEach(function(o){if(o&&o.start&&o.start<=date&&(!best||o.start>=best.start))best=o;});return best;}
+function ordoCurrent(p){
+  var o=ordoAt(p,todayKey());if(o)return o;
+  var l=ordoList(p).filter(function(x){return x&&x.start}).sort(function(a,b){return a.start<b.start?-1:1});
+  return l[0]||null;
+}
+function ordoPriceAt(o,date){
+  if(!o||!o.act||!ngapHas())return null;
+  var base=ngapPrice('acts',o.act.id,date,o.act);if(base===null)return null;
+  var sum=base;
+  (o.supp||[]).forEach(function(id){var x=ngapPrice('supplements',id,date);if(x!==null)sum+=x;});
+  if(o.travel)sum+=Number(ngapTravel(o.travel))||0;
+  return _ngR2(sum);
+}
+function sessionPrice(p,date){
+  date=date||todayKey();
+  var x=ordoPriceAt(ordoAt(p,date),date);
+  if(x!==null)return x;
+  return Number((p&&p.sessionFee!==undefined)?p.sessionFee:18.20);
+}
+function bilanPrice(p,date){
+  date=date||todayKey();
+  if(ngapHas()){
+    var o=p?ordoAt(p,date):null,b=ngapBilanFor((o&&o.bilan)||D.bilanType||'general');
+    if(b){var x=ngapPrice('bilans',b.id,date);if(x!==null)return x;}
+  }
+  return Number(D.bilanFee||0);
+}
+function apAmount(ap,pat){
+  var d=(ap&&ap.date)||todayKey();
+  if(ap.isBilan||ap.type==='bilan')return bilanPrice(pat,d);
+  return sessionPrice(pat,d);
+}
+function ordoCotLabel(o,date){
+  if(!o||!o.act)return '';
+  var v=ngapVer('acts',o.act.id,date||todayKey(),o.act);
+  var s=v?(v.code+' '+_ngC(v.coef)):'';
+  (o.supp||[]).forEach(function(id){var it=ngapItem('supplements',id);if(it)s+=' + '+(it.label.length>18?it.label.slice(0,18)+'…':it.label);});
+  if(o.travel)s+=' + '+o.travel;
+  return s;
+}
+function _legacySessionCount(p){
+  var t=todayKey();
+  var apts=(D.appointments||[]).filter(function(a){return a.patientId===p.id&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date<=t});
+  var done=apts.length+(parseInt(p.sessionsBeforeApp)||0),prescribed=parseInt(p.prescribedSessions)||0;
+  var rs=parseInt(p.renewAfterSessions)||0,rm=parseInt(p.renewAfterMonths)||0,needs=false,label,w=cvOrdoWarn();
+  if(prescribed>0){label=done+'/'+prescribed;if(w>0&&done>=prescribed-w)needs=true;}
+  else{
+    label=done+(done<2?' séance':' séances');
+    if(rs>0&&done>=rs)needs=true;
+    if(rm>0&&apts.length>0){var first=apts.slice().sort(function(a,b){return String(a.date).localeCompare(String(b.date))})[0];var fd=new Date(first.date+'T00:00:00');if(Math.floor((new Date()-fd)/(30.44*86400000))>=rm)needs=true;}
+  }
+  return {done:done,total:prescribed,label:label,needsRenewal:needs};
+}
+function _ordoSessionsBetween(pid,from,to){
+  return (D.appointments||[]).filter(function(a){return a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.type!=='bilan'&&a.date&&a.date>=from&&a.date<=to}).length;
+}
+function getSessionCount(pid){
+  var p=gp(pid);if(!p)return{done:0,total:0,label:'',needsRenewal:false};
+  var o=ordoCurrent(p);
+  if(!o)return _legacySessionCount(p);
+  var t=todayKey(),done=_ordoSessionsBetween(pid,o.start,t)+(parseInt(o.before,10)||0),total=parseInt(o.sessions,10)||0,w=cvOrdoWarn(),needs=false;
+  if(total>0){if(w>0&&done>=total-w)needs=true;}
+  else{
+    var rs=parseInt(p.renewAfterSessions)||0,rm=parseInt(p.renewAfterMonths)||0;
+    if(rs>0&&done>=rs)needs=true;
+    if(rm>0&&o.start<=t&&Math.floor((new Date()-new Date(o.start+'T00:00:00'))/(30.44*86400000))>=rm)needs=true;
+  }
+  return {done:done,total:total,label:total>0?(done+'/'+total):(done+(done<2?' séance':' séances')),needsRenewal:needs,ordo:o};
+}
+
+/* ─── consultation de la NGAP par le secrétaire ─── */
+function ngapCompact(){
+  if(!D.ngap)return null;
+  var t=todayKey(),cur=function(kind){return (D.ngap[kind]||[]).map(function(a){var v=_ngVerAt(a.versions,t)||{};return {id:a.id,code:v.code,coef:v.coef,label:a.label};}).filter(function(a){return a.code})};
+  return {consultedOn:D.ngap.consultedOn||'',keys:Object.keys(D.ngap.keys||{}).map(function(c){var v=_ngVerAt(D.ngap.keys[c].versions,t);return {code:c,value:v?v.value:null}}).filter(function(k){return k.value}),
+    acts:cur('acts'),bilans:cur('bilans'),supplements:cur('supplements')};
+}
+function ngapRefresh(){
+  if(!_secrCfg()){toast('Connectez d\'abord le secrétaire IA (bouton 🤖)');return}
+  if(NGAP.busy){ngapBusyModal();return}
+  NGAP.busy=true;NGAP.t0=Date.now();ngapBusyModal();
+  secrApi('POST','ngap/refresh',{zone:D.ngapZone==='dom'?'dom':'metropole',current:ngapCompact()}).then(function(r){
+    NGAP.busy=false;ngapReview(r.ngap);
+  },function(e){
+    var m=String(e&&e.message||e);
+    if(/Failed to fetch|NetworkError|Load failed|network|déjà en cours|Erreur 50[34]/i.test(m))return ngapPoll(0,m);
+    NGAP.busy=false;ngapError(m);
+  });
+}
+function ngapPoll(n,firstErr){
+  return secrApi('GET','ngap').then(function(r){
+    if(r.ngap&&r.ngap.at>=NGAP.t0-5000){NGAP.busy=false;ngapReview(r.ngap);return;}
+    if(r.job&&r.job.running&&n<45){setTimeout(function(){ngapPoll(n+1,firstErr)},10000);return;}
+    NGAP.busy=false;ngapError((r.job&&r.job.error)||firstErr||'La consultation n\'a pas abouti');
+  },function(){if(n<45){setTimeout(function(){ngapPoll(n+1,firstErr)},10000);}else{NGAP.busy=false;ngapError(firstErr);}});
+}
+function ngapBusyModal(){
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔎 NGAP — consultation en cours';
+  b.innerHTML='<div style="font-size:13px;line-height:1.5">Le secrétaire IA recherche la NGAP des actes de kinésithérapie en vigueur (ameli.fr, Journal officiel, sources professionnelles) et les évolutions datées.</div>'+
+    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Cela prend en général <b>1 à 4 minutes</b>. Vous pouvez fermer cette fenêtre : le résultat vous sera présenté ici, pour validation, avant d\'être appliqué.</div>'+
+    '<div class="ngbox" style="font-size:12px">⏳ Recherche en cours…</div>'+
+    '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
+  opM('mM');
+}
+function ngapError(m){
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='NGAP — consultation impossible';
+  b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:10px">⚠️ '+esc(m)+'</div>'+
+    (/Console Claude|recherche web/i.test(m)?'<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Sur <b>platform.claude.com</b> (compte Anthropic du secrétaire) : réglages de l\'organisation → autoriser la recherche web. Puis relancez l\'actualisation.</div>':'')+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button><button class="btn bp bw" onclick="ngapRefresh()">🔄 Réessayer</button></div>';
+  opM('mM');
+}
+
+/* ─── fusion : ce que dit le secrétaire → D.ngap (avec les dates d'effet choisies) ─── */
+function _ngKeyVersionsFromR(k,changes){
+  var m={};
+  (k.history||[]).forEach(function(h){m[h.from||'']={from:h.from||'',value:h.value,valueDom:h.valueDom};});
+  m[k.from||'']={from:k.from||'',value:k.value,valueDom:k.valueDom};
+  (changes||[]).forEach(function(c){
+    if(c.type!=='valeur_lettre_cle'||!(c.newValue>0)||!c.date)return;
+    if(c.code===k.code||c.id===String(k.code).toLowerCase()||(!c.code&&!c.id))m[c.date]={from:c.date,value:c.newValue};
+  });
+  return Object.keys(m).sort().map(function(f){var v=m[f],o={from:f,value:v.value};if(v.valueDom)o.valueDom=v.valueDom;return o;});
+}
+var _NG_KINDS=[['acts','Acte'],['bilans','Bilan'],['supplements','Supplément']];
+function ngapDiff(cur,R){
+  var co=R.consultedOn||todayKey(),items=[],news=[];
+  (R.keys||[]).forEach(function(k){
+    var nv=_ngKeyVersionsFromR(k,R.changes),old=cur&&cur.keys&&cur.keys[k.code];
+    if(!old)return;
+    var o0=_ngVerAt(old.versions,co),n0=_ngVerAt(nv,co);
+    if(o0&&n0&&Math.abs(o0.value-n0.value)>0.0005)items.push({kind:'key',id:k.code,label:'Lettre clé '+k.code,fromV:o0.value,toV:n0.value,date:n0.from||co,orig:n0.from||'',sure:!!n0.from});
+    nv.filter(function(v){return v.from>co}).forEach(function(v){
+      if(old.versions.some(function(x){return x.from===v.from&&Math.abs(x.value-v.value)<0.0005}))return;
+      var prev=_ngVerAt(nv,_cvAddDays(v.from,-1));
+      items.push({kind:'key',id:k.code,label:'Lettre clé '+k.code,fromV:prev?prev.value:null,toV:v.value,date:v.from,orig:v.from,sure:true,future:true});
+    });
+  });
+  _NG_KINDS.forEach(function(kk){
+    var kind=kk[0];
+    (R[kind]||[]).forEach(function(a){
+      var old=cur?((cur[kind]||[]).filter(function(x){return x.id===a.id})[0]):null;
+      var fut=(R.changes||[]).filter(function(c){return c.id===a.id&&c.date>co&&(c.newCoef>0||c.newCode)&&c.type!=='suppression'});
+      if(!old){news.push({kind:kind,id:a.id,label:a.label,code:a.code,coef:a.coef,from:a.from||''});}
+      else{
+        var ov=_ngVerAt(old.versions,co);
+        if(!ov||ov.code!==a.code||Math.abs(ov.coef-a.coef)>0.0005){
+          var ch=(R.changes||[]).filter(function(c){return c.id===a.id&&c.date<=co&&((c.newCoef>0&&Math.abs(c.newCoef-a.coef)<0.0005)||c.newCode===a.code)}).pop();
+          var dt=(ch&&ch.date)||a.from||'';
+          items.push({kind:kind,id:a.id,label:a.label,fromV:ov?{code:ov.code,coef:ov.coef}:null,toV:{code:a.code,coef:a.coef},date:dt||co,orig:dt,sure:!!dt});
+        }
+      }
+      fut.forEach(function(c){
+        if(old&&(old.versions||[]).some(function(x){return x.from===c.date&&x.code===(c.newCode||a.code)&&Math.abs(x.coef-(c.newCoef>0?c.newCoef:a.coef))<0.0005}))return;
+        items.push({kind:kind,id:a.id,label:a.label,fromV:{code:a.code,coef:a.coef},toV:{code:c.newCode||a.code,coef:c.newCoef>0?c.newCoef:a.coef},date:c.date,orig:c.date,sure:true,future:true});
+      });
+    });
+  });
+  return {items:items,news:news};
+}
+function _ngUpsert(vs,v){
+  var out=(vs||[]).filter(function(x){return (x.from||'')!==(v.from||'')});out.push(v);
+  out.sort(function(a,b){return (a.from||'')<(b.from||'')?-1:((a.from||'')>(b.from||'')?1:0)});
+  return out;
+}
+function ngapMerge(cur,doc,items){
+  var R=doc.ref,co=R.consultedOn||todayKey();
+  var next=cur?JSON.parse(JSON.stringify(cur)):{v:1,keys:{},acts:[],bilans:[],supplements:[],travel:[],log:[]};
+  next.keys=next.keys||{};
+  (R.keys||[]).forEach(function(k){
+    var nv=_ngKeyVersionsFromR(k,R.changes);
+    (items||[]).forEach(function(it){if(it.kind==='key'&&it.id===k.code&&it.date&&it.date!==it.orig){nv=nv.map(function(v){return v.from===it.orig?Object.assign({},v,{from:it.date}):v});}});
+    next.keys[k.code]={label:k.label||((next.keys[k.code]||{}).label)||'',versions:nv};
+  });
+  _NG_KINDS.forEach(function(kk){
+    var kind=kk[0];next[kind]=next[kind]||[];
+    (R[kind]||[]).forEach(function(a){
+      var old=next[kind].filter(function(x){return x.id===a.id})[0];
+      if(!old){old={id:a.id,label:a.label,cat:a.cat||'',versions:[{from:a.from||'',code:a.code,coef:a.coef,src:'ia'}]};if(a.type)old.type=a.type;next[kind].push(old);return;}
+      old.label=a.label;old.cat=a.cat||old.cat||'';if(a.type)old.type=a.type;
+      /* évolutions à venir que le secrétaire ne confirme plus : retirées (sauf corrections du kiné) */
+      var futD=(items||[]).filter(function(it){return it.kind===kind&&it.id===a.id&&it.future}).map(function(it){return it.date});
+      old.versions=(old.versions||[]).filter(function(v){return !((v.from||'')>co&&v.src!=='kine'&&futD.indexOf(v.from)<0)});
+    });
+    (items||[]).forEach(function(it){
+      if(it.kind!==kind)return;
+      var o=next[kind].filter(function(x){return x.id===it.id})[0];if(!o)return;
+      o.versions=_ngUpsert(o.versions,{from:it.date||'',code:it.toV.code,coef:it.toV.coef,src:'ia'});
+    });
+    (R.changes||[]).forEach(function(c){if(c.type==='suppression'&&c.id){var o=next[kind].filter(function(x){return x.id===c.id})[0];if(o)o.removed=c.date;}});
+  });
+  if((R.travel||[]).length)next.travel=R.travel.slice();
+  next.consultedOn=co;next.at=Date.now();next.zone=D.ngapZone==='dom'?'dom':'metropole';
+  next.summary=R.summary||'';next.sources=R.sources||[];next.doubts=R.doubts||[];next.changes=R.changes||[];next.costUsd=doc.costUsd||0;
+  next.log=(next.log||[]).concat([{at:Date.now(),consultedOn:co,n:(items||[]).length}]).slice(-20);
+  return next;
+}
+
+/* ─── validation par le kiné ─── */
+function _ngV(v){return v?(v.code+' '+_ngC(v.coef)):'—';}
+function ngapReview(doc){
+  if(!doc||!doc.ref){ngapError('Réponse vide du secrétaire');return;}
+  NGAP.doc=doc;
+  var R=doc.ref,cur=D.ngap||null,df=ngapDiff(cur,R);
+  NGAP.items=df.items;NGAP.newItems=df.news;
+  var co=R.consultedOn||todayKey();
+  var kv=(R.keys||[]).filter(function(k){return k.code==='AMK'})[0]||(R.keys||[])[0];
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔄 NGAP — à valider';
+  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Consultée le '+esc(_ngDay(co))+' par le secrétaire IA · '+(R.acts||[]).length+' actes, '+(R.bilans||[]).length+' bilans'+(kv?' · lettre clé '+esc(String(kv.value).replace('.',','))+' €':'')+(doc.costUsd?' · coût ≈ '+String(doc.costUsd).replace('.',',')+' $':'')+'</div>';
+  if(R.summary)h+='<div class="ngbox" style="font-size:12px;line-height:1.45;margin-bottom:10px">'+esc(R.summary)+'</div>';
+  if(!cur)h+='<div style="font-size:12px;margin-bottom:8px">Première consultation : le référentiel sera enregistré, puis vous pourrez associer une cotation à chaque patient.</div>';
+  if(df.items.length){
+    h+='<h4 style="margin:10px 0 6px">Changements ('+df.items.length+')</h4><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Chaque changement s\'applique à partir de sa date d\'effet (modifiable), pour tous les patients.</div>';
+    df.items.forEach(function(it,i){
+      var price=it.kind==='key'?'':(function(){var kvv=null;try{var K=R.keys||[];var kk=K.filter(function(x){return x.code===it.toV.code})[0]||K.filter(function(x){return x.code==='AMK'})[0]||K[0];kvv=kk?kk.value:null;}catch(e){}return kvv?(' = '+money(it.toV.coef*kvv)):'';})();
+      h+='<div class="ngit"><div><b>'+(it.kind==='key'?(esc(it.id)+' : '+(it.fromV!==null?String(it.fromV).replace('.',',')+' €':'—')+' → '+String(it.toV).replace('.',',')+' €'):(esc(_ngV(it.fromV))+' → '+esc(_ngV(it.toV))+price))+'</b>'+(it.future?' <span class="cvtag w">à venir</span>':'')+'</div>'+
+        (it.kind==='key'?'':'<div style="color:var(--text2)">'+esc(it.label)+'</div>')+
+        '<div style="margin-top:4px">à partir du <input type="date" value="'+esc(it.date||'')+'" onchange="NGAP.items['+i+'].date=this.value">'+(it.sure?'':' <span class="cvtag r">date non trouvée : vérifiez</span>')+'</div></div>';
+    });
+  }else if(cur)h+='<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ Aucun changement de tarif ou de cotation depuis la dernière consultation.</div>';
+  if(df.news.length){
+    h+='<details style="margin:8px 0"><summary style="font-size:12px;cursor:pointer"><b>'+(cur?'➕ Nouveaux éléments ('+df.news.length+')':'📖 Actes, bilans et suppléments ('+df.news.length+')')+'</b></summary>'+
+      df.news.slice(0,400).map(function(a){return '<div class="ngact"><span>'+esc(a.label)+'</span><b>'+esc(a.code+' '+_ngC(a.coef))+'</b></div>'}).join('')+'</details>';
+  }
+  if((R.doubts||[]).length)h+='<h4 style="margin:10px 0 6px">⚠️ À vérifier</h4>'+R.doubts.map(function(d){return '<div style="font-size:12px;margin-bottom:4px">• '+esc(d)+'</div>'}).join('');
+  if((R.sources||[]).length)h+='<details style="margin:8px 0"><summary style="font-size:12px;cursor:pointer">Sources ('+R.sources.length+')</summary>'+R.sources.map(function(s){return '<div style="font-size:11px;margin:3px 0;word-break:break-all"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title||s.url)+'</a></div>'}).join('')+'</details>';
+  h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances déjà facturées ne changent pas. Les séances non facturées sont recalculées selon la date de chaque changement. Vérifiez les points signalés : la cotation reste sous votre responsabilité.</div>'+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button><button class="btn bp bw" onclick="ngapApplyReview()">✅ Appliquer</button></div>';
+  b.innerHTML=h;opM('mM');
+}
+function ngapApplyReview(){
+  if(!NGAP.doc)return;
+  var bad=(NGAP.items||[]).filter(function(it){return !/^\d{4}-\d{2}-\d{2}$/.test(it.date||'')});
+  if(bad.length){toast('Indiquez une date d\'effet pour chaque changement');return}
+  var first=!D.ngap;
+  D.ngap=ngapMerge(D.ngap||null,NGAP.doc,NGAP.items);
+  NGAP.doc=null;invalidateBillCache();sv();R();cvPlanSoon();
+  toast('✅ NGAP appliquée'+((NGAP.items||[]).length?' : '+NGAP.items.length+' changement(s) daté(s)':''),3500);
+  /* après la toute première consultation : associer une cotation à chaque patient */
+  if(first&&ngapPatientsNoCot().length)ngapOpenPatients(true);else clM('mM');
+}
+
+/* ─── actes : consultation, correction manuelle ─── */
+function ngapOpenActs(){
+  if(!ngapHas()){toast('Consultez d\'abord la NGAP (🔄)');return}
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='📖 Actes NGAP';
+  b.innerHTML='<div class="fg"><input id="ngQ" placeholder="Rechercher : lombalgie, genou, RIM, bilan…" oninput="ngapActsList()" value="'+esc(NGAP.filterAct||'')+'"></div><div id="ngList"></div>'+
+    '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
+  opM('mM');ngapActsList();
+}
+function _ngNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function ngapActsList(){
+  var q=_ngNorm((document.getElementById('ngQ')||{}).value||'');NGAP.filterAct=q;
+  var t=todayKey(),h='';
+  _NG_KINDS.forEach(function(kk){
+    var l=(D.ngap[kk[0]]||[]).filter(function(a){var v=_ngVerAt(a.versions,t)||{};return !q||_ngNorm(a.label+' '+(a.cat||'')+' '+v.code+' '+a.id).indexOf(q)>=0});
+    if(!l.length)return;
+    var cats={};l.forEach(function(a){var c=kk[0]==='acts'?(a.cat||'Autres'):(kk[1]+'s');(cats[c]=cats[c]||[]).push(a);});
+    Object.keys(cats).sort().forEach(function(c){
+      h+='<div class="ngcat">'+esc(c)+'</div>';
+      cats[c].forEach(function(a){
+        var v=_ngVerAt(a.versions,t),p=ngapPrice(kk[0],a.id,t),fut=(a.versions||[]).filter(function(x){return (x.from||'')>t});
+        h+='<div class="ngact" onclick="ngapEditAct(\''+kk[0]+'\',\''+esc(a.id)+'\')" style="cursor:pointer"><span>'+esc(a.label)+(a.removed?' <span class="cvtag r">supprimé au '+esc(_ngDay(a.removed))+'</span>':'')+
+          (fut.length?'<br><span style="font-size:10px;color:#8a6d00">→ '+fut.map(function(x){return esc(x.code+' '+_ngC(x.coef))+' au '+esc(_ngDay(x.from))}).join(', ')+'</span>':'')+'</span><b>'+esc(v?(v.code+' '+_ngC(v.coef)):'')+(p!==null?' · '+money(p):'')+'</b></div>';
+      });
+    });
+  });
+  var tr=(D.ngap.travel||[]);
+  if(tr.length&&(!q||'deplacement ifd ifs ik'.indexOf(q)>=0))h+='<div class="ngcat">Déplacements</div>'+tr.map(function(x){return '<div class="ngact"><span>'+esc(x.label)+'</span><b>'+esc(x.code)+' · '+money(x.amount)+(x.perKm?'/km':'')+'</b></div>'}).join('');
+  var el=document.getElementById('ngList');if(el)el.innerHTML=h||'<div style="font-size:12px;color:var(--text2)">Aucun résultat.</div>';
+}
+function ngapEditAct(kind,id){
+  var a=ngapItem(kind,id);if(!a)return;
+  var t=todayKey(),v=_ngVerAt(a.versions,t)||{};
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='✏️ Corriger une cotation';
+  b.innerHTML='<div style="font-size:13px;font-weight:600;margin-bottom:8px">'+esc(a.label)+'</div>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Historique : '+(a.versions||[]).map(function(x){return esc(x.code+' '+_ngC(x.coef))+(x.from?' depuis le '+esc(_ngDay(x.from)):'')+(x.src==='kine'?' (vous)':'')}).join(' · ')+'</div>'+
+    '<div class="fr"><div class="fg"><label>Lettre clé</label><input id="ngeC" value="'+esc(v.code||'')+'" maxlength="4" oninput="this.value=this.value.toUpperCase()"></div>'+
+    '<div class="fg"><label>Coefficient</label><input id="ngeK" type="number" step="0.01" value="'+(v.coef||'')+'"></div>'+
+    '<div class="fg"><label>À partir du</label><input id="ngeD" type="date" value="'+t+'"></div></div>'+
+    '<div class="br"><button class="btn" onclick="ngapOpenActs()">Retour</button><button class="btn bp bw" onclick="ngapSaveAct(\''+kind+'\',\''+esc(id)+'\')">Enregistrer</button></div>';
+  opM('mM');
+}
+function ngapSaveAct(kind,id){
+  var a=ngapItem(kind,id);if(!a)return;
+  var c=String(document.getElementById('ngeC').value||'').trim().toUpperCase(),k=parseFloat(String(document.getElementById('ngeK').value).replace(',','.')),d=document.getElementById('ngeD').value;
+  if(!/^[A-Z]{2,4}$/.test(c)||!(k>0&&k<100)||!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('Lettre clé, coefficient et date requis');return}
+  a.versions=_ngUpsert(a.versions,{from:d,code:c,coef:_ngR2(k),src:'kine'});
+  invalidateBillCache();sv();R();toast('Cotation corrigée à partir du '+_ngDay(d));ngapOpenActs();
+}
+
+/* ─── associer une cotation aux patients (proposée par l'IA à partir de l'indication) ─── */
+function ngapActivePatients(){
+  var t=todayKey(),lim=_cvAddDays(t,-90),act={};
+  (D.appointments||[]).forEach(function(a){
+    if(!a||!a.patientId||a.cancelled||a.type==='absence')return;
+    if((!a.billed&&(a.date||'')<=t)||(a.date&&a.date>=lim))act[a.patientId]=true;
+  });
+  return (D.patients||[]).filter(function(p){return act[p.id]}).sort(function(a,b){return _cvName(a).localeCompare(_cvName(b))});
+}
+function ngapPatientsNoCot(){return ngapActivePatients().filter(function(p){var o=ordoCurrent(p);return !(o&&o.act)});}
+function _ngCaseText(p){
+  var parts=[],o=ordoCurrent(p);
+  if(o&&o.indication)parts.push(o.indication);
+  var mot={};(D.appointments||[]).filter(function(a){return a.patientId===p.id&&!a.cancelled&&a.motifId}).slice(-12).forEach(function(a){var m=gm(a.motifId);if(m&&m.label)mot[m.label]=1;});
+  var ml=Object.keys(mot);if(ml.length)parts.push('Motifs : '+ml.join(', '));
+  if(p.notes){
+    var n=String(p.notes).replace(/\S+@\S+/g,' ').replace(/(\+?\d[\d .-]{5,}\d)/g,' ');
+    [p.lastName,p.firstName].forEach(function(w){if(w&&w.length>1)n=n.replace(new RegExp(String(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),' ');});
+    n=n.replace(/\s+/g,' ').trim();if(n)parts.push('Notes : '+n);
+  }
+  var age=p.dob?calcAge(p.dob):'';if(age)parts.push('Âge : '+age+' ans');
+  return parts.join(' · ').slice(0,480);
+}
+function ngapOpenPatients(afterFirst){
+  if(!ngapHas()){toast('Consultez d\'abord la NGAP (🔄)');return}
+  var pats=ngapActivePatients(),t=todayKey();
+  NGAP.rows=pats.map(function(p){var o=ordoCurrent(p);return {p:p,o:o,text:_ngCaseText(p),sugg:null};});
+  ngapRenderPatients(afterFirst);
+}
+function _ngActOptions(sel){
+  var t=todayKey();
+  return '<option value="">— choisir —</option>'+(D.ngap.acts||[]).slice().sort(function(a,b){return String(a.cat||'').localeCompare(String(b.cat||''))||a.label.localeCompare(b.label)}).map(function(a){var v=_ngVerAt(a.versions,t)||{},p=ngapPrice('acts',a.id,t);return '<option value="'+esc(a.id)+'"'+(a.id===sel?' selected':'')+'>'+esc((v.code||'')+' '+_ngC(v.coef||0)+' · '+a.label+(p!==null?' · '+money(p):''))+'</option>'}).join('');
+}
+function ngapRenderPatients(afterFirst){
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='👥 Cotations des patients';
+  var rows=NGAP.rows||[],miss=rows.filter(function(r){return !(r.o&&r.o.act)});
+  var h=(afterFirst?'<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ Référentiel enregistré. Associez maintenant une cotation à vos patients : le secrétaire IA peut la proposer à partir des motifs et des notes (sans nom ni téléphone).</div>':'')+
+    '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+rows.length+' patients suivis · '+miss.length+' sans cotation. La cotation s\'applique aux séances non facturées ; les séances déjà facturées ne changent pas.</div>'+
+    (miss.length?'<div class="cvbar"><button class="btn bp" id="ngSugBtn" onclick="ngapSuggestMissing()">🤖 Proposer les cotations manquantes</button></div>':'');
+  rows.forEach(function(r,i){
+    var p=r.p;
+    if(r.o&&r.o.act){
+      h+='<div class="cvrow off" style="cursor:default"><div class="cvm"><div class="cvn">'+esc(_cvName(p))+'</div><div class="cvs">✓ '+esc(ordoCotLabel(r.o))+' · '+money(sessionPrice(p,todayKey()))+' · <a href="#" onclick="event.preventDefault();openNewOrdo(\''+p.id+'\',null,\''+r.o.id+'\')">modifier</a></div></div></div>';
+      return;
+    }
+    var s=r.sugg,ck=s&&s.id&&s.confidence>=0.6;
+    h+='<div class="cvrow" style="cursor:default"><input type="checkbox" data-ngi="'+i+'"'+(ck?' checked':'')+'><div class="cvm"><div class="cvn">'+esc(_cvName(p))+'</div>'+
+      '<div class="cvs">'+(r.text?esc(r.text.slice(0,140)):'<i>aucune indication (motifs, notes)</i>')+'</div>'+
+      '<select data-ngs="'+i+'" style="width:100%;margin-top:4px;font-size:12px;padding:4px" onchange="var c=document.querySelector(\'#mMB input[data-ngi=&quot;'+i+'&quot;]\');if(c)c.checked=!!this.value">'+_ngActOptions(s&&s.id)+'</select>'+
+      (s?'<div class="cvs">'+(s.id?'🤖 '+Math.round(s.confidence*100)+' %'+(s.reason?' — '+esc(s.reason):''):'🤖 indication insuffisante : choisissez vous-même')+'</div>':'')+'</div></div>';
+  });
+  h+='<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button>'+(miss.length?'<button class="btn bp bw" onclick="ngapApplyAssoc()">Appliquer aux patients cochés</button>':'')+'</div>';
+  b.innerHTML=h;opM('mM');
+}
+function ngapSuggestMissing(){
+  var rows=(NGAP.rows||[]).filter(function(r){return !(r.o&&r.o.act)&&r.text});
+  if(!rows.length){toast('Aucune indication à analyser : choisissez les cotations vous-même');return}
+  var btn=document.getElementById('ngSugBtn');if(btn){btn.disabled=true;btn.textContent='🤖 Analyse en cours…';}
+  var acts=(D.ngap.acts||[]).map(function(a){var v=_ngVerAt(a.versions,todayKey())||{};return {id:a.id,code:v.code,coef:v.coef,label:a.label,cat:a.cat||''}}).filter(function(a){return a.code});
+  var batches=[];for(var i=0;i<rows.length;i+=50)batches.push(rows.slice(i,i+50));
+  var chain=Promise.resolve();
+  batches.forEach(function(bt){
+    chain=chain.then(function(){
+      return secrApi('POST','ngap/suggest',{acts:acts,cases:bt.map(function(r,j){return {k:'c'+j,text:r.text}})}).then(function(res){
+        (res.propositions||[]).forEach(function(pr){var j=parseInt(String(pr.k).slice(1),10);if(bt[j])bt[j].sugg=pr;});
+      });
+    });
+  });
+  chain.then(function(){ngapRenderPatients(false);},function(e){toast('⚠️ '+e.message,5000);ngapRenderPatients(false);});
+}
+function _ngFirstUnbilled(pid){
+  var t=todayKey(),d='';
+  (D.appointments||[]).forEach(function(a){if(a.patientId===pid&&!a.billed&&!a.cancelled&&a.type!=='absence'&&a.date&&a.date<=t&&(!d||a.date<d))d=a.date;});
+  return d||t;
+}
+function ngapApplyAssoc(){
+  var n=0,t=todayKey();
+  document.querySelectorAll('#mMB input[data-ngi]:checked').forEach(function(x){
+    var i=+x.getAttribute('data-ngi'),r=NGAP.rows[i],sel=document.querySelector('#mMB select[data-ngs="'+i+'"]');
+    var id=sel?sel.value:'';if(!r||!id)return;
+    var a=ngapItem('acts',id);if(!a)return;
+    var v=_ngVerAt(a.versions,t)||{},p=r.p,leg=_legacySessionCount(p),start=_ngFirstUnbilled(p.id);
+    var o={id:uid(),start:start,date:'',sessions:parseInt(p.prescribedSessions,10)||0,before:Math.max(0,leg.done-_ordoSessionsBetween(p.id,start,t)),
+      act:{id:a.id,code:v.code,coef:v.coef,label:a.label},supp:[],travel:'',bilan:(r.sugg&&r.sugg.bilan)||D.bilanType||'general',indication:'',by:'ia',at:new Date().toISOString()};
+    p.ordos=ordoList(p).filter(function(x){return x.start!==start}).concat([o]);
+    n++;
+  });
+  if(!n){toast('Cochez au moins un patient et choisissez sa cotation');return}
+  invalidateBillCache();sv();R();cvPlanSoon();
+  toast('✅ Cotation associée à '+n+' patient'+(n>1?'s':''));
+  ngapOpenPatients(false);
+}
+
+/* ─── nouvelle ordonnance (menu du patient, fiche) ─── */
+function openNewOrdo(pid,apId,ordoId){
+  try{clCtx();}catch(e){}
+  var p=gp(pid);if(!p)return;
+  var ap=apId?(D.appointments||[]).filter(function(a){return a.id===apId})[0]:null;
+  var ed=ordoId?ordoList(p).filter(function(o){return o.id===ordoId})[0]:null;
+  var cur=ordoCurrent(p),t=todayKey();
+  var o=ed||{start:(ap&&ap.date)||t,date:(ap&&ap.date&&ap.date<=t)?ap.date:t,sessions:0,act:cur&&cur.act?cur.act:null,supp:cur?(cur.supp||[]):[],travel:cur?(cur.travel||''):'',bilan:(cur&&cur.bilan)||D.bilanType||'general',indication:''};
+  NGAP.no={pid:pid,edit:ed?ed.id:null,act:o.act?o.act.id:''};
+  var has=ngapHas(),b=document.getElementById('mMB');
+  document.getElementById('mMT').textContent=(ed?'✏️ Ordonnance':'📄 Nouvelle ordonnance')+' — '+_cvName(p);
+  var h='<div class="fr"><div class="fg"><label>Date de l\'ordonnance</label><input type="date" id="noDate" value="'+esc(o.date||'')+'"></div>'+
+    '<div class="fg"><label>Début des séances</label><input type="date" id="noStart" value="'+esc(o.start||t)+'" onchange="noUpd()"></div></div>'+
+    '<div class="fg"><label>Nombre de séances (vide = illimité)</label><input type="number" id="noN" min="1" max="200" placeholder="illimité" value="'+(parseInt(o.sessions,10)>0?parseInt(o.sessions,10):'')+'"></div>';
+  if(has){
+    h+='<div class="fg"><label>Indication (pathologie, prescription)</label><div style="display:flex;gap:6px"><input id="noInd" value="'+esc(o.indication||'')+'" placeholder="ex. lombalgie commune, PTG genou droit…" style="flex:1"><button class="btn bs" style="flex:none;padding:6px 10px" onclick="noSuggest()" id="noSugB" title="Cotation proposée par le secrétaire IA">🤖</button></div></div>'+
+      '<div class="fg"><label>Cotation NGAP</label><input id="noQ" placeholder="Rechercher : lombalgie, genou, RIM…" oninput="noFilter()" style="margin-bottom:4px"><select id="noAct" size="6" style="font-size:12px" onchange="NGAP.no.act=this.value;noUpd()"></select><div id="noSugInfo" style="font-size:11px;color:var(--text2);margin-top:3px"></div></div>';
+    var sup=D.ngap.supplements||[];
+    if(sup.length)h+='<div class="fg"><label>Suppléments</label><div class="pcks" style="flex-wrap:wrap">'+sup.map(function(s){var pr=ngapPrice('supplements',s.id,t);return '<label><input type="checkbox" data-nosup="'+esc(s.id)+'"'+((o.supp||[]).indexOf(s.id)>=0?' checked':'')+' onchange="noUpd()"> '+esc(s.label)+(pr!==null?' (+'+money(pr)+')':'')+'</label>'}).join('')+'</div></div>';
+    var tr=(D.ngap.travel||[]).filter(function(x){return !x.perKm});
+    h+='<div class="fr"><div class="fg"><label>Déplacement</label><select id="noTr" onchange="noUpd()"><option value="">Au cabinet</option>'+tr.map(function(x){return '<option value="'+esc(x.code)+'"'+(o.travel===x.code?' selected':'')+'>'+esc(x.code+' · '+x.label+' (+'+money(x.amount)+')')+'</option>'}).join('')+'</select></div>'+
+      '<div class="fg"><label>🅱️ Bilan</label><select id="noBil">'+(D.ngap.bilans||[]).map(function(x){var pr=ngapPrice('bilans',x.id,t),v=_ngVerAt(x.versions,t)||{};return '<option value="'+esc(x.type||'autre')+'"'+((o.bilan||'general')===x.type?' selected':'')+'>'+esc(x.label+' · '+(v.code||'')+' '+_ngC(v.coef||0)+(pr!==null?' · '+money(pr):''))+'</option>'}).join('')+'</select></div></div>';
+    h+='<div class="ngbox" id="noPrice" style="font-size:13px;font-weight:600"></div>';
+  }else{
+    h+='<div class="ngbox" style="font-size:12px">💶 Pour la cotation et le tarif NGAP, faites d\'abord consulter la NGAP par le secrétaire IA (⚙ › Facturation). En attendant, le montant manuel de la fiche est utilisé.</div>';
+  }
+  h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances sont comptées à partir du début de l\'ordonnance. Le secrétaire vous prévient à l\'approche de la dernière séance. L\'alerte ❗ Ordonnance est retirée.</div>'+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button>'+(ed?'<button class="btn bd" onclick="delOrdo(\''+pid+'\',\''+ed.id+'\')">🗑</button>':'')+'<button class="btn bp bw" onclick="saveNewOrdo()">Enregistrer</button></div>';
+  b.innerHTML=h;opM('mM');
+  if(has){noFilter();noUpd();}
+}
+function noFilter(){
+  var sel=document.getElementById('noAct');if(!sel)return;
+  var q=_ngNorm((document.getElementById('noQ')||{}).value||''),t=todayKey(),cur=NGAP.no.act;
+  var l=(D.ngap.acts||[]).filter(function(a){var v=_ngVerAt(a.versions,t)||{};return !q||a.id===cur||_ngNorm(a.label+' '+(a.cat||'')+' '+v.code).indexOf(q)>=0})
+    .sort(function(a,b){return String(a.cat||'').localeCompare(String(b.cat||''))||a.label.localeCompare(b.label)});
+  sel.innerHTML='<option value="">— sans cotation (montant manuel) —</option>'+l.map(function(a){var v=_ngVerAt(a.versions,t)||{},p=ngapPrice('acts',a.id,t);return '<option value="'+esc(a.id)+'"'+(a.id===cur?' selected':'')+'>'+esc((v.code||'')+' '+_ngC(v.coef||0)+' · '+a.label+(p!==null?' · '+money(p):''))+'</option>'}).join('');
+}
+function _noRead(){
+  var p=gp(NGAP.no.pid),t=todayKey();
+  var supp=[];document.querySelectorAll('#mMB input[data-nosup]:checked').forEach(function(x){supp.push(x.getAttribute('data-nosup'))});
+  var a=NGAP.no.act?ngapItem('acts',NGAP.no.act):null,v=a?(_ngVerAt(a.versions,t)||{}):null;
+  var n=parseInt((document.getElementById('noN')||{}).value,10);
+  return {start:(document.getElementById('noStart')||{}).value||t,date:(document.getElementById('noDate')||{}).value||'',sessions:n>0?n:0,
+    act:a?{id:a.id,code:v.code,coef:v.coef,label:a.label}:null,supp:supp,travel:((document.getElementById('noTr')||{}).value)||'',
+    bilan:((document.getElementById('noBil')||{}).value)||D.bilanType||'general',indication:String((document.getElementById('noInd')||{}).value||'').trim().slice(0,300),p:p};
+}
+function noUpd(){
+  var el=document.getElementById('noPrice');if(!el)return;
+  var o=_noRead(),t=todayKey(),d=o.start>t?o.start:t,x=ordoPriceAt(o,d);
+  el.innerHTML=x!==null?('Séance : '+money(x)+' <span style="font-weight:400;font-size:11px;color:var(--text2)">('+esc(ordoCotLabel(o,d))+(d>t?' au '+esc(_ngDay(d)):'')+')</span>'):('Séance : '+money(Number((o.p&&o.p.sessionFee!==undefined)?o.p.sessionFee:18.20))+' <span style="font-weight:400;font-size:11px;color:var(--text2)">(montant manuel, sans cotation)</span>');
+}
+function noSuggest(){
+  var ind=String((document.getElementById('noInd')||{}).value||'').trim();
+  if(!ind){toast('Écrivez d\'abord l\'indication (ex. lombalgie commune)');return}
+  if(!_secrCfg()){toast('Secrétaire IA non connecté');return}
+  var btn=document.getElementById('noSugB');if(btn){btn.disabled=true;btn.textContent='…';}
+  var acts=(D.ngap.acts||[]).map(function(a){var v=_ngVerAt(a.versions,todayKey())||{};return {id:a.id,code:v.code,coef:v.coef,label:a.label,cat:a.cat||''}}).filter(function(a){return a.code});
+  secrApi('POST','ngap/suggest',{acts:acts,cases:[{k:'c0',text:ind}]}).then(function(r){
+    if(btn){btn.disabled=false;btn.textContent='🤖';}
+    var s=(r.propositions||[])[0],info=document.getElementById('noSugInfo');
+    if(s&&s.id){NGAP.no.act=s.id;var q=document.getElementById('noQ');if(q)q.value='';noFilter();
+      if(s.bilan){var bs=document.getElementById('noBil');if(bs&&bs.querySelector('option[value="'+s.bilan+'"]'))bs.value=s.bilan;}
+      noUpd();if(info)info.textContent='🤖 Proposé ('+Math.round(s.confidence*100)+' %)'+(s.reason?' : '+s.reason:'')+' — vérifiez.';}
+    else if(info)info.textContent='🤖 Indication insuffisante : choisissez la cotation dans la liste.';
+  },function(e){if(btn){btn.disabled=false;btn.textContent='🤖';}toast('⚠️ '+e.message,5000);});
+}
+function saveNewOrdo(){
+  var o=_noRead(),p=o.p;if(!p)return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(o.start)){toast('Date de début requise');return}
+  var list=ordoList(p).slice(),old=NGAP.no.edit?list.filter(function(x){return x.id===NGAP.no.edit})[0]:null;
+  var rec={id:old?old.id:uid(),start:o.start,date:o.date,sessions:o.sessions,before:old?(parseInt(old.before,10)||0):0,act:o.act,supp:o.supp,travel:o.travel,bilan:o.bilan,indication:o.indication,by:'kine',at:new Date().toISOString()};
+  list=list.filter(function(x){return x.id!==rec.id&&x.start!==rec.start});list.push(rec);
+  list.sort(function(a,b){return a.start<b.start?-1:(a.start>b.start?1:0)});
+  p.ordos=list;
+  var curO=ordoCurrent(p);if(curO&&curO.id===rec.id)p.prescribedSessions=rec.sessions;
+  if(!old)p.needOrdo=false;
+  invalidateBillCache();sv();R();cvPlanSoon();clM('mM');
+  toast((old?'✅ Ordonnance modifiée':'📄 Nouvelle ordonnance enregistrée')+' : '+(rec.sessions?rec.sessions+' séances':'illimitée')+(rec.act?' · '+ordoCotLabel(rec,rec.start)+' ('+money(sessionPrice(p,rec.start>todayKey()?rec.start:todayKey()))+')':''),3500);
+  try{if(document.getElementById('mP')&&document.getElementById('mP').classList.contains('open'))openPC(p.id);}catch(e){}
+}
+function delOrdo(pid,oid){
+  var p=gp(pid);if(!p)return;
+  if(!confirm('Supprimer cette ordonnance ? Les séances non facturées reprendront la cotation précédente (ou le montant manuel).'))return;
+  p.ordos=ordoList(p).filter(function(o){return o.id!==oid});
+  var c=ordoCurrent(p);p.prescribedSessions=c?(parseInt(c.sessions,10)||0):(p.prescribedSessions||0);
+  invalidateBillCache();sv();R();cvPlanSoon();clM('mM');toast('Ordonnance supprimée');
+}
+/* résumé pour la fiche et le formulaire du patient */
+function ordoCardHtml(p){
+  var o=ordoCurrent(p),t=todayKey(),sc=getSessionCount(p.id);
+  var h='<div class="ub">Montant séance : <b>'+money(sessionPrice(p,t))+'</b>'+(o&&o.act?' <span style="font-size:11px;color:var(--text2)">('+esc(ordoCotLabel(o,t))+')</span>':'')+'</div>';
+  if(o)h+='<div class="ub">📄 Ordonnance du '+esc(_ngDay(o.date||o.start))+' · '+(parseInt(o.sessions,10)>0?parseInt(o.sessions,10)+' séances':'illimitée')+' · début '+esc(_ngDay(o.start))+'</div>';
+  return h;
+}
+function ordoEditHtml(p){
+  var l=ordoList(p);
+  if(!l.length)return '';
+  var t=todayKey(),o=ordoCurrent(p),sc=getSessionCount(p.id);
+  var h='<div style="font-size:12px;margin-bottom:6px"><b>En cours :</b> ordonnance du '+esc(_ngDay(o.date||o.start))+', séances depuis le '+esc(_ngDay(o.start))+' — <b>'+esc(sc.label)+'</b>'+(o.act?' · '+esc(ordoCotLabel(o,t))+' · '+money(sessionPrice(p,t)):' · montant manuel')+' <a href="#" onclick="event.preventDefault();openNewOrdo(\''+p.id+'\',null,\''+o.id+'\')">modifier</a></div>';
+  var prev=l.filter(function(x){return x.id!==o.id});
+  if(prev.length)h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px">Précédentes : '+prev.map(function(x){return esc(_ngDay(x.start))+(x.act?' ('+esc(ordoCotLabel(x,x.start))+')':'')}).join(' · ')+'</div>';
+  return h;
+}
+
+/* ─── réglages : ⚙ › 💵 Facturation › NGAP ─── */
+function ngapSettingsHtml(){
+  var t=todayKey(),has=ngapHas(),h='<div class="ngbox" style="margin-top:10px"><div style="font-weight:700;font-size:12px;margin-bottom:6px">💶 Cotations NGAP (consultées par le secrétaire IA)</div>';
+  if(has){
+    var kv=ngapKeyValue('AMK',t),nf=0;
+    ['acts','bilans','supplements'].forEach(function(k){(D.ngap[k]||[]).forEach(function(a){nf+=(a.versions||[]).filter(function(v){return (v.from||'')>t}).length;});});
+    Object.keys(D.ngap.keys||{}).forEach(function(c){nf+=(D.ngap.keys[c].versions||[]).filter(function(v){return (v.from||'')>t}).length;});
+    h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">Consultée le '+esc(_ngDay(D.ngap.consultedOn))+' · '+(D.ngap.acts||[]).length+' actes · lettre clé '+(kv!==null?String(kv).replace('.',',')+' €':'?')+(nf?' · <b>'+nf+' évolution(s) à venir</b> (appliquée(s) à leur date)':'')+'</div>';
+  }else h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">Pas encore consultée. Le secrétaire IA cherche la NGAP en vigueur et ses évolutions datées ; vous validez avant qu\'elle s\'applique. Ensuite, chaque patient a sa cotation (et son tarif), et le bilan est coté selon la NGAP.</div>';
+  h+='<div class="fr"><div class="fg"><label>Zone</label><select id="sNgapZone" onchange="D.ngapZone=this.value;if(D.ngap)D.ngap.zone=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')"><option value="metropole"'+(D.ngapZone!=='dom'?' selected':'')+'>Métropole</option><option value="dom"'+(D.ngapZone==='dom'?' selected':'')+'>Outre-mer (DOM)</option></select></div>';
+  if(has)h+='<div class="fg"><label>🅱️ Bilan par défaut</label><select id="sBilanType" onchange="D.bilanType=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')">'+(D.ngap.bilans||[]).map(function(x){var v=_ngVerAt(x.versions,t)||{},pr=ngapPrice('bilans',x.id,t);return '<option value="'+esc(x.type||'autre')+'"'+((D.bilanType||'general')===x.type?' selected':'')+'>'+esc(x.label+' · '+(v.code||'')+' '+_ngC(v.coef||0)+(pr!==null?' · '+money(pr):''))+'</option>'}).join('')+'</select></div>';
+  else h+='<div class="fg"><label>🅱️ Montant des bilans (€)</label><input id="sBilanFee" type="number" step="0.01" value="'+(Number(D.bilanFee||0).toFixed(2))+'" onchange="setBilanFee(this.value)"></div>';
+  h+='</div><div class="cvbar"><button class="btn bp" onclick="ngapRefresh()">🔄 '+(has?'Actualiser':'Consulter')+' la NGAP</button>'+(has?'<button class="btn bs" onclick="ngapOpenActs()">📖 Actes</button><button class="btn bs" onclick="ngapOpenPatients(false)">👥 Cotations des patients</button>':'')+'</div>';
+  if(!_secrCfg())h+='<div style="font-size:11px;color:#c0392b">Secrétaire IA non connecté : consultation impossible.</div>';
+  return h+'</div>';
+}
+
+/* v100 — assistant ✨ : cotations NGAP (lecture) et nouvelle ordonnance (action, défaisable) */
+function _asstNgapSearch(i){
+  if(!ngapHas())return {erreur:'La NGAP n\'a pas encore été consultée (Paramètres › Facturation › Consulter la NGAP).'};
+  var q=_ngNorm(i.texte||'').trim(),t=todayKey(),out=[];
+  var words=q?q.split(/\s+/).filter(Boolean):[];
+  [['acts','acte'],['bilans','bilan'],['supplements','supplément']].forEach(function(kk){
+    (D.ngap[kk[0]]||[]).forEach(function(a){
+      var v=_ngVerAt(a.versions,t)||{};
+      var hay=_ngNorm(a.label+' '+(a.cat||'')+' '+(v.code||'')+' '+kk[1]);
+      if(words.length&&!words.every(function(w){return hay.indexOf(w)>=0}))return;
+      var pr=ngapPrice(kk[0],a.id,t);
+      out.push({cotation_id:a.id,type:kk[1],cotation:(v.code||'')+' '+_ngC(v.coef||0),libelle:a.label,categorie:a.cat||'',tarif:pr===null?null:_aEuro(pr)});
+    });
+  });
+  return {total:out.length,resultats:out.slice(0,15),valeur_lettre_cle:ngapKeyValue('AMK',t),consultee_le:D.ngap.consultedOn||''};
+}
+function _prepNouvelleOrdo(i){
+  var p=gp(i.patient_id);if(!p)return {error:'patient_id inconnu : utilise chercher_patients'};
+  var t=todayKey(),start=i.date_debut?_aKey(i.date_debut):t;if(!start)return {error:'date_debut invalide (AAAA-MM-JJ)'};
+  var dOrd=i.date_ordonnance?_aKey(i.date_ordonnance):'';if(i.date_ordonnance&&!dOrd)return {error:'date_ordonnance invalide (AAAA-MM-JJ)'};
+  var n=(i.seances===undefined||i.seances===null||i.seances==='')?0:parseInt(i.seances,10);
+  if(isNaN(n)||n<0||n>200)return {error:'nombre de séances invalide (0 = illimité)'};
+  var act=null;
+  if(i.cotation_id){
+    var a=ngapItem('acts',String(i.cotation_id));if(!a)return {error:'cotation_id inconnu : cherche l\'acte avec cotations_ngap'};
+    var v=_ngVerAt(a.versions,start)||{};act={id:a.id,code:v.code,coef:v.coef,label:a.label};
+  }else if(ngapHas())return {error:'Donne cotation_id (cherche l\'acte avec cotations_ngap). Si la pathologie n\'est pas connue, demande-la au kiné.'};
+  var bil=['general','neuro','fragilite','autre'].indexOf(i.bilan)>=0?i.bilan:(D.bilanType||'general');
+  var rec={id:uid(),start:start,date:dOrd||'',sessions:n,before:0,act:act,supp:[],travel:'',bilan:bil,indication:String(i.indication||'').slice(0,300),by:'ia',at:new Date().toISOString()};
+  var price=ordoPriceAt(rec,start>t?start:t);
+  var lab='📄 Nouvelle ordonnance pour '+_aPName(p)+' : '+(n?n+' séances':'nombre de séances illimité')+', à partir du '+_aDateFr(start)+(act?' · '+act.code+' '+_ngC(act.coef)+' — '+act.label+(price!==null?' ('+money(price)+' la séance)':''):'');
+  var w=[];if(ordoList(p).some(function(o){return o.start===start}))w.push('remplace l\'ordonnance qui commençait le même jour');
+  return {label:lab,warnings:w,exec:function(){
+    var q=gp(p.id);if(!q)return {ok:false,msg:'fiche introuvable'};
+    var list=ordoList(q).filter(function(o){return o.start!==start}).concat([rec]).sort(function(x,y){return x.start<y.start?-1:(x.start>y.start?1:0)});
+    var ch={ordos:list,needOrdo:false},cur=null;
+    list.forEach(function(o){if(o.start<=t&&(!cur||o.start>=cur.start))cur=o;});if(!cur)cur=list[0];
+    if(cur&&cur.id===rec.id)ch.prescribedSessions=n;
+    var undo=[_aSet('pat',q,ch)];_aSave();try{cvPlanSoon();}catch(e){}
+    return {ok:true,msg:'ordonnance enregistrée : '+lab.replace(/^📄 /,''),undo:undo};
+  }};
 }
 
 /* Orientation/resize: re-render agenda for optimal display */
