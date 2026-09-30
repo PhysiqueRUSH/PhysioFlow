@@ -508,6 +508,9 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .fqz{display:inline-block;font-size:10px;font-weight:700;color:var(--text3)}
 .fqz.ok{color:#1e8e3e}.fqz.over{color:#d93025}.fqz.under{color:#c77700}
 .fqchart{position:relative;margin:4px 0 6px}
+.fqscroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.fqscroll::-webkit-scrollbar{height:4px}.fqscroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.fqyax{position:absolute;top:0;background:var(--surface);pointer-events:none}
 .fqempty{font-size:12px;color:var(--text2);text-align:center;padding:40px 10px;background:var(--bg);border-radius:12px}
 .fqtip{display:none;position:absolute;z-index:3;min-width:170px;max-width:240px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;box-shadow:var(--shadow);padding:8px 10px;font-size:11px;pointer-events:none}
 .fqtip .fqtt{font-weight:700;color:var(--text2);margin-bottom:2px}.fqtip .fqtv{font-size:14px;font-weight:800;margin-bottom:4px}
@@ -544,7 +547,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 103 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 104 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -14194,7 +14197,7 @@ function showPatCtx(e,pid){
 /* ═══════════════════════════════════════════════════════════════════
    v103 — SEUILS DE FRÉQUENTATION
    - 📊 Statistiques : courbe du nombre de séances par semaine (lundi → dimanche),
-     complétée chaque dimanche par la semaine écoulée. Motifs cochés / décochés
+     complétée par chaque semaine une fois terminée (dimanche soir). Motifs cochés / décochés
      (tous cochés par défaut, sauf le groupe), seuils en lignes horizontales.
    - ⚙ Paramètres : seuil de surfréquentation, de sous-fréquentation (et seuils
      propres à une période de l'année), séances comptées, déclencheurs :
@@ -14223,8 +14226,8 @@ function _fqAdd(k,n){var d=new Date(k+'T12:00:00');d.setDate(d.getDate()+n);retu
 function _fqMon(k){var d=new Date(k+'T12:00:00'),w=d.getDay();d.setDate(d.getDate()-(w===0?6:w-1));return dk(d);}
 function _fqDm(k){var p=String(k).split('-');return p[2]+'/'+p[1];}
 function _fqNum(v){var n=parseInt(v,10);return n>=0?n:null;}
-/* dernière semaine complète : celle qui se termine dimanche (aujourd'hui si on est dimanche) */
-function freqLastWeek(){var t=todayKey(),d=new Date(t+'T12:00:00');return d.getDay()===0?_fqMon(t):_fqAdd(_fqMon(t),-7);}
+/* dernière semaine TERMINÉE (lundi → dimanche) : le dimanche compris, donc prise en compte une fois le dimanche fini (à partir du lundi 0 h) */
+function freqLastWeek(){return _fqAdd(_fqMon(todayKey()),-7);}
 /* séries : motifs (actuels et futurs), bilans sans motif, motifs supprimés, groupe */
 function freqSeries(){
   var out=[],seen={};
@@ -14343,44 +14346,55 @@ function freqDraw(){
   if(kp)kp.innerHTML='<div class="fqk"><small>Sem. du '+(n?weeks[n-1].slice(8)+' au '+_fqDm(_fqAdd(weeks[n-1],6)):'—')+'</small><b>'+last+'</b><span class="'+_FQZ[lz][2]+'">'+_FQZ[lz][0]+'</span></div>'+
     '<div class="fqk"><small>Moyenne</small><b>'+avg+'</b><span class="fqz">séances / sem.</span></div>'+
     '<div class="fqk"><small>Tendance sur 4 sem.</small><b>'+(tr===null?'—':(tr>2?'↗ +':tr<-2?'↘ ':'→ ')+(tr>2?tr:tr)+' %')+'</b><span class="fqz">vs les 4 d\'avant</span></div>';
-  /* dessin */
+  /* dessin : axe des valeurs fixe à gauche, toutes les semaines sur l'axe horizontal (la courbe défile si la place manque) */
   var hasTh=ths.some(function(t){return t.over||t.under});
-  var W=Math.max(280,box.clientWidth||320),H=230,pl=34,pr=hasTh?40:14,pt=16,pb=28,cw=W-pl-pr,ch=H-pt-pb;
   if(!n||!vals.some(function(v){return v>0})){box.innerHTML='<div class="fqempty">Aucune séance sur cette période avec les motifs cochés.</div>';_fqFoot();return;}
+  var W=Math.max(280,box.clientWidth||320),pl=30,pr=hasTh?34:10,pt=16,cw0=W-pl-pr,ins=9;
+  var step=n>1?Math.max((cw0-2*ins)/(n-1),13):0;
+  var plotW=n>1?Math.max(cw0,step*(n-1)+2*ins):cw0;
+  if(n>1)step=(plotW-2*ins)/(n-1);
+  var vert=n>1&&step<36,pb=vert?44:26,H=vert?250:232,ch=H-pt-pb,scroll=plotW>cw0+1;
   var mx=Math.max.apply(null,vals.concat(ths.map(function(t){return t.over||0}),ths.map(function(t){return t.under||0}),[4]));
-  var ymax=_fqNice(mx*1.12),X=function(i){return pl+(n===1?cw/2:cw*i/(n-1))},Y=function(v){return pt+ch*(1-v/ymax)};
-  var colW=n===1?cw:cw/(n-1),svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" role="img" aria-label="Séances par semaine" style="display:block;overflow:visible">'+
+  var ymax=_fqNice(mx*1.12),X=function(i){return n===1?plotW/2:ins+step*i},Y=function(v){return pt+ch*(1-v/ymax)};
+  var cA=function(i){return i===0?0:X(i)-step/2},cB=function(i){return i===n-1?plotW:X(i)+step/2};
+  var svg='<svg width="'+plotW.toFixed(0)+'" height="'+H+'" viewBox="0 0 '+plotW.toFixed(1)+' '+H+'" role="img" aria-label="Séances par semaine" style="display:block">'+
     '<defs><linearGradient id="fqGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--accent);stop-opacity:.28"/><stop offset="100%" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>';
   /* zones : idéale (vert), au-dessus du seuil haut (rouge pâle), au-dessous du seuil bas (orange pâle) — une colonne par semaine (seuils par période) */
   for(var i=0;i<n;i++){
-    var x0=Math.max(pl,X(i)-colW/2),x1=Math.min(pl+cw,X(i)+colW/2),t=ths[i];
+    var x0=cA(i),x1=cB(i),t=ths[i];
     if(!(t.over||t.under))continue;
     var yo=t.over?Y(t.over):pt,yu=t.under?Y(t.under):pt+ch;
     if(t.over)svg+='<rect x="'+x0.toFixed(1)+'" y="'+pt+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,yo-pt).toFixed(1)+'" fill="#e74c3c" fill-opacity=".07"/>';
     svg+='<rect x="'+x0.toFixed(1)+'" y="'+yo.toFixed(1)+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,yu-yo).toFixed(1)+'" fill="#2ecc71" fill-opacity=".09"/>';
     if(t.under)svg+='<rect x="'+x0.toFixed(1)+'" y="'+yu.toFixed(1)+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,pt+ch-yu).toFixed(1)+'" fill="#f39c12" fill-opacity=".08"/>';
   }
-  /* grille */
-  for(var g=0;g<=4;g++){var gv=ymax*g/4,gy=Y(gv);svg+='<line x1="'+pl+'" x2="'+(pl+cw)+'" y1="'+gy.toFixed(1)+'" y2="'+gy.toFixed(1)+'" style="stroke:var(--border2)" stroke-width="1"/><text x="'+(pl-6)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end" font-size="10" style="fill:var(--text3)">'+Math.round(gv)+'</text>';}
-  /* lignes de seuil (en escalier si une période a ses propres seuils) */
+  /* grille (les valeurs sont sur l'axe fixe de gauche) */
+  var yax='';
+  for(var g=0;g<=4;g++){var gv=ymax*g/4,gy=Y(gv);svg+='<line x1="0" x2="'+plotW.toFixed(1)+'" y1="'+gy.toFixed(1)+'" y2="'+gy.toFixed(1)+'" style="stroke:var(--border2)" stroke-width="1"/>';yax+='<text x="'+(pl-6)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end" font-size="10" style="fill:var(--text3)">'+Math.round(gv)+'</text>';}
+  /* repères verticaux discrets : un par semaine, plus marqué au changement de mois */
+  weeks.forEach(function(w,i){var nm=i>0&&w.slice(5,7)!==weeks[i-1].slice(5,7);svg+='<line x1="'+X(i).toFixed(1)+'" x2="'+X(i).toFixed(1)+'" y1="'+(pt+ch)+'" y2="'+(pt+ch+(nm?6:3))+'" style="stroke:var(--'+(nm?'text3':'border')+')" stroke-width="1"/>';});
+  /* lignes de seuil (en escalier si une période a ses propres seuils) ; pastilles dans la marge fixe de droite */
+  var pills='';
   var stepLine=function(key,col,lab){
-    var d='',on=false,lastY=null;
-    for(var i=0;i<n;i++){var v=ths[i][key];var xa=Math.max(pl,X(i)-colW/2),xb=Math.min(pl+cw,X(i)+colW/2);
-      if(!(v>0)){on=false;continue;}var y=Y(v).toFixed(1);d+=(on?(' L'+xa.toFixed(1)+','+y):(' M'+xa.toFixed(1)+','+y))+' L'+xb.toFixed(1)+','+y;on=true;lastY=y;}
+    var d='',on=false;
+    for(var i=0;i<n;i++){var v=ths[i][key],xa=cA(i),xb=cB(i);
+      if(!(v>0)){on=false;continue;}var y=Y(v).toFixed(1);d+=(on?(' L'+xa.toFixed(1)+','+y):(' M'+xa.toFixed(1)+','+y))+' L'+xb.toFixed(1)+','+y;on=true;}
     if(!d)return '';
     var lv=ths[n-1][key]||ths.filter(function(t){return t[key]>0}).pop()[key];
-    /* étiquette dans la marge de droite, au bout de la ligne (ne cache jamais la courbe) */
-    return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="1.6" stroke-dasharray="5 4" data-lab="'+lab+' '+lv+'"/>'+
-      '<g><rect x="'+(pl+cw+3)+'" y="'+(Y(lv)-8).toFixed(1)+'" width="'+(pr-4)+'" height="16" rx="8" fill="'+col+'"/><text x="'+(pl+cw+3+(pr-4)/2)+'" y="'+(Y(lv)+3.6).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">'+lv+'</text><title>'+lab+' '+lv+'</title></g>';
+    pills+='<g><rect x="3" y="'+(Y(lv)-8).toFixed(1)+'" width="'+(pr-4)+'" height="16" rx="8" fill="'+col+'"/><text x="'+(3+(pr-4)/2)+'" y="'+(Y(lv)+3.6).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">'+lv+'</text><title>'+lab+' '+lv+'</title></g>';
+    return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="1.6" stroke-dasharray="5 4" data-lab="'+lab+' '+lv+'"/>';
   };
   svg+=stepLine('over','#e74c3c','Surfréquentation')+stepLine('under','#e08e0b','Sous-fréquentation');
   /* courbe + aire */
   var pts=vals.map(function(v,i){return [X(i),Y(v)]}),path=_fqPath(pts);
   if(n>1)svg+='<path d="'+path+' L'+X(n-1).toFixed(1)+','+(pt+ch)+' L'+X(0).toFixed(1)+','+(pt+ch)+' Z" fill="url(#fqGrad)"/>';
   svg+='<path d="'+path+'" fill="none" style="stroke:var(--accent)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
-  /* axe des semaines */
-  var every=Math.max(1,Math.ceil(n/6));
-  weeks.forEach(function(w,i){if((n-1-i)%every)return;svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" style="fill:var(--text3)">'+_fqDm(w)+'</text>';});
+  /* axe des semaines : TOUTES les semaines (date du lundi), verticales si la place manque ; 1re semaine du mois en gras */
+  weeks.forEach(function(w,i){
+    var nm=i===0||w.slice(5,7)!==weeks[i-1].slice(5,7),fw=nm?' font-weight="700"':'',st=nm?'fill:var(--text2)':'fill:var(--text3)';
+    if(vert)svg+='<text transform="translate('+(X(i)+3.4).toFixed(1)+','+(pt+ch+8)+') rotate(-90)" text-anchor="end" font-size="9.5"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
+    else svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
+  });
   /* repère de survol */
   svg+='<line id="fqGuide" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ch)+'" style="stroke:var(--text3)" stroke-width="1" stroke-dasharray="2 3" opacity="0"/>';
   /* points colorés selon la zone */
@@ -14388,12 +14402,17 @@ function freqDraw(){
     svg+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(last?5:3.2)+'" style="fill:'+col+';stroke:var(--surface)" stroke-width="'+(last?2.2:1.5)+'"/>';});
   svg+='<text x="'+X(n-1).toFixed(1)+'" y="'+(Y(vals[n-1])-10).toFixed(1)+'" text-anchor="'+(n>1?'end':'middle')+'" font-size="12" font-weight="800" style="fill:var(--text)">'+vals[n-1]+'</text>';
   /* zones de survol (une par semaine) */
-  for(i=0;i<n;i++){var xa=Math.max(pl,X(i)-colW/2),xb=Math.min(pl+cw,X(i)+colW/2);svg+='<rect x="'+xa.toFixed(1)+'" y="'+pt+'" width="'+(xb-xa).toFixed(1)+'" height="'+ch+'" fill="transparent" style="cursor:pointer" onmouseenter="freqTip('+i+')" onclick="event.stopPropagation();freqTip('+i+',1)"/>';}
+  for(i=0;i<n;i++){var xa=cA(i),xb=cB(i);svg+='<rect x="'+xa.toFixed(1)+'" y="'+pt+'" width="'+(xb-xa).toFixed(1)+'" height="'+(ch+pb-4)+'" fill="transparent" style="cursor:pointer" onmouseenter="freqTip('+i+')" onclick="event.stopPropagation();freqTip('+i+',1)"/>';}
   svg+='</svg>';
-  var key=hasTh?'<div class="fqkey">'+(ths.some(function(t){return t.over})?'<span><i class="dash" style="border-color:#e74c3c"></i>Surfréquentation</span>':'')+'<span><i style="background:#2ecc71;opacity:.35"></i>Zone idéale</span>'+(ths.some(function(t){return t.under})?'<span><i class="dash" style="border-color:#e08e0b"></i>Sous-fréquentation</span>':'')+'</div>':'';
-  box.innerHTML=svg+'<div id="fqTip" class="fqtip"></div>'+key;
+  var key=(hasTh||scroll)?'<div class="fqkey">'+(ths.some(function(t){return t.over})?'<span><i class="dash" style="border-color:#e74c3c"></i>Surfréquentation</span>':'')+(hasTh?'<span><i style="background:#2ecc71;opacity:.35"></i>Zone idéale</span>':'')+(ths.some(function(t){return t.under})?'<span><i class="dash" style="border-color:#e08e0b"></i>Sous-fréquentation</span>':'')+(scroll?'<span>◂ glissez pour voir les semaines précédentes</span>':'')+'</div>':'';
+  box.innerHTML='<div class="fqscroll" id="fqScroll" style="margin:0 '+pr+'px 0 '+pl+'px">'+svg+'</div>'+
+    '<svg class="fqyax" width="'+pl+'" height="'+H+'" style="left:0">'+yax+'</svg>'+
+    (pills?'<svg class="fqyax" width="'+pr+'" height="'+H+'" style="right:0">'+pills+'</svg>':'')+
+    '<div id="fqTip" class="fqtip"></div>'+key;
   box.onmouseleave=function(){freqTip(-1)};
-  FREQ.geo={X:X,Y:Y,W:W};
+  var sc=document.getElementById('fqScroll');
+  if(sc){sc.scrollLeft=sc.scrollWidth;sc.onscroll=function(){if(FREQ.tip>=0)freqTip(-1);};}
+  FREQ.geo={X:X,Y:Y,W:W,pl:pl};
   _fqFoot();
 }
 function freqTip(i,tap){
@@ -14405,17 +14424,17 @@ function freqTip(i,tap){
   var parts=S.filter(function(s){return row[s.id]&&FREQ.sel[s.id]}).sort(function(a,b){return row[b.id]-row[a.id]}).map(function(s){return '<div><i style="background:'+s.color+'"></i>'+esc(s.label)+' <b>'+row[s.id]+'</b></div>'}).join('');
   tip.innerHTML='<div class="fqtt">Semaine du '+_fqDm(w)+' au '+_fqDm(_fqAdd(w,6))+'</div><div class="fqtv">'+F.vals[i]+' séances <span class="'+_FQZ[z][2]+'">'+_FQZ[z][0]+'</span></div>'+parts+
     ((t.over||t.under)?'<div class="fqts">Seuils'+(t.period?' ('+esc(t.period)+')':'')+' : '+(t.under?'sous '+t.under:'')+(t.under&&t.over?' · ':'')+(t.over?'sur '+t.over:'')+'</div>':'');
-  var x=FREQ.geo.X(i);tip.style.display='block';
+  var sc=document.getElementById('fqScroll'),xp=FREQ.geo.X(i),x=FREQ.geo.pl+xp-(sc?sc.scrollLeft:0);tip.style.display='block';
   var tw=tip.offsetWidth||180,left=Math.min(Math.max(4,x-tw/2),FREQ.geo.W-tw-4);
   tip.style.left=left+'px';tip.style.top='4px';
-  if(gd){gd.setAttribute('x1',x);gd.setAttribute('x2',x);gd.setAttribute('opacity','1');}
+  if(gd){gd.setAttribute('x1',xp);gd.setAttribute('x2',xp);gd.setAttribute('opacity','1');}
 }
 /* appui en dehors de la courbe : la bulle se referme */
 document.addEventListener('click',function(e){try{if(FREQ.tip>=0&&!(e.target.closest&&e.target.closest('#fqChart')))freqTip(-1);}catch(_){}},true);
 function _fqFoot(){
   var el=document.getElementById('fqFoot');if(!el)return;
   var f=getFreq(),hasTh=_fqNum(f.over)||_fqNum(f.under);
-  var h='<div>🗓 Mise à jour chaque dimanche : la semaine écoulée s\'ajoute à la courbe.'+(hasTh?'':' <b>Réglez vos seuils</b> pour les voir sur la courbe.')+' <a href="#" onclick="event.preventDefault();freqOpenSettings()">⚙ Seuils et déclencheurs</a></div>';
+  var h='<div>🗓 Une semaine (lundi → dimanche) s\'ajoute à la courbe une fois terminée, dimanche soir.'+(hasTh?'':' <b>Réglez vos seuils</b> pour les voir sur la courbe.')+' <a href="#" onclick="event.preventDefault();freqOpenSettings()">⚙ Seuils et déclencheurs</a></div>';
   var L=f.log.slice(-4).reverse();
   if(L.length)h+='<div class="fqlog"><b>Derniers déclenchements</b>'+L.map(function(e){var idx=f.log.indexOf(e);return '<div>'+esc(_fqLogText(e))+(e.undone?' <i>(annulé)</i>':((e.did||[]).length&&_fqUndoable(e)?' <a href="#" onclick="event.preventDefault();freqUndo('+idx+')">Annuler</a>':''))+'</div>'}).join('')+'</div>';
   el.innerHTML=h;
@@ -14500,7 +14519,7 @@ function freqUndo(idx){
   e.undone=true;sv();R();toast('Déclenchement annulé');_fqFoot();
   var s=document.getElementById('fqSet');if(s)s.outerHTML=freqSettingsHtml();
 }
-/* chaque dimanche (ou à la première ouverture qui suit) : la semaine écoulée est comparée aux seuils */
+/* la semaine est comparée aux seuils une fois terminée : dès le dimanche soir minuit (à la première ouverture de l'appli qui suit) */
 function freqCheck(force){
   try{
     if(typeof _pfBootSyncDone!=='undefined'&&!_pfBootSyncDone&&!force){setTimeout(freqCheck,15000);return;}
@@ -14563,7 +14582,7 @@ function freqDecline(idx){var f=getFreq(),e=f.log[idx];if(!e)return;delete e.pen
 function freqSettingsHtml(){
   var f=getFreq(),st=freqStats(),S=freqSeries(),bs=freqBasis(),nb=S.filter(function(s){return bs[s.id]&&s.id.charAt(0)!=='_'}).length,nm=S.filter(function(s){return s.id.charAt(0)!=='_'}).length;
   var h='<div class="ss" id="fqSet"><h3>📈 Seuils de fréquentation</h3>'+
-    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.45">Nombre de séances par semaine. Les seuils s\'affichent sur la courbe (📊 Statistiques). Chaque dimanche, la semaine écoulée est comparée aux seuils : vos déclencheurs ouvrent ou ferment alors des créneaux pour garder une fréquentation idéale. Les RDV déjà pris ne sont jamais touchés.</div>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.45">Nombre de séances par semaine. Les seuils s\'affichent sur la courbe (📊 Statistiques). Une fois la semaine terminée (dimanche soir), elle est comparée aux seuils : vos déclencheurs ouvrent ou ferment alors des créneaux pour garder une fréquentation idéale. Les RDV déjà pris ne sont jamais touchés.</div>'+
     '<div class="fr"><div class="fg"><label>🔴 Surfréquentation à partir de</label><input type="number" id="fqOver" min="1" max="999" placeholder="ex. '+(st?st.p80:60)+'" value="'+(_fqNum(f.over)||'')+'" onchange="freqSet(\'over\',this.value)"></div>'+
     '<div class="fg"><label>🟠 Sous-fréquentation jusqu\'à</label><input type="number" id="fqUnder" min="1" max="999" placeholder="ex. '+(st?st.p20:30)+'" value="'+(_fqNum(f.under)||'')+'" onchange="freqSet(\'under\',this.value)"></div></div>'+
     (st?'<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px">Repères ('+st.n+' dernières semaines) : moyenne <b>'+st.avg+'</b> · plus basse '+st.min+' · plus haute '+st.max+' séances.</div>':'')+
