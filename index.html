@@ -487,6 +487,55 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .ngprogf{height:100%;background:linear-gradient(90deg,var(--accent),#4fb3a3);border-radius:6px;transition:width .8s ease}
 .ngprogl{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--text2)}
 .ngprogl span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.ngit.off,.ngact.off{opacity:.55}
+/* v103 — secrétaire (consignes), patient bloqué, seuils de fréquentation */
+.secrcons{display:flex;gap:6px;margin-top:6px}
+.secrcons input{flex:1;min-width:0;font-size:12px;padding:7px 9px;border-radius:8px;border:1px dashed #9b7fd4;background:var(--surface)}
+.secrcons .btn{flex:none;font-size:12px;padding:6px 10px;white-space:nowrap}
+.secrbusy{opacity:.6;pointer-events:none}
+.pimenu{flex:none;border:none;background:none;font-size:20px;line-height:1;color:var(--text3);padding:4px 6px;border-radius:8px;cursor:pointer}
+.pimenu:active{background:var(--bg)}
+.blkban{background:#fdecea;color:#b3261e;border:1px solid #f5c2bd;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.blkban button{margin-left:auto;font-size:11px;padding:3px 8px}
+.fqhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.fqrange{display:flex;gap:3px;background:var(--bg);border-radius:10px;padding:3px}
+.fqrange button{border:none;background:none;font-size:11px;font-weight:600;color:var(--text2);padding:4px 9px;border-radius:8px;cursor:pointer}
+.fqrange button.on{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.fqkpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.fqk{background:var(--bg);border-radius:12px;padding:8px 10px;min-width:0}
+.fqk small{display:block;font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fqk b{display:block;font-size:22px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--text)}
+.fqz{display:inline-block;font-size:10px;font-weight:700;color:var(--text3)}
+.fqz.ok{color:#1e8e3e}.fqz.over{color:#d93025}.fqz.under{color:#c77700}
+.fqchart{position:relative;margin:4px 0 6px}
+.fqempty{font-size:12px;color:var(--text2);text-align:center;padding:40px 10px;background:var(--bg);border-radius:12px}
+.fqtip{display:none;position:absolute;z-index:3;min-width:170px;max-width:240px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;box-shadow:var(--shadow);padding:8px 10px;font-size:11px;pointer-events:none}
+.fqtip .fqtt{font-weight:700;color:var(--text2);margin-bottom:2px}.fqtip .fqtv{font-size:14px;font-weight:800;margin-bottom:4px}
+.fqtip div i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.fqtip .fqts{margin-top:4px;color:var(--text3)}
+.fqlegend{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 8px}
+.fqchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px 9px;border-radius:14px;border:1px solid var(--border2);background:var(--bg);color:var(--text3);cursor:pointer;user-select:none}
+.fqchip input{display:none}.fqchip i{width:9px;height:9px;border-radius:50%;opacity:.35}
+.fqchip.on{color:var(--text);background:var(--surface);border-color:var(--border)}.fqchip.on i{opacity:1}
+.fqchip small{color:var(--text3);font-variant-numeric:tabular-nums}
+.fqfoot{font-size:11px;color:var(--text2);line-height:1.45}
+.fqlog{margin-top:6px;padding:6px 8px;background:var(--bg);border-radius:10px}.fqlog div{margin-top:2px}
+.fqper{display:flex;gap:4px;align-items:center;margin:4px 0;font-size:11px;flex-wrap:wrap}
+.fqper input{width:58px;font-size:12px;padding:4px 6px}.fqper .btn{padding:3px 8px;font-size:11px}
+.fqtrig{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--border2);border-radius:10px;margin-bottom:6px;background:var(--bg)}
+.fqtrig.off{opacity:.55}.fqtrig .btn{flex:none;padding:3px 8px;font-size:12px}
+.fqtt2{flex:1;font-size:12px;line-height:1.4;cursor:pointer}
+.fqsw{position:relative;width:36px;height:20px;flex:none}.fqsw input{opacity:0;width:0;height:0}
+.fqsw span{position:absolute;inset:0;background:var(--border);border-radius:20px;transition:.2s;cursor:pointer}
+.fqsw span:before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+.fqsw input:checked+span{background:var(--accent)}.fqsw input:checked+span:before{transform:translateX(16px)}
+.fqform{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.fqrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fqrow select{flex:1;min-width:0;font-size:13px}
+.fqkw{min-width:66px;font-size:12px;color:var(--text2)}b.fqkw{color:var(--accent);font-size:13px;letter-spacing:.03em}
+.fqkey{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:10px;color:var(--text2);margin-top:2px}
+.fqkey span{display:inline-flex;align-items:center;gap:4px}.fqkey i{display:inline-block;width:14px;height:8px;border-radius:2px}.fqkey i.dash{height:0;border-top:2px dashed;border-radius:0}
+.fqtime{display:inline-flex;align-items:center;gap:2px}.fqtime input{font-size:13px;padding:3px 4px}.fqtime button{border:none;background:none;color:var(--text3);cursor:pointer}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -495,7 +544,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 102.1 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 103 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -726,7 +775,7 @@ function buildSlotVisibilityPublic(){
       }
     });
   }
-  return out;
+  return freqClosuresPublic(out); /* v103 : fermetures exceptionnelles (déclencheurs) */
 }
 
 /* Push local data D to Firebase */
@@ -787,7 +836,7 @@ function fbPush(){
           if(_lastApt){var _cutoff=new Date();_cutoff.setMonth(_cutoff.getMonth()-_inacMo);if(_lastApt<dk(_cutoff))_inac=true}
           else _inac=true;
         }
-        return{ph:ph,name:((p.lastName||'')+' '+(p.firstName||'')).trim().toLowerCase(),inactive:_inac}
+        var _kp={ph:ph,name:((p.lastName||'')+' '+(p.firstName||'')).trim().toLowerCase(),inactive:_inac};if(p.blocked)_kp.b=1;return _kp /* v103 : patient bloqué */
       }).filter(function(x){return x.ph.length>=8||x.name.length>2})
     });
     /* Snapshot local appointments for closure safety */
@@ -2043,7 +2092,7 @@ function showInfoBubble(el){
   setTimeout(function(){bub.remove()},5000);
 }
 function allEmojis(pid){
-  return billEmoji(pid,false)+triEmoji(pid)+renewEmoji(pid)+docEmoji(pid)+billedTodayEmoji(pid);
+  return blockEmoji(pid)+billEmoji(pid,false)+triEmoji(pid)+renewEmoji(pid)+docEmoji(pid)+billedTodayEmoji(pid);
 }
 function billPatient(pid,force){
   const p=gp(pid);if(!p)return;
@@ -2736,6 +2785,7 @@ function _buildPatientList(arr,_today2){
           '<div class="pd">'+ag+(p.phone?' · '+esc(p.phone):'')+scBadge+futBadge+'</div>'+
           '<div class="ub">Non facturées : <b>'+ub+'</b> · <b>'+money(ua)+'</b> <span style="cursor:pointer;font-size:11px;opacity:.6" onclick="event.stopPropagation();editUnbilledCount(\''+p.id+'\',this)" title="Modifier">✏️</span></div>'+
         '</div>'+
+        '<button class="pimenu" onclick="event.stopPropagation();showPatCtx(event,\''+p.id+'\')" title="Menu du patient">⋮</button>'+ /* v103 */
       '</div>';
   }
   return h;
@@ -2950,6 +3000,7 @@ function showCtx(e,id){
   if(!isAbs)it+='<div class="ci" onclick="exoFromAp(\''+ap.id+'\')">✨ Ajouter une ouv. except. sur ce créneau</div>'; /* v97 */
   if(vM==='grid'&&pat&&!isAbs)it+='<div class="ci" onclick="addPatientSameSlot(\''+ap.id+'\');clCtx()">👥 Ajouter un patient sur ce créneau</div>';
   if(pat&&!isAbs)it+='<div class="ci" onclick="openQuickHide(\''+pat.id+'\',\''+ap.date+'\',\''+(ap.motifId||'')+'\');clCtx()">🙈 Masquer des créneaux à ce patient</div>';
+  if(pat)it+=blockCtxItem(pat.id); /* v103 */
   it+='<div class="ci dng" onclick="delAp()">🗑 Supprimer</div>';
   m.innerHTML=it;
   m.style.left='-9999px';m.style.top='0';m.style.maxHeight='';
@@ -3823,12 +3874,14 @@ function openPC(pid){
     ordoCardHtml(p)+ /* v100 : montant NGAP + ordonnance en cours */
     scHtml+
     '</div></div>'+
+    (p.blocked?'<div class="blkban">⛔ Patient bloqué : rendez-vous indisponibles dans l\'appli patient, et le secrétaire IA ne lui en propose plus.<button class="btn bs" onclick="togglePatBlock(\''+pid+'\',\'card\')">✅ Débloquer</button></div>':'')+ /* v103 */
     '<div class="pacts">'+(p.phone?'<a href="tel:'+esc(p.phone)+'" title="Principal">📞 Appeler</a><a href="sms:'+esc(p.phone)+'" title="Principal">💬 SMS</a>':'')+
     (p.extraPhones&&p.extraPhones.length?p.extraPhones.map(function(ep,ei){return ep?'<a href="tel:'+esc(ep)+'" title="Tél '+(ei+2)+'">📞 '+esc(ep)+'</a>':''}).join(''):'')+
     '<button onclick="editPat(\''+pid+'\')">✏️ Modifier</button>'+
     '<button onclick="billPatient(\''+pid+'\',true)">💵 Facturer</button>'+
     '<button onclick="cvPatSend(\''+pid+'\')">💵 SMS carte Vitale</button>'+
-    '<button onclick="clM(\'mP\');openNewOrdo(\''+pid+'\')">📄 Ordonnance</button></div>'+ /* v100 */
+    '<button onclick="clM(\'mP\');openNewOrdo(\''+pid+'\')">📄 Ordonnance</button>'+ /* v100 */
+    '<button onclick="togglePatBlock(\''+pid+'\',\'card\')">'+(p.blocked?'✅ Débloquer':'⛔ Bloquer')+'</button></div>'+ /* v103 */
     '<button class="btn bs bw" style="margin-bottom:8px;font-size:12px" onclick="openQuickHide(\''+pid+'\')">🙈 Masquer des créneaux à ce patient</button>'+
     '<div class="pcks"><label><input type="checkbox" '+(p.needOrdo?'checked':'')+' onchange="togFlag(\''+pid+'\',\'needOrdo\',this.checked)"> ❗ Ordonnance</label>'+
     '<label><input type="checkbox" '+(p.needMut?'checked':'')+' onchange="togMutFlag(\''+pid+'\',this.checked)"> ‼️ Mutuelle</label>'+
@@ -4570,6 +4623,9 @@ function openSet(){
 
     /* ═══ 6. FACTURATION (v100 : rappels carte Vitale par le secrétaire, NGAP) ═══ */
     cvSettingsHtml()+
+
+    /* ═══ v103 — SEUILS DE FRÉQUENTATION ═══ */
+    (function(){try{return freqSettingsHtml();}catch(e){return '<div class="ss"><h3>📈 Seuils de fréquentation</h3><div style="font-size:12px;color:#c0392b">Rubrique indisponible : '+esc(String(e&&e.message||e))+'</div></div>';}})()+
 
     /* ═══ 7. SUIVI DES PATIENTS ═══ */
     '<div class="ss"><h3>👥 Suivi des patients</h3>'+
@@ -8947,6 +9003,7 @@ window.openStats = function(){
         '<canvas id="stChart" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>'+
         '<div id="stMonthlyText" style="text-align:center;margin-top:6px"></div>'+
       '</div>'+
+      freqStatsHtml()+ /* v103 */
       '<div class="ss" style="margin-top:16px">'+
         '<h3>🥧 Répartition par motif</h3>'+
         '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+
@@ -9099,6 +9156,7 @@ window.openStats = function(){
     run();
     setTimeout(drawChart,100);
     setTimeout(drawPie,150);
+    FREQ.sel=null;setTimeout(function(){try{freqDraw();}catch(e){var c=document.getElementById('fqChart');if(c)c.innerHTML='<div class="fqempty">Courbe indisponible : '+esc(String(e&&e.message||e))+'</div>';}},120); /* v103 */
   }catch(e){
     console.error(e);
     try{toast('Erreur Stats : '+(e&&e.message?e.message:e));}catch(_){}
@@ -9529,55 +9587,6 @@ function _secrActs(p){return (p&&p.actions&&p.actions.length)?p.actions:((p&&p.a
 function _secrPhone(ph){var d=String(ph||'').replace(/\D/g,'');if(d.length===11&&d.indexOf('33')===0)d='0'+d.slice(2);return d.length===10?d.replace(/(\d{2})(?=\d)/g,'$1 '):String(ph||'');}
 function _secrName(x){return (x&&x.name)?x.name:'Numéro inconnu';}
 
-function secrPendingHtml(){
-  if(!_secrCfg())return '';
-  var list=SECR.pending||[];
-  if(!list.length)return '<div class="secrcard" style="text-align:center;padding:18px 12px"><div style="font-size:26px">✅</div><b style="font-size:14px">Rien à traiter</b>'+
-    '<div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Le secrétaire vous prévient dès qu\'un message demande votre avis.</div>'+
-    '<div style="display:flex;gap:6px"><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'activity\')">📬 Voir l\'activité</button><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'assistant\')">✨ Assistant</button></div></div>'; /* v99 */
-  return list.map(function(p){
-    var acts=_secrActs(p);
-    var val=p.actionsValides||acts.map(function(){return !!p.actionValide});
-    var al=p.actionsAlertes||acts.map(function(){return p.actionProbleme||''});
-    var tags='<span class="secrtag">'+esc(_secrCatLabel(p.categorie))+'</span>'+(p.categorie==='urgence'?'<span class="secrtag red">URGENT</span>':'')+(p.simulated?'<span class="secrtag warn">🧪 simulation</span>':'')+(p.canal==='app'?'<span class="secrtag app">💬 messagerie de l\'appli</span>':'')+'<span class="secrtag'+(p.confiance<0.8?' warn':'')+'">confiance '+Math.round((p.confiance||0)*100)+' %</span>';
-    var actsH=acts.map(function(a,i){var w=al[i]||'';return '<label class="secract"><input type="checkbox" id="spa_'+p.id+'_'+i+'" '+(val[i]&&!w?'checked':'')+'> <span>'+esc(_secrActionLabel(a))+(w?' <span class="secrtag warn">⚠️ '+esc(w)+'</span>':'')+'</span></label>'}).join('');
-    var notes='';
-    (p.actionsFaites||[]).forEach(function(x){notes+='<div class="secrnote" style="color:#1e8c4e">✔️ Déjà fait : '+esc(x)+'</div>'});
-    if(p.note&&p.note!==p.question_kine)notes+='<div class="secrnote">ℹ️ '+esc(p.note)+'</div>';
-    if(p.relecture)notes+='<div class="secrnote">🔎 '+esc(p.relecture)+'</div>';
-    if(p.kineReply)notes+='<div class="secrnote" style="color:#2a5bb8">💬 Vous avez déjà répondu dans la messagerie ('+_secrWhen(p.kineReply.at)+') : « '+esc(p.kineReply.text)+' » — envoyez seulement si c\'est encore utile.</div>'; /* v98 */
-    (p.controles||[]).forEach(function(c){notes+='<div class="secrnote">📅 '+esc(c)+'</div>'});
-    if(!acts.length&&p.actionProbleme)notes+='<div class="secrnote">⚠️ '+esc(p.actionProbleme)+'</div>';
-    return '<div class="secrcard" id="sp_'+p.id+'">'+
-      '<div style="display:flex;justify-content:space-between;gap:6px;align-items:baseline"><b style="font-size:14px">'+esc(_secrName(p))+'</b><span class="secrmeta">'+_secrWhen(p.createdAt)+'</span></div>'+
-      '<div class="secrmeta">'+esc(_secrPhone(p.phone))+'</div>'+tags+
-      '<div class="secrin">'+esc(p.patientText||'')+'</div>'+
-      (p.resume?'<div class="secrmeta">🤖 '+esc(p.resume)+'</div>':'')+
-      (p.question_kine?'<div style="font-size:12px;margin:4px 0;color:#c0510f">❓ '+esc(p.question_kine)+'</div>':'')+
-      notes+actsH+
-      (p.analyse?'<details class="secrwhy"><summary>🧠 Son raisonnement</summary><div>'+esc(p.analyse)+'</div></details>':'')+
-      '<textarea id="spt_'+p.id+'" rows="4" style="width:100%;font-size:13px;border-radius:8px;border:1px solid var(--border);padding:8px;resize:vertical" placeholder="'+(p.canal==='app'?'Votre réponse dans la messagerie de l\'appli (vide = pas de réponse)':'Votre réponse (vide = pas de SMS)')+'">'+esc(p.reponse||'')+'</textarea>'+
-      '<div style="font-size:10px;color:var(--text3);margin-top:2px">Si vous modifiez la réponse, le secrétaire en tire une leçon.</div>'+
-      '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrApprove(\''+p.id+'\')">✅ Envoyer</button>'+
-      '<button class="btn bs" style="flex:1" onclick="secrOpenThread(\''+esc(p.tid||p.norm)+'\')">💬</button>'+
-      '<button class="btn" style="flex:1" onclick="secrIgnore(\''+p.id+'\')">Ignorer</button></div></div>';
-  }).join('');
-}
-function secrApprove(id){
-  if(SECR.busy)return;
-  var p=(SECR.pending||[]).find(function(x){return x.id===id});
-  var acts=_secrActs(p);var sel=[];
-  acts.forEach(function(a,i){var cb=document.getElementById('spa_'+id+'_'+i);if(cb&&cb.checked)sel.push(i)});
-  var ta=document.getElementById('spt_'+id);
-  if(sel.length&&!confirm('Confirmer :\n'+sel.map(function(i){return '• '+_secrActionLabel(acts[i])}).join('\n')+' ?'))return;
-  if(!sel.length&&!(ta&&ta.value.trim())&&!confirm('Aucun SMS ni aucune action : clore cette proposition ?'))return;
-  if(p&&sel.length<acts.length&&ta&&ta.value.trim()&&ta.value.trim()===String(p.reponse||'').trim()&&!confirm('⚠️ Vous avez décoché une action, mais la réponse n\'a pas changé : elle l\'annonce peut-être encore au patient.\n\nEnvoyer quand même ?'))return;
-  var body={texte:ta?ta.value:'',actions:sel,avecAction:sel.length>0};
-  SECR.busy=true;
-  secrApi('POST','pending/'+encodeURIComponent(id)+'/approve',body).then(function(r){
-    SECR.busy=false;toast(r.sent?((p&&p.canal==='app')?'✅ Réponse envoyée dans l\'appli':'✅ SMS envoyé'):'✅ Traité');secrLoad();
-  }).catch(function(e){SECR.busy=false;alert(e.message);secrLoad();});
-}
 function secrIgnore(id){
   var note=prompt('Ignorer : aucun SMS ne sera envoyé.\n\nPourquoi ? (facultatif — le secrétaire en tirera une leçon)','');
   if(note===null)return;
@@ -9602,6 +9611,7 @@ function secrThreadHtml(){
   var h='<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:8px"><div><b>'+esc(_secrName(t))+'</b><div class="secrmeta">'+esc(_secrPhone(t.phone))+'</div></div>'+
     (paused?'<button class="btn bs" style="font-size:11px" onclick="secrPause(0)">🤖 Rendre la main</button>':'<button class="btn bs" style="font-size:11px" onclick="secrPause(24)">✋ Reprendre la main (24 h)</button>')+'</div>';
   h+='<div class="secrcard" style="font-size:12px;padding:8px 10px">📝 <b>Notes du secrétaire</b> : '+(t.memo?esc(t.memo):'<i style="color:var(--text3)">aucune</i>')+' <button class="secrlink" onclick="secrEditMemo()">modifier</button></div>';
+  h+=_secrRulesHtml(t); /* v103 : règles données pour cette conversation */
   h+='<div class="secrmsgs">'+(t.messages||[]).map(function(m){
     var cls=m.dir==='in'?'in':('out'+(m.by==='kine'?' kine':''));
     var who=m.dir==='in'?'':(m.by==='kine'?'vous':'🤖 secrétaire');
@@ -10447,6 +10457,7 @@ function _asstPat(q){
   var docs=[];if(p.needOrdo)docs.push('ordonnance');if(p.needMut)docs.push('mutuelle');if(p.needSecu)docs.push('carte vitale / sécu');if(docs.length)o.documents_a_fournir=docs;
   o.documents_enregistres=(p.documents||[]).length;
   o.tarif_seance=_aEuro(sessionPrice(p,todayKey())); /* v100 : NGAP si cotation */
+  if(p.blocked)o.bloque='oui : rendez-vous indisponibles dans l\'appli patient (débloquer : menu du patient ou fiche)'; /* v103 */
   var _oc=ordoCurrent(p);
   if(_oc){var _sc=getSessionCount(p.id);o.ordonnance={debut:_oc.start,date:_oc.date||'',seances:(parseInt(_oc.sessions,10)||'illimité'),faites:_sc.done,cotation:_oc.act?(ordoCotLabel(_oc)+' — '+_oc.act.label):'aucune (montant manuel)',bilan:_oc.bilan||''};}
   else if(p.prescribedSessions)o.seances_prescrites=p.prescribedSessions;
@@ -10959,7 +10970,8 @@ function _asstSystem(){
   L.push('');
   L.push('Où le kiné fait lui-même ce qui ne t\'est pas permis (ne cite que ces chemins) :');
   L.push('- horaires, jours travaillés, motifs (durées, places, heures) : bouton ⚙ Paramètres, rubriques « Mon agenda » et « Motifs de consultation » ;');
-  L.push('- rappels carte Vitale (envoyés par le secrétaire), NGAP (actualiser, actes, cotations des patients) et bilan : ⚙ Paramètres, rubrique « Facturation » ; envoi immédiat : bouton 💵 en haut de l\'écran ;');
+  L.push('- rappels carte Vitale (envoyés par le secrétaire), NGAP (installer le référentiel intégré, rechercher les changements, actes, cotations des patients) et bilan : ⚙ Paramètres, rubrique « Facturation » ; envoi immédiat : bouton 💵 en haut de l\'écran ;');
+  L.push('- bloquer / débloquer un patient (plus de rendez-vous dans l\'appli patient) : menu du patient (agenda, liste) ou sa fiche ; seuils de fréquentation et déclencheurs : ⚙ Paramètres, rubrique « Seuils de fréquentation » (courbe : 📊 Statistiques) ;');
   L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
   L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
   L.push('- supprimer une fiche patient : ouvrir la fiche du patient, bouton 🗑 en bas ; documents (ordonnance, photos) : fiche du patient, rubrique « Documents ».');
@@ -10975,7 +10987,7 @@ function _asstSystem(){
   (D.motifs||[]).forEach(function(m){L.push('- '+m.id+' — '+m.label+' — '+m.duration+' min — '+(m.slots||1)+' place(s) — '+((m.times||[]).filter(Boolean).length?(m.times||[]).filter(Boolean).slice().sort().join(' '):'selon les horaires d\'ouverture'));});
   if(D.futureAgenda&&D.futureAgenda.date&&Array.isArray(D.futureAgenda.motifs)){L.push('À partir du '+_aDateFr(D.futureAgenda.date)+', agenda futur : motifs '+D.futureAgenda.motifs.map(function(m){return m.id+' ('+m.label+', '+m.duration+' min)'}).join(', ')+'.');}
   var vac=(D.vacationPeriods||[]).filter(function(v){return v&&v.to&&v.to>=t0});if(vac.length)L.push('Congés prévus : '+vac.map(function(v){return 'du '+_aDateFr(v.from)+' au '+_aDateFr(v.to)}).join(' ; ')+'.');
-  L.push((ngapHas()?('Tarifs : NGAP consultée le '+_aDateFr(D.ngap.consultedOn)+' (lettre clé '+String(ngapKeyValue('AMK',t0)).replace('.',',')+' €) ; chaque patient a sa cotation (fiche_patient) ; cotations_ngap pour chercher un acte ; bilan '+String(bilanPrice(null,t0)).replace('.',',')+' €.'):('Tarif séance par défaut 18,20 € ; bilan '+String(D.bilanFee||30).replace('.',',')+' €.'))+' Patients enregistrés : '+(D.patients||[]).length+'.'); /* v100 */
+  L.push((ngapHas()?('Tarifs : NGAP à jour ('+(D.ngap.base?'référentiel vérifié le '+_aDateFr(D.ngap.base)+(D.ngap.lastCheck?', changements recherchés le '+_aDateFr(D.ngap.lastCheck.on):''):'consultée le '+_aDateFr(D.ngap.consultedOn))+', lettre clé '+String(ngapKeyValue('AMK',t0)).replace('.',',')+' €) ; chaque patient a sa cotation (fiche_patient) ; cotations_ngap pour chercher un acte ; bilan '+String(bilanPrice(null,t0)).replace('.',',')+' €.'):('Tarif séance par défaut 18,20 € ; bilan '+String(D.bilanFee||30).replace('.',',')+' €.'))+' Patients enregistrés : '+(D.patients||[]).length+'.'); /* v100 */
   L.push('');
   L.push('Calendrier (chaque ligne : jour = date) :');
   var seen={};
@@ -12190,7 +12202,7 @@ function _asstPublicCfg(){return {
           if(_lastApt){var _cutoff=new Date();_cutoff.setMonth(_cutoff.getMonth()-_inacMo);if(_lastApt<dk(_cutoff))_inac=true}
           else _inac=true;
         }
-        return{ph:ph,name:((p.lastName||'')+' '+(p.firstName||'')).trim().toLowerCase(),inactive:_inac}
+        var _kp={ph:ph,name:((p.lastName||'')+' '+(p.firstName||'')).trim().toLowerCase(),inactive:_inac};if(p.blocked)_kp.b=1;return _kp /* v103 : patient bloqué */
       }).filter(function(x){return x.ph.length>=8||x.name.length>2})
     };}
 
@@ -12310,16 +12322,10 @@ function secrCallsSms(phone,name){
    Réglages : un menu par rubrique (Comportement, Canaux, Outils), chaque rubrique sur sa page.
    ═══════════════════════════════════════════════════════════════════ */
 var _SECR_GROUP={pending:'pending',assistant:'assistant',threads:'activity',thread:'activity',calls:'activity',summaries:'activity',settings:'settings',lessons:'settings',test:'settings'};
-var _SECR_MENU=[
-  ['Comportement',[['auto','🤖','Autonomie'],['infos','✍️','Infos et consignes'],['privacy','🔒','Confidentialité'],['summ','📋','Résumés']]],
-  ['Canaux',[['sms','📱','SMS du téléphone'],['app','💬','Messagerie de l\'appli'],['callscfg','📞','Appels entrants'],['notif','🔔','Notifications']]],
-  ['Outils',[['lessons','🎓','Apprentissage'],['test','🧪','Tester'],['models','🧠','Modèles d\'IA'],['connect','🔌','Connexion']]]
-];
-function _secrSecInfo(k){var r=null;_SECR_MENU.forEach(function(g){g[1].forEach(function(x){if(x[0]===k)r=x;});});return r;}
 function openSecr(tab){
   if(tab)SECR.tab=tab;
   if(tab==='settings')SECR.sec=null;
-  if(tab==='pending'&&((typeof ASST!=='undefined'&&ASST.confirm)||(SECR.status&&!SECR.status.pendingCount&&!(SECR.status.suggestions||[]).length)))SECR.tab='assistant';
+  if(tab==='pending'&&((typeof ASST!=='undefined'&&ASST.confirm)||(SECR.status&&!SECR.status.pendingCount&&!(SECR.status.suggestions||[]).length))){SECR.tab='assistant';SECR.wantPending=!(typeof ASST!=='undefined'&&ASST.confirm);} /* v103 */
   if(!_secrCfg()){SECR.tab='settings';SECR.sec='connect';}
   opM('mSECR');
   secrRender();
@@ -12349,7 +12355,7 @@ function secrSec(k){
 }
 function secrLoad(){
   var t=SECR.tab,pr;
-  var calls=function(){return secrApi('GET','calls').then(function(r){SECR.calls=r;}).catch(function(e){if(t==='calls'||SECR.sec==='callscfg')throw e;});};
+  var calls=function(){return secrApi('GET','calls').then(function(r){SECR.calls=r;}).catch(function(e){if(t==='calls'||SECR.sec==='callscfg'||SECR.sec==='canaux')throw e;});};
   if(t==='pending')pr=Promise.all([secrApi('GET','status'),secrApi('GET','pending')]).then(function(r){SECR.status=r[0];SECR.pending=r[1].pending||[];});
   else if(t==='threads')pr=Promise.all([secrApi('GET','status'),secrApi('GET','threads')]).then(function(r){SECR.status=r[0];SECR.threads=r[1].threads||[];});
   else if(t==='thread')pr=secrApi('GET','threads/'+encodeURIComponent(SECR.openTid)).then(function(r){SECR.thread=r.thread;});
@@ -12357,11 +12363,14 @@ function secrLoad(){
   else if(t==='calls')pr=calls();
   else if(t==='lessons')pr=Promise.all([secrApi('GET','status'),secrApi('GET','lessons').catch(function(e){return {_err:e.message}})]).then(function(r){SECR.status=r[0];SECR.lessons=r[1];});
   else if(t==='assistant')pr=Promise.all([secrApi('GET','status'),secrApi('GET','assistant/usage').catch(function(){return null})]).then(function(r){SECR.status=r[0];if(r[1])ASST.usage=r[1];});
-  else if(t==='settings'&&SECR.sec==='notif')pr=Promise.all([secrApi('GET','status'),secrApi('GET','push').catch(function(){return {devices:[]}})]).then(function(r){SECR.status=r[0];SECR.push=r[1];});
-  else if(t==='settings'&&(!SECR.sec||SECR.sec==='callscfg'))pr=Promise.all([secrApi('GET','status'),calls()]).then(function(r){SECR.status=r[0];});
+  else if(t==='settings'&&(SECR.sec==='notif'||SECR.sec==='notifs'))pr=Promise.all([secrApi('GET','status'),secrApi('GET','push').catch(function(){return {devices:[]}})]).then(function(r){SECR.status=r[0];SECR.push=r[1];});
+  else if(t==='settings'&&(!SECR.sec||SECR.sec==='callscfg'||SECR.sec==='canaux'))pr=Promise.all([secrApi('GET','status'),calls()]).then(function(r){SECR.status=r[0];});
   else pr=secrApi('GET','status').then(function(r){SECR.status=r;});
   SECR.err='';
-  pr.then(function(){secrRender();secrRefreshBadge();}).catch(function(e){SECR.err=e.message;secrRender();});
+  pr.then(function(){
+    if(SECR.wantPending){SECR.wantPending=false;if(SECR.tab==='assistant'&&SECR.status&&SECR.status.pendingCount){SECR.tab='pending';secrRender();secrLoad();return;}} /* v103 */
+    secrRender();secrRefreshBadge();
+  }).catch(function(e){SECR.err=e.message;secrRender();});
 }
 /* bandeau d'état : chaque pastille mène au réglage concerné */
 function _secrStatusHtml(){
@@ -12370,9 +12379,9 @@ function _secrStatusHtml(){
   var s=st.settings,gw=st.gateway||{},c=SECR.calls&&SECR.calls.config,smsOk=!!(gw.configured&&gw.registeredAt);
   var chip=function(cls,txt,k){return '<button class="'+cls+'" onclick="secrSec(\''+k+'\')">'+txt+'</button>';};
   var h=chip(s.enabled?'ok':'warn',s.enabled?'● Actif':'⏸ En pause','auto')+
-    chip(smsOk?'ok':'warn','📱 SMS'+(smsOk?'':' à brancher'),'sms')+
-    chip(s.appMessages!==false?'ok':'off','💬 Appli'+(s.appMessages!==false?'':' : non'),'app');
-  if(c)h+=chip(c.enabled?'ok':'off','📞 Appels'+(c.enabled?'':' : non'),'callscfg');
+    chip(smsOk?'ok':'warn','📱 SMS'+(smsOk?'':' à brancher'),'canaux')+
+    chip(s.appMessages!==false?'ok':'off','💬 Appli'+(s.appMessages!==false?'':' : non'),'canaux');
+  if(c)h+=chip(c.enabled?'ok':'off','📞 Appels'+(c.enabled?'':' : non'),'canaux'); /* v103 */
   return '<div class="secrstat" id="secrStat">'+h+'</div>';
 }
 function secrRender(){
@@ -12405,7 +12414,7 @@ function secrRender(){
     if(!k)h+=secrSettingsHtml();
     else{
       var inf=_secrSecInfo(k)||['','⚙','Réglages'];
-      h+='<div class="secrsech">'+(conn?'<button class="secrback" onclick="secrTab(\'settings\')">‹ Réglages</button>':'')+'<div class="secrsect">'+inf[1]+' '+inf[2]+'</div></div>';
+      h+='<div class="secrsech">'+(conn?_secrBackBtn(k):'')+'<div class="secrsect">'+inf[1]+' '+inf[2]+'</div></div>'; /* v103 */
       h+=SECR.tab==='lessons'?secrLessonsHtml():(SECR.tab==='test'?secrTestHtml():secrSettingsHtml());
     }
   }
@@ -12431,16 +12440,9 @@ function _secrSub(k){
   return '';
 }
 function _secrSaveBtn(){return '<button class="btn bp bw" style="margin-top:4px" onclick="secrSaveSettings()">💾 Enregistrer les réglages</button>';}
-function secrSettingsHtml(){
+function _secrSettingsPage(){ /* v103 : une page de réglage (le menu est dans secr103.js) */
   var c=_secrCfg()||{},st=SECR.status,k=SECR.sec;
-  if(!k){
-    if(!st||!st.settings)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
-    return '<div class="secrmenu">'+_SECR_MENU.map(function(gr){
-      return '<h4>'+gr[0]+'</h4>'+gr[1].map(function(x){
-        return '<button class="secrrow" onclick="secrSec(\''+x[0]+'\')"><span class="i">'+x[1]+'</span><span class="t"><b>'+x[2]+'</b><small>'+esc(_secrSub(x[0]))+'</small></span><span class="c">›</span></button>';
-      }).join('');
-    }).join('')+'</div>';
-  }
+  if(!k)return secrSettingsHtml(); /* v103 : le menu est dans secr103.js */
   if(k==='connect'){
     return '<div class="secrcard">'+
       '<div class="fg"><label>Adresse du secrétaire</label><input id="secrUrl" value="'+esc(c.url||'')+'" placeholder="https://secretaire-….a.run.app" autocapitalize="off" autocorrect="off"></div>'+
@@ -12955,6 +12957,130 @@ function cvStatusBox(){
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   v103 — Référentiel NGAP kiné INTÉGRÉ (vérifié le 27/09/2026) : l'appli fonctionne sans
+   consultation par l'IA. L'IA ne sert plus qu'à chercher ce qui a changé depuis.
+   Valeurs : ameli.fr (lettres clés, déplacements, majorations), avenants 7 et 8 (dates des
+   revalorisations 2026), tableaux professionnels à jour. Les lignes marquées dans « À vérifier »
+   ont un coefficient exact à confirmer (écart de quelques centimes au plus).
+   Chaque acte garde son historique daté : une séance est tarifée à la valeur de son jour.
+   ═══════════════════════════════════════════════════════════════════ */
+var NGAP_BASE_DATE='2026-09-27';
+function ngapBase(){
+  var V=function(c,coef,hist){ /* hist : [[date, ancien coef]] dans l'ordre (le coef courant s'applique depuis la dernière date) */
+    var vs=[];
+    if(hist&&hist.length){vs.push({from:'',code:c,coef:hist[0][1],src:'base'});for(var i=1;i<hist.length;i++)vs.push({from:hist[i-1][0],code:c,coef:hist[i][1],src:'base'});vs.push({from:hist[hist.length-1][0],code:c,coef:coef,src:'base'});}
+    else vs.push({from:'',code:c,coef:coef,src:'base'});
+    return vs;
+  };
+  var J26='2026-01-01',M26='2026-05-28',S26='2026-09-01';
+  var A=function(id,cat,label,c,coef,hist){return {id:id,label:label,cat:cat,versions:V(c,coef,hist)};};
+  var p06=function(coef){return [[J26,Math.round((coef-0.6)*100)/100]];};   /* actes ex-AMS 7,5 : +0,6 au 01/01/2026 */
+  var acts=[
+    A('ram_lombalgie','Rachis','Lombalgie commune (référentiel)','RAM',8.09,p06(8.09)),
+    A('ram_cervicalgie','Rachis','Cervicalgie non spécifique, sans atteinte neurologique (référentiel)','RAM',8.07,p06(8.07)),
+    A('ram_lombosacre','Rachis','Rachis lombo-sacré non opéré (hors référentiel)','RAM',8.11,p06(8.11)),
+    A('ram_cervical','Rachis','Rachis cervical non opéré (hors référentiel)','RAM',8.12,p06(8.12)),
+    A('ram_dorsal','Rachis','Rachis dorsal non opéré','RAM',8.10,p06(8.10)),
+    A('ram_multi','Rachis','Rachis non opéré, au moins 2 segments','RAM',8.13,p06(8.13)),
+    A('rao_lombosacre','Rachis','Rachis lombo-sacré opéré','RAO',8.09,p06(8.09)),
+    A('rao_cervical','Rachis','Rachis cervical opéré','RAO',8.10,p06(8.10)),
+    A('rao_dorsal','Rachis','Rachis dorsal opéré','RAO',8.08,p06(8.08)),
+    A('rao_multi','Rachis','Rachis opéré, au moins 2 segments','RAO',8.11,p06(8.11)),
+    A('dra_deviation','Rachis','Déviation du rachis (scoliose, cyphose…)','DRA',8.10,p06(8.10)),
+    A('rsm_coiffe','Membre supérieur','Tendinopathie de la coiffe des rotateurs non opérée (référentiel)','RSM',8.09,p06(8.09)),
+    A('rsc_coiffe','Membre supérieur','Suture de la coiffe des rotateurs (référentiel)','RSC',8.11,p06(8.11)),
+    A('vsm_epaule','Membre supérieur','Épaule / bras non opéré (hors référentiel)','VSM',8.08,p06(8.08)),
+    A('vsm_autre','Membre supérieur','Coude, avant-bras, poignet-main non opérés (hors référentiel)','VSM',8.10,p06(8.10)),
+    A('vsm_multi','Membre supérieur','Membre supérieur non opéré, au moins 2 segments','VSM',8.11,p06(8.11)),
+    A('vsc_segment','Membre supérieur','Membre supérieur opéré, un segment (hors référentiel)','VSC',8.10,p06(8.10)),
+    A('vsc_multi','Membre supérieur','Membre supérieur opéré, au moins 2 segments','VSC',8.12,p06(8.12)),
+    A('rim_entorse','Membre inférieur','Entorse externe récente de cheville non opérée (référentiel)','RIM',8.10,p06(8.10)),
+    A('ric_entorse','Membre inférieur','Entorse de cheville opérée (référentiel)','RIC',8.11,p06(8.11)),
+    A('ric_lca','Membre inférieur','Reconstruction du ligament croisé antérieur (référentiel)','RIC',8.08,p06(8.08)),
+    A('ric_menisc','Membre inférieur','Méniscectomie isolée (référentiel)','RIC',8.09,p06(8.09)),
+    A('ric_pth','Membre inférieur','Prothèse totale de hanche (référentiel)','RIC',8.10,p06(8.10)),
+    A('ric_ptg','Membre inférieur','Prothèse de genou, totale ou unicompartimentaire (référentiel)','RIC',8.12,p06(8.12)),
+    A('vim_segment','Membre inférieur','Membre inférieur non opéré, hors référentiel (hanche, genou, cheville-pied)','VIM',8.10,p06(8.10)),
+    A('vic_segment','Membre inférieur','Membre inférieur opéré, hors référentiel','VIC',8.10,p06(8.10)),
+    A('ter_sans_chir','Plusieurs territoires','Au moins 2 territoires, sans chirurgie','TER',9.79,[[M26,9.49]]),
+    A('ter_avec_chir','Plusieurs territoires','Au moins 2 territoires, avec chirurgie','TER',9.81,[[M26,9.51]]),
+    A('ter_paralysie_cerebrale','Plusieurs territoires','Paralysie cérébrale ou polyhandicap de l\'enfant','TER',16),
+    A('apm_ms','Amputation','Amputation d\'un membre supérieur','APM',8.11,p06(8.11)),
+    A('apm_mi','Amputation','Amputation d\'un membre inférieur','APM',8.10,p06(8.10)),
+    A('apm_multi','Amputation','Amputation d\'au moins 2 membres','APM',9.80,[[M26,9.50]]),
+    A('nmi_periph_1','Neurologie','Neuropathie périphérique, 1 membre ou la face','NMI',8.50),
+    A('nmi_periph_multi','Neurologie','Neuropathies ou lésions radiculaires, plusieurs membres','NMI',11.01,[[S26,10.01]]),
+    A('nmi_central_1','Neurologie','Atteinte neurologique centrale, 1 membre','NMI',8.51),
+    A('nmi_central_multi','Neurologie','Affection neurologique stable ou évolutive, plusieurs territoires (Parkinson, SEP…)','NMI',11,[[S26,10]]),
+    A('nmi_hemiplegie','Neurologie','Hémiplégie','NMI',9),
+    A('nmi_para_tetra','Neurologie','Paraplégie, tétraplégie','NMI',12.01,[[S26,11.01]]),
+    A('nmi_myopathie','Neurologie','Myopathie','NMI',11.99,[[S26,10.99]]),
+    A('nmi_encephalopathie','Neurologie','Encéphalopathie infantile','NMI',12,[[S26,11]]),
+    A('nmi_rhumato_1','Rhumatismes inflammatoires','Affection rhumatismale inflammatoire, 1 membre','NMI',8),
+    A('nmi_rhumato_multi','Rhumatismes inflammatoires','Affection rhumatismale inflammatoire, au moins 2 territoires','NMI',9.01),
+    A('arl_desencombrement','Respiratoire, ORL','Désencombrement urgent (bronchiolite, exacerbation)','ARL',8.49),
+    A('arl_respiratoire','Respiratoire, ORL','Affection respiratoire obstructive, restrictive ou mixte','ARL',8.50),
+    A('arl_preop','Respiratoire, ORL','Rééducation respiratoire pré ou postopératoire','ARL',8.51),
+    A('arl_mucoviscidose','Respiratoire, ORL','Mucoviscidose','ARL',10),
+    A('arl_bpco_individuel','Respiratoire, ORL','Réadaptation respiratoire (BPCO), séance individuelle d\'environ 1 h 30','ARL',28),
+    A('arl_bpco_groupe','Respiratoire, ORL','Réadaptation respiratoire (BPCO), en groupe de 2 à 4','ARL',20),
+    A('arl_maxillo','Respiratoire, ORL','Affections maxillo-faciales','ARL',7.99),
+    A('arl_vestibulaire','Respiratoire, ORL','Rééducation vestibulaire','ARL',8),
+    A('arl_deglutition','Respiratoire, ORL','Troubles de la déglutition isolés','ARL',8.01),
+    A('rav_arteriopathie','Vasculaire','Artériopathie des membres inférieurs','RAV',8.01),
+    A('rav_veineux','Vasculaire','Insuffisance veineuse des membres inférieurs','RAV',7.99),
+    A('rav_lymph_1','Vasculaire','Lymphœdème, 1 membre ou cou-face','RAV',8),
+    A('rav_lymph_multi','Vasculaire','Lymphœdème, au moins 2 territoires','RAV',9),
+    A('rav_lymph_sein','Vasculaire','Lymphœdème du membre supérieur après cancer du sein, phase intensive','RAV',15.5),
+    A('rab_perinee','Abdomen, périnée','Rééducation périnéale active','RAB',8.5),
+    A('rab_abdo_postop','Abdomen, périnée','Rééducation abdominale postopératoire','RAB',8.01),
+    A('rab_post_partum','Abdomen, périnée','Rééducation abdominale du post-partum','RAB',8),
+    A('rpe_sujet_age','Sujet âgé','Rééducation de la déambulation / globale du sujet âgé','RPE',8.5,[[J26,6]]),
+    A('rpb_1','Brûlures','Brûlures, 1 membre','RPB',8),
+    A('rpb_multi','Brûlures','Brûlures, au moins 2 membres','RPB',9),
+    A('pll_palliatifs','Soins palliatifs','Soins palliatifs (cotation journalière)','PLL',12)
+  ];
+  var bil=function(id,label,type,coef,from){var b={id:id,label:label,cat:'Bilans',type:type,versions:[{from:from||'',code:'AMK',coef:coef,src:'base'}]};return b;};
+  var bilans=[bil('bdk_general','Bilan diagnostic kinésithérapique (BDK), cas général','general',10.7),
+    bil('bdk_neuro','BDK, affections neurologiques et musculaires','neuro',10.8),
+    bil('bilan_fragilite','Bilan de repérage de la fragilité (70 ans et plus)','fragilite',10,S26)];
+  var supplements=[A('balneo_bassin','Suppléments','Kinébalnéothérapie en bassin','AMK',2.5,[[J26,1.2]]),
+    A('balneo_piscine','Suppléments','Kinébalnéothérapie en piscine','AMK',3.5,[[J26,2.2]]),
+    A('rav_bandage_1','Suppléments','Bandage multicouche, 1 membre (lymphœdème)','RAV',1),
+    A('rav_bandage_2','Suppléments','Bandage multicouche, 2 membres (lymphœdème)','RAV',2)];
+  var keys={};
+  'AMK APM ARL DRA NMI PLL RAB RAM RAO RAV RIC RIM RPB RPE RSC RSM TER VIC VIM VSC VSM'.split(' ').forEach(function(c){
+    keys[c]={label:c==='AMK'?'Actes de masso-kinésithérapie':'Lettre clé descriptive',versions:[{from:'',value:2.15},{from:'2024-02-22',value:2.21,valueDom:2.43}]};
+  });
+  keys.TMK={label:'Télésoin',versions:[{from:'',value:2.15,valueDom:2.36}]};
+  return {v:1,base:NGAP_BASE_DATE,consultedOn:NGAP_BASE_DATE,at:Date.now(),zone:D.ngapZone==='dom'?'dom':'metropole',
+    summary:'Référentiel intégré, vérifié le 27/09/2026. Toutes les lettres clés valent 2,21 € en métropole et 2,43 € en outre-mer depuis le 22/02/2024 (télésoin TMK : 2,15 € / 2,36 €). Revalorisations prises en compte à leur date : +0,6 point pour les actes ex-AMS 7,5, RPE porté à 8,5 et balnéothérapie +1,3 point au 01/01/2026 ; TER et APM +0,3 point au 28/05/2026 ; NMI +1 point et bilan de fragilité au 01/09/2026. Prochaine étape annoncée : +0,3 point sur les actes ex-AMS 7,5 au 01/07/2027, qui peut encore être reportée : elle n\'est pas appliquée d\'office, « Rechercher les changements » vous la proposera une fois confirmée.',
+    sources:[{url:'https://www.ameli.fr/masseur-kinesitherapeute/exercice-liberal/facturation-remuneration/tarifs-conventionnels/tarifs',title:'ameli.fr — Tarifs conventionnels des masseurs-kinésithérapeutes'},
+      {url:'https://gard.ordremk.fr/files/2024/11/CVL_Livret-avenant-7-kine-web_VF.pdf',title:'Ordre des MK — Livret avenant 7'},
+      {url:'https://www.milo-kine.fr/blog/avenant-8-kinesitherapie/',title:'Milo — Avenant 8 (28/05/2026)'},
+      {url:'https://www.topaze.com/blog/reglementation/revalorisation-actes-kine-1er-septembre/',title:'Topaze — Revalorisation au 1er septembre 2026'},
+      {url:'https://www.andrewapp.com/blog/cotation-ngap-kine-2026',title:'Andrew — Cotation NGAP kiné 2026'},
+      {url:'https://physio-learning.com/ressources/tarifs-kine-2026-tableau-ngap/',title:'Physio-learning — Tableau NGAP 2026'},
+      {url:'https://www.cegedim-sante.com/wp-content/uploads/2026/02/Schema-NGAP-Kine.pdf',title:'Cegedim — Schéma des cotations NGAP kiné'},
+      {url:'https://snmkr.fr/wp-content/uploads/2025/12/tableau-ngap_v15a.pdf',title:'SNMKR — Tableau NGAP au 01/01/2026'},
+      {url:'https://www.ffmkr.org/actualites/revalorisations-ce-qui-evolue-au-1er-septembre',title:'FFMKR — Revalorisations au 1er septembre 2026'},
+      {url:'https://www.ameli.fr/masseur-kinesitherapeute/textes-reference/convention/avenants',title:'ameli.fr — Avenants à la convention (avenant 8 au 28/05/2026)'}],
+    doubts:['+0,3 point sur les actes ex-AMS 7,5 annoncé au 01/07/2027 (report possible par le comité d\'alerte, comme en 2025) : non appliqué d\'office.',
+      'Coefficients à confirmer à quelques centièmes près (écart de quelques centimes) : rachis dorsal (RAM 8,10, RAO 8,08), déviation du rachis (DRA), segments hors référentiel du membre supérieur (VSM 8,10, VSC 8,10) et du membre inférieur (VIM, VIC 8,10), rhumatismes inflammatoires (NMI 8 / 9,01), post-partum (RAB 8), brûlures (RPB 8 / 9).',
+      'Les référentiels les plus fins (fractures, canal carpien…) ne sont pas détaillés : utilisez la ligne du segment, ou ajoutez l\'acte dans 📖 Actes.'],
+    keys:keys,acts:acts,bilans:bilans,supplements:supplements,
+    travel:[{code:'IFD',label:'Indemnité forfaitaire de déplacement',amount:2.5,amountDom:2.5},{code:'IFS',label:'Indemnité forfaitaire spécifique',amount:4,amountDom:4},
+      {code:'IK',label:'Indemnité kilométrique (plaine)',amount:0.38,amountDom:0.43,perKm:true},{code:'IKM',label:'Indemnité kilométrique (montagne)',amount:0.61,amountDom:0.66,perKm:true},{code:'IKS',label:'Indemnité kilométrique (à pied, à ski)',amount:3.35,amountDom:3.35,perKm:true}],
+    majorations:[{code:'MN',label:'Majoration de nuit',amount:9.15},{code:'MD',label:'Majoration dimanche et jours fériés',amount:7.62}],
+    changes:[{date:J26,type:'coefficient',label:'Actes ex-AMS 7,5 (RAM, RAO, RSM, RSC, VSM, VSC, RIM, RIC, VIM, VIC, DRA, APM) : +0,6 point'},
+      {date:J26,type:'coefficient',label:'Balnéothérapie : +1,3 point (bassin 2,5 ; piscine 3,5)'},{date:J26,type:'coefficient',label:'RPE : 6 → 8,5'},
+      {date:M26,type:'coefficient',label:'TER 9,49 → 9,79 ; TER 9,51 → 9,81 ; APM 9,5 → 9,8'},
+      {date:S26,type:'coefficient',label:'NMI +1 point (10 → 11, 10,01 → 11,01, 10,99 → 11,99, 11 → 12, 11,01 → 12,01)'},
+      {date:S26,type:'nouvel_acte',label:'Bilan de repérage de la fragilité (AMK 10)'}],
+    log:[{at:Date.now(),consultedOn:NGAP_BASE_DATE,n:0,base:true}]};
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    v100 — NGAP : le secrétaire IA consulte la nomenclature en vigueur
    - D.ngap : lettres clés (valeur datée), actes / bilans / suppléments (lettre clé +
      coefficient, datés), déplacements. Le prix d'une séance = coefficient × valeur de
@@ -13079,6 +13205,7 @@ function ngapCompact(){
 /* v100.2 — le bouton lance la consultation sur le serveur ; elle continue seule, même appli quittée.
    L'appli suit son avancement quand elle est ouverte, et présente le résultat (à valider) dès qu'il est prêt. */
 function ngapRefresh(){
+  if(!ngapHas()){ngapInstallModal();return} /* v103 : le référentiel intégré d'abord, sans IA */
   if(!_secrCfg()){toast('Connectez d\'abord le secrétaire IA (bouton 🤖)');return}
   if(NGAP.busy){ngapBusyModal();return}
   NGAP.busy=true;ngapBusyModal();
@@ -13141,10 +13268,10 @@ function ngapProgPaint(){
 }
 setInterval(function(){if(NGAP.busy&&document.querySelector('.ngprogbox'))ngapProgPaint();},1000);
 function ngapBusyModal(){
-  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔎 NGAP — consultation en cours';
-  b.innerHTML='<div style="font-size:13px;line-height:1.5">Le secrétaire IA recherche la NGAP des actes de kinésithérapie en vigueur (ameli.fr, Journal officiel, sources professionnelles) et les évolutions datées.</div>'+
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔎 NGAP — recherche des changements';
+  b.innerHTML='<div style="font-size:13px;line-height:1.5">Le secrétaire IA recherche ce qui a changé dans la NGAP des actes de kinésithérapie'+(D.ngap&&D.ngap.base?' depuis le référentiel vérifié du '+esc(_ngDay(D.ngap.base)):'')+' (ameli.fr, Journal officiel, sources professionnelles), avec les dates d\'effet.</div>'+
     '<div class="ngbox ngprogbox" style="font-size:12px">'+ngapProgHtml()+'</div>'+
-    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Cela prend en général <b>1 à 4 minutes</b>. La recherche se fait sur le serveur : <b>vous pouvez quitter l\'appli</b>, elle continue. Une notification vous prévient à la fin, et le résultat vous est présenté ici, pour validation, avant d\'être appliqué.</div>'+
+    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Cela prend en général <b>1 à 4 minutes</b>. La recherche se fait sur le serveur : <b>vous pouvez quitter l\'appli</b>, elle continue. Une notification vous prévient à la fin ; chaque changement trouvé vous est présenté, à cocher, avant d\'être appliqué.</div>'+
     '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
   opM('mM');
 }
@@ -13158,6 +13285,88 @@ function ngapError(m,diag){
   opM('mM');
 }
 
+/* ─── v103 : référentiel intégré (installé sans IA) ─── */
+function _ngHasObj(n){return !!(n&&Array.isArray(n.acts)&&n.acts.length);}
+function _ngUsedIds(){
+  var u={};(D.patients||[]).forEach(function(p){ordoList(p).forEach(function(o){if(o&&o.act&&o.act.id)u[o.act.id]=1;(o&&o.supp||[]).forEach(function(s){u[s]=1;});});});
+  return u;
+}
+/* installe le référentiel intégré ; sur un référentiel existant : vos corrections (✏️), les actes que vous avez
+   ajoutés ou associés à un patient et les évolutions à venir déjà validées sont conservés */
+function ngapMergeBase(cur,B){
+  if(!_ngHasObj(cur))return B;
+  var next=JSON.parse(JSON.stringify(B)),bd=B.base,used=_ngUsedIds();
+  Object.keys(cur.keys||{}).forEach(function(c){
+    var ok=cur.keys[c];if(!ok)return;
+    if(!next.keys[c]){next.keys[c]=ok;return;}
+    (ok.versions||[]).forEach(function(v){if((v.from||'')>bd)next.keys[c].versions=_ngUpsert(next.keys[c].versions,v);});
+  });
+  _NG_KINDS.forEach(function(kk){
+    var kind=kk[0];next[kind]=next[kind]||[];
+    (cur[kind]||[]).forEach(function(a){
+      if(!a||!a.id)return;
+      var b=next[kind].filter(function(x){return x.id===a.id})[0];
+      if(!b){
+        var mine=(a.versions||[]).some(function(v){return v.src==='kine'});
+        if(mine||used[a.id])next[kind].push(a);
+        return;
+      }
+      (a.versions||[]).forEach(function(v){if(v.src==='kine'||((v.from||'')>bd&&v.src!=='base'))b.versions=_ngUpsert(b.versions,v);});
+      if(a.removed)b.removed=a.removed;
+    });
+  });
+  ['travel','majorations'].forEach(function(f){next[f]=next[f]||[];(cur[f]||[]).forEach(function(t){if(t&&t.code&&!next[f].some(function(x){return x.code===t.code}))next[f].push(t);});});
+  next.log=(cur.log||[]).concat(next.log||[]).slice(-20);
+  if(cur.lastCheck)next.lastCheck=cur.lastCheck;
+  return next;
+}
+function ngapBaseNewer(){return !ngapHas()||(D.ngap.base||'')<NGAP_BASE_DATE;}
+function ngapInstallModal(){
+  var B=ngapBase(),t=todayKey(),upd=ngapHas();
+  var kvB=function(code){var k=B.keys[code]||B.keys.AMK,v=_ngVerAt(k.versions,t)||{};return v;};
+  var k0=kvB('AMK'),pr=function(a){var v=_ngVerAt(a.versions,t);if(!v)return '';var k=kvB(v.code);var x=(D.ngapZone==='dom'&&k.valueDom)?k.valueDom:k.value;return x?money(_ngR2(v.coef*x)):'';};
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent=upd?'📥 NGAP — référentiel intégré':'📥 Installer la NGAP à jour';
+  var cats={};B.acts.forEach(function(a){(cats[a.cat]=cats[a.cat]||[]).push(a);});
+  var h='<div style="font-size:13px;line-height:1.5;margin-bottom:8px">Référentiel NGAP des actes de kinésithérapie <b>vérifié le '+esc(_ngDay(NGAP_BASE_DATE))+'</b>, intégré à l\'appli : <b>aucune recherche par l\'IA n\'est nécessaire</b>.</div>'+
+    '<div class="ngbox" style="font-size:12px;line-height:1.5;margin-bottom:8px"><b>Lettre clé : '+_ngC(k0.value)+' €</b> en métropole, '+_ngC(k0.valueDom||k0.value)+' € en outre-mer · '+B.acts.length+' actes · '+B.bilans.length+' bilans · '+B.supplements.length+' suppléments · déplacements et majorations</div>'+
+    '<div style="font-size:12px;line-height:1.45;margin-bottom:8px">'+esc(B.summary)+'</div>'+
+    '<details style="margin:6px 0"><summary style="font-size:12px;cursor:pointer"><b>📅 Revalorisations datées ('+B.changes.length+')</b></summary>'+B.changes.map(function(c){return '<div style="font-size:12px;margin:3px 0">• '+esc(_ngDay(c.date))+' — '+esc(c.label)+'</div>'}).join('')+'</details>'+
+    '<details style="margin:6px 0"><summary style="font-size:12px;cursor:pointer"><b>📖 Actes, bilans et suppléments</b></summary>'+
+      Object.keys(cats).map(function(c){return '<div class="ngcat">'+esc(c)+'</div>'+cats[c].map(function(a){var v=_ngVerAt(a.versions,t)||{};return '<div class="ngact"><span>'+esc(a.label)+'</span><b>'+esc(v.code+' '+_ngC(v.coef))+' · '+pr(a)+'</b></div>'}).join('')}).join('')+
+      '<div class="ngcat">Bilans</div>'+B.bilans.map(function(a){var v=_ngVerAt(a.versions,t)||{};return '<div class="ngact"><span>'+esc(a.label)+(v.from&&v.from>t?' (au '+esc(_ngDay(v.from))+')':'')+'</span><b>'+esc(v.code+' '+_ngC(v.coef))+' · '+pr(a)+'</b></div>'}).join('')+
+      '<div class="ngcat">Suppléments</div>'+B.supplements.map(function(a){var v=_ngVerAt(a.versions,t)||{};return '<div class="ngact"><span>'+esc(a.label)+'</span><b>'+esc(v.code+' '+_ngC(v.coef))+' · '+pr(a)+'</b></div>'}).join('')+
+    '</details>'+
+    '<details style="margin:6px 0"><summary style="font-size:12px;cursor:pointer">⚠️ À vérifier ('+B.doubts.length+')</summary>'+B.doubts.map(function(d){return '<div style="font-size:12px;margin:3px 0">• '+esc(d)+'</div>'}).join('')+'</details>'+
+    (upd?'<div style="font-size:12px;margin:8px 0">Vos corrections (✏️), les actes que vous avez ajoutés ou associés à un patient, et les évolutions à venir déjà validées sont <b>conservés</b>.</div>':'')+
+    '<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances déjà facturées ne changent pas. Ensuite, associez une cotation à chaque patient (le secrétaire IA peut la proposer) : chaque séance est alors tarifée à la valeur NGAP de son jour. Pour les nouveautés après le '+esc(_ngDay(NGAP_BASE_DATE))+' : ⚙ › Facturation › 🔎 Rechercher les changements.</div>'+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Plus tard</button><button class="btn bp bw" onclick="ngapInstallBase()">📥 Installer</button></div>';
+  b.innerHTML=h;opM('mM');
+}
+function ngapInstallBase(){
+  D.ngap=ngapMergeBase(D.ngap||null,ngapBase());
+  D.ngapBaseOffered=NGAP_BASE_DATE;
+  D.ngapSeenAt=Date.now();NGAP.pending=null; /* les anciennes consultations (v100 à v102) ne sont plus proposées */
+  try{localStorage.setItem('pf_ngap_err',String(Date.now()));}catch(e){}
+  if(!D.ngapZone)D.ngapZone='metropole';
+  D.ngap.zone=D.ngapZone==='dom'?'dom':'metropole';
+  invalidateBillCache();sv();R();try{cvPlanSoon();}catch(e){}
+  toast('✅ NGAP installée (référentiel vérifié le '+_ngDay(NGAP_BASE_DATE)+')',3500);
+  if(ngapPatientsNoCot().length)ngapOpenPatients(true);else clM('mM');
+}
+/* proposé une fois au démarrage (puis dans ⚙ › Facturation), seulement quand l'appli est au repos :
+   jamais pendant que vous touchez l'écran ni par-dessus une autre fenêtre */
+var _ngLastAct=0;
+['pointerdown','keydown','touchstart'].forEach(function(ev){try{document.addEventListener(ev,function(){_ngLastAct=Date.now();},true);}catch(e){}});
+function ngapBaseOffer(){
+  try{
+    if(!ngapBaseNewer()||D.ngapBaseOffered===NGAP_BASE_DATE)return;
+    if(document.querySelector('.mo.open')||Date.now()-_ngLastAct<8000){NGAP.offerTries=(NGAP.offerTries||0)+1;if(NGAP.offerTries<40)setTimeout(ngapBaseOffer,15000);return;}
+    D.ngapBaseOffered=NGAP_BASE_DATE;sv();
+    ngapInstallModal();
+  }catch(e){}
+}
+setTimeout(ngapBaseOffer,6000);
+
 /* ─── fusion : ce que dit le secrétaire → D.ngap (avec les dates d'effet choisies) ─── */
 function _ngKeyVersionsFromR(k,changes){
   var m={};
@@ -13170,144 +13379,266 @@ function _ngKeyVersionsFromR(k,changes){
   return Object.keys(m).sort().map(function(f){var v=m[f],o={from:f,value:v.value};if(v.valueDom)o.valueDom=v.valueDom;return o;});
 }
 var _NG_KINDS=[['acts','Acte'],['bilans','Bilan'],['supplements','Supplément']];
+function _ngWords(s){return _ngNorm(s).split(/[^a-z0-9]+/).filter(function(w){return w.length>3});}
+function _ngLikeExisting(cur,kind,a){
+  var w=_ngWords(a.label);if(!w.length)return null;
+  return ((cur&&cur[kind])||[]).filter(function(x){
+    var v=_ngVerAt(x.versions,todayKey())||{};if(v.code!==a.code)return false;
+    var xw=_ngWords(x.label),n=w.filter(function(y){return xw.indexOf(y)>=0}).length;
+    return n>=Math.max(1,Math.ceil(Math.min(w.length,xw.length)/2));
+  })[0]||null;
+}
+/* v103 — chaque changement est une case à cocher. Décochés d'office (à vérifier) : les baisses, et ce qui contredit
+   le référentiel vérifié (date d'effet antérieure à sa vérification). */
 function ngapDiff(cur,R){
-  var co=R.consultedOn||todayKey(),items=[],news=[];
+  var co=R.consultedOn||todayKey(),items=[],news=[],bd=(cur&&cur.base)||'';
+  var add=function(it){
+    var w=[];
+    if(it.kind==='key'||it.kind==='travel'||it.kind==='maj'){if(it.fromV!==null&&it.fromV!==undefined&&it.toV<it.fromV-0.0005)w.push(it.kind==='key'?'baisse de la lettre clé':'baisse');}
+    else if(it.fromV&&it.toV&&it.toV.coef<it.fromV.coef-0.0005)w.push('baisse du coefficient');
+    if(bd&&it.date&&it.date<=bd&&it.kind!=='removal')w.push('contredit le référentiel vérifié le '+_ngDay(bd));
+    it.warn=w;it.on=!w.length;
+    if(!it.sure&&it.kind!=='travel'&&it.kind!=='maj'&&it.kind!=='removal')it.warn=w.concat(['date d\'effet non trouvée : vérifiez']);
+    items.push(it);
+  };
+  /* lettres clés */
   (R.keys||[]).forEach(function(k){
-    var nv=_ngKeyVersionsFromR(k,R.changes),old=cur&&cur.keys&&cur.keys[k.code];
-    if(!old)return;
-    var o0=_ngVerAt(old.versions,co),n0=_ngVerAt(nv,co);
-    if(o0&&n0&&Math.abs(o0.value-n0.value)>0.0005)items.push({kind:'key',id:k.code,label:'Lettre clé '+k.code,fromV:o0.value,toV:n0.value,date:n0.from||co,orig:n0.from||'',sure:!!n0.from});
+    var nv=_ngKeyVersionsFromR(k,R.changes),old=cur&&cur.keys&&cur.keys[k.code],n0=_ngVerAt(nv,co);
+    if(!old){
+      if(n0)add({kind:'key',id:k.code,label:k.label||'',fromV:null,toV:n0.value,toD:n0.valueDom,date:n0.from||'',orig:n0.from||'',sure:true,isNew:true,allowEmpty:true});
+      return;
+    }
+    var o0=_ngVerAt(old.versions,co);
+    if(o0&&n0&&Math.abs(o0.value-n0.value)>0.0005)add({kind:'key',id:k.code,label:k.label||'',fromV:o0.value,toV:n0.value,toD:n0.valueDom,date:n0.from||co,orig:n0.from||'',sure:!!n0.from});
     nv.filter(function(v){return v.from>co}).forEach(function(v){
-      if(old.versions.some(function(x){return x.from===v.from&&Math.abs(x.value-v.value)<0.0005}))return;
-      var prev=_ngVerAt(nv,_cvAddDays(v.from,-1));
-      items.push({kind:'key',id:k.code,label:'Lettre clé '+k.code,fromV:prev?prev.value:null,toV:v.value,date:v.from,orig:v.from,sure:true,future:true});
+      if((old.versions||[]).some(function(x){return x.from===v.from&&Math.abs(x.value-v.value)<0.0005}))return;
+      var prev=_ngVerAt(old.versions,v.from);
+      add({kind:'key',id:k.code,label:k.label||'',fromV:prev?prev.value:null,toV:v.value,toD:v.valueDom,date:v.from,orig:v.from,sure:true,future:true});
     });
   });
+  /* valeur de lettre clé annoncée seulement dans les évolutions (sans la liste des lettres clés) */
+  (R.changes||[]).forEach(function(c){
+    if(c.type!=='valeur_lettre_cle'||!(c.newValue>0)||!c.date||!cur||!cur.keys)return;
+    var targets=c.code?[c.code]:Object.keys(cur.keys).filter(function(x){return x!=='TMK'});
+    targets.forEach(function(code){
+      if((R.keys||[]).some(function(k){return k.code===code}))return;
+      var old=cur.keys[code];if(!old)return;
+      if((old.versions||[]).some(function(x){return x.from===c.date&&Math.abs(x.value-c.newValue)<0.0005}))return;
+      var prev=_ngVerAt(old.versions,c.date);
+      if(prev&&Math.abs(prev.value-c.newValue)<0.0005)return;
+      add({kind:'key',id:code,label:'',fromV:prev?prev.value:null,toV:c.newValue,date:c.date,orig:c.date,sure:true,future:c.date>co});
+    });
+  });
+  /* actes, bilans, suppléments */
   _NG_KINDS.forEach(function(kk){
     var kind=kk[0];
     (R[kind]||[]).forEach(function(a){
       var old=cur?((cur[kind]||[]).filter(function(x){return x.id===a.id})[0]):null;
-      var fut=(R.changes||[]).filter(function(c){return c.id===a.id&&c.date>co&&(c.newCoef>0||c.newCode)&&c.type!=='suppression'});
-      if(!old){news.push({kind:kind,id:a.id,label:a.label,code:a.code,coef:a.coef,from:a.from||''});}
-      else{
-        var ov=_ngVerAt(old.versions,co);
-        if(!ov||ov.code!==a.code||Math.abs(ov.coef-a.coef)>0.0005){
-          var ch=(R.changes||[]).filter(function(c){return c.id===a.id&&c.date<=co&&((c.newCoef>0&&Math.abs(c.newCoef-a.coef)<0.0005)||c.newCode===a.code)}).pop();
-          var dt=(ch&&ch.date)||a.from||'';
-          items.push({kind:kind,id:a.id,label:a.label,fromV:ov?{code:ov.code,coef:ov.coef}:null,toV:{code:a.code,coef:a.coef},date:dt||co,orig:dt,sure:!!dt});
-        }
+      if(!old){
+        var like=_ngLikeExisting(cur,kind,a);
+        news.push({kind:kind,id:a.id,label:a.label,cat:a.cat||'',type:a.type,code:a.code,coef:a.coef,from:a.from||'',on:!like,like:like?like.label:''});
+        return;
       }
-      fut.forEach(function(c){
-        if(old&&(old.versions||[]).some(function(x){return x.from===c.date&&x.code===(c.newCode||a.code)&&Math.abs(x.coef-(c.newCoef>0?c.newCoef:a.coef))<0.0005}))return;
-        items.push({kind:kind,id:a.id,label:a.label,fromV:{code:a.code,coef:a.coef},toV:{code:c.newCode||a.code,coef:c.newCoef>0?c.newCoef:a.coef},date:c.date,orig:c.date,sure:true,future:true});
-      });
+      var ov=_ngVerAt(old.versions,co);
+      if(!ov||ov.code!==a.code||Math.abs(ov.coef-a.coef)>0.0005){
+        var ch=(R.changes||[]).filter(function(c){return c.id===a.id&&c.date<=co&&((c.newCoef>0&&Math.abs(c.newCoef-a.coef)<0.0005)||c.newCode===a.code)}).pop();
+        var dt=(ch&&ch.date)||a.from||'';
+        add({kind:kind,id:a.id,label:a.label,fromV:ov?{code:ov.code,coef:ov.coef}:null,toV:{code:a.code,coef:a.coef},date:dt||co,orig:dt,sure:!!dt});
+      }
     });
   });
-  return {items:items,news:news};
+  /* évolutions datées d'actes connus (listés ou non dans la réponse) */
+  (R.changes||[]).forEach(function(c){
+    if(!c.id||!c.date||c.type==='suppression'||c.type==='valeur_lettre_cle'||!(c.newCoef>0||c.newCode))return;
+    var kind=null,old=null;
+    _NG_KINDS.forEach(function(kk){if(kind)return;var o=((cur&&cur[kk[0]])||[]).filter(function(x){return x.id===c.id})[0];if(o){kind=kk[0];old=o;}});
+    if(!old)return;
+    var listed=(R[kind]||[]).filter(function(x){return x.id===c.id})[0];
+    if(listed&&c.date<=co)return; /* déjà couvert par la ligne de l'acte */
+    var base=listed&&c.date>co?{code:listed.code,coef:listed.coef}:_ngVerAt(old.versions,_cvAddDays(c.date,-1));
+    if(!base)return;
+    var to={code:c.newCode||base.code,coef:c.newCoef>0?c.newCoef:base.coef};
+    if((old.versions||[]).some(function(x){return x.from===c.date&&x.code===to.code&&Math.abs(x.coef-to.coef)<0.0005}))return;
+    var at=_ngVerAt(old.versions,c.date);
+    if(at&&at.code===to.code&&Math.abs(at.coef-to.coef)<0.0005)return;
+    if(items.some(function(it){return it.kind===kind&&it.id===c.id&&it.date===c.date}))return;
+    add({kind:kind,id:c.id,label:old.label,fromV:{code:base.code,coef:base.coef},toV:to,date:c.date,orig:c.date,sure:true,future:c.date>co});
+  });
+  /* suppressions */
+  (R.changes||[]).forEach(function(c){
+    if(c.type!=='suppression'||!c.id||!cur)return;
+    _NG_KINDS.forEach(function(kk){var o=(cur[kk[0]]||[]).filter(function(x){return x.id===c.id})[0];if(o&&o.removed!==c.date)add({kind:'removal',sub:kk[0],id:c.id,label:o.label,date:c.date,orig:c.date,sure:true});});
+  });
+  /* déplacements et majorations (montants, sans date d'effet) */
+  [['travel','travel'],['majorations','maj']].forEach(function(ff){
+    (R[ff[0]]||[]).forEach(function(t){
+      var old=((cur&&cur[ff[0]])||[]).filter(function(x){return x.code===t.code})[0];
+      if(!old){news.push({kind:ff[1],id:t.code,label:t.label,amount:t.amount,amountDom:t.amountDom,perKm:t.perKm,on:true});return;}
+      if(Math.abs((old.amount||0)-t.amount)>0.0005)add({kind:ff[1],id:t.code,label:old.label||t.label,fromV:old.amount,toV:t.amount,toD:t.amountDom,date:'',sure:true,allowEmpty:true});
+    });
+  });
+  /* regroupe les lettres clés qui changent pareil (AMK, RAM, RIM… : une seule ligne) */
+  var keyed={},out=[];
+  items.forEach(function(it){
+    if(it.kind!=='key'){out.push(it);return;}
+    var g=[it.date,it.fromV,it.toV,it.toD||'',it.future?1:0].join('|');
+    if(keyed[g]){keyed[g].ids.push(it.id);return;}
+    it.ids=[it.id];keyed[g]=it;out.push(it);
+  });
+  return {items:out,news:news};
 }
 function _ngUpsert(vs,v){
   var out=(vs||[]).filter(function(x){return (x.from||'')!==(v.from||'')});out.push(v);
   out.sort(function(a,b){return (a.from||'')<(b.from||'')?-1:((a.from||'')>(b.from||'')?1:0)});
   return out;
 }
-function ngapMerge(cur,doc,items){
+/* première consultation sans référentiel (ancien mode, secours) : tout est pris */
+function ngapMergeFull(doc,items){
   var R=doc.ref,co=R.consultedOn||todayKey();
-  var next=cur?JSON.parse(JSON.stringify(cur)):{v:1,keys:{},acts:[],bilans:[],supplements:[],travel:[],log:[]};
-  next.keys=next.keys||{};
-  (R.keys||[]).forEach(function(k){
-    var nv=_ngKeyVersionsFromR(k,R.changes);
-    (items||[]).forEach(function(it){if(it.kind==='key'&&it.id===k.code&&it.date&&it.date!==it.orig){nv=nv.map(function(v){return v.from===it.orig?Object.assign({},v,{from:it.date}):v});}});
-    next.keys[k.code]={label:k.label||((next.keys[k.code]||{}).label)||'',versions:nv};
-  });
+  var next={v:1,keys:{},acts:[],bilans:[],supplements:[],travel:[],log:[]};
+  (R.keys||[]).forEach(function(k){next.keys[k.code]={label:k.label||'',versions:_ngKeyVersionsFromR(k,R.changes)};});
   _NG_KINDS.forEach(function(kk){
-    var kind=kk[0];next[kind]=next[kind]||[];
-    (R[kind]||[]).forEach(function(a){
-      var old=next[kind].filter(function(x){return x.id===a.id})[0];
-      if(!old){old={id:a.id,label:a.label,cat:a.cat||'',versions:[{from:a.from||'',code:a.code,coef:a.coef,src:'ia'}]};if(a.type)old.type=a.type;next[kind].push(old);return;}
-      old.label=a.label;old.cat=a.cat||old.cat||'';if(a.type)old.type=a.type;
-      /* évolutions à venir que le secrétaire ne confirme plus : retirées (sauf corrections du kiné) */
-      var futD=(items||[]).filter(function(it){return it.kind===kind&&it.id===a.id&&it.future}).map(function(it){return it.date});
-      old.versions=(old.versions||[]).filter(function(v){return !((v.from||'')>co&&v.src!=='kine'&&futD.indexOf(v.from)<0)});
+    var kind=kk[0];
+    (R[kind]||[]).forEach(function(a){var o={id:a.id,label:a.label,cat:a.cat||'',versions:[{from:a.from||'',code:a.code,coef:a.coef,src:'ia'}]};if(a.type)o.type=a.type;next[kind].push(o);});
+    (R.changes||[]).forEach(function(c){
+      var o=next[kind].filter(function(x){return x.id===c.id})[0];if(!o||!c.date)return;
+      if(c.type==='suppression'){o.removed=c.date;return;}
+      if(c.date>co&&(c.newCoef>0||c.newCode)){var v0=_ngVerAt(o.versions,c.date)||{};o.versions=_ngUpsert(o.versions,{from:c.date,code:c.newCode||v0.code,coef:c.newCoef>0?c.newCoef:v0.coef,src:'ia'});}
     });
-    (items||[]).forEach(function(it){
-      if(it.kind!==kind)return;
-      var o=next[kind].filter(function(x){return x.id===it.id})[0];if(!o)return;
-      o.versions=_ngUpsert(o.versions,{from:it.date||'',code:it.toV.code,coef:it.toV.coef,src:'ia'});
-    });
-    (R.changes||[]).forEach(function(c){if(c.type==='suppression'&&c.id){var o=next[kind].filter(function(x){return x.id===c.id})[0];if(o)o.removed=c.date;}});
   });
-  if((R.travel||[]).length)next.travel=R.travel.slice();
+  next.travel=(R.travel||[]).slice();next.majorations=(R.majorations||[]).slice();
   next.consultedOn=co;next.at=Date.now();next.zone=D.ngapZone==='dom'?'dom':'metropole';
   next.summary=R.summary||'';next.sources=R.sources||[];next.doubts=R.doubts||[];next.changes=R.changes||[];next.costUsd=doc.costUsd||0;
-  next.log=(next.log||[]).concat([{at:Date.now(),consultedOn:co,n:(items||[]).length}]).slice(-20);
+  next.log=[{at:Date.now(),consultedOn:co,n:0}];
+  return next;
+}
+/* mise à jour : seuls les éléments cochés sont appliqués ; l'historique du référentiel est conservé */
+function ngapMerge(cur,doc,items,news){
+  if(!_ngHasObj(cur))return ngapMergeFull(doc,items);
+  var R=doc.ref,co=R.consultedOn||todayKey(),n=0;
+  var next=JSON.parse(JSON.stringify(cur));next.keys=next.keys||{};
+  (items||[]).filter(function(it){return it.on}).forEach(function(it){
+    n++;
+    if(it.kind==='key'){
+      (it.ids||[it.id]).forEach(function(code){
+        var k=next.keys[code]||(next.keys[code]={label:it.label||'Lettre clé descriptive',versions:[]});
+        var v={from:it.date||'',value:it.toV};if(it.toD)v.valueDom=it.toD;
+        k.versions=_ngUpsert(k.versions,v);
+      });
+      return;
+    }
+    if(it.kind==='travel'||it.kind==='maj'){
+      var f=it.kind==='travel'?'travel':'majorations',o=(next[f]||[]).filter(function(x){return x.code===it.id})[0];
+      if(o){o.amount=it.toV;if(it.toD)o.amountDom=it.toD;}
+      return;
+    }
+    if(it.kind==='removal'){var r=(next[it.sub]||[]).filter(function(x){return x.id===it.id})[0];if(r)r.removed=it.date;return;}
+    var a=(next[it.kind]||[]).filter(function(x){return x.id===it.id})[0];
+    if(a)a.versions=_ngUpsert(a.versions,{from:it.date||'',code:it.toV.code,coef:it.toV.coef,src:'ia'});
+  });
+  (news||[]).filter(function(a){return a.on}).forEach(function(a){
+    n++;
+    if(a.kind==='travel'||a.kind==='maj'){
+      var f=a.kind==='travel'?'travel':'majorations';next[f]=next[f]||[];
+      var t={code:a.id,label:a.label,amount:a.amount};if(a.amountDom)t.amountDom=a.amountDom;if(a.perKm)t.perKm=true;next[f].push(t);return;
+    }
+    next[a.kind]=next[a.kind]||[];
+    var o={id:a.id,label:a.label,cat:a.cat||'',versions:[{from:a.from||'',code:a.code,coef:a.coef,src:'ia'}]};if(a.type)o.type=a.type;
+    next[a.kind].push(o);
+  });
+  var seen={};next.sources=(R.sources||[]).concat(cur.sources||[]).filter(function(s){if(!s||!s.url||seen[s.url])return false;seen[s.url]=1;return true;}).slice(0,30);
+  var ds={};next.doubts=(R.doubts||[]).concat(cur.doubts||[]).filter(function(d){if(!d||ds[d])return false;ds[d]=1;return true;}).slice(0,20);
+  var cs={};next.changes=(cur.changes||[]).concat(R.changes||[]).filter(function(c){var k=c&&(c.date+'|'+(c.label||c.id));if(!c||cs[k])return false;cs[k]=1;return true;}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))}).slice(-60);
+  if(!cur.base)next.summary=R.summary||next.summary||'';
+  next.consultedOn=co;next.at=Date.now();next.zone=D.ngapZone==='dom'?'dom':'metropole';
+  next.lastCheck={on:co,at:Date.now(),n:n,summary:R.summary||'',costUsd:doc.costUsd||0};
+  next.log=(next.log||[]).concat([{at:Date.now(),consultedOn:co,n:n}]).slice(-20);
   return next;
 }
 
-/* ─── validation par le kiné ─── */
+/* ─── validation par le kiné : une case par changement ─── */
 function _ngV(v){return v?(v.code+' '+_ngC(v.coef)):'—';}
+function _ngKeyAt(code,date,R){
+  var K=(R&&R.keys)||[],k=K.filter(function(x){return x.code===code})[0];
+  if(k){var v=_ngVerAt(_ngKeyVersionsFromR(k,R.changes),date);if(v)return (D.ngapZone==='dom'&&v.valueDom)?v.valueDom:v.value;}
+  return ngapKeyValue(code,date);
+}
+function _ngItemHtml(it,i,R){
+  var t;
+  if(it.kind==='key')t=esc((it.ids||[it.id]).join(', '))+' : '+(it.fromV!==null&&it.fromV!==undefined?_ngC(it.fromV)+' €':'—')+' → '+_ngC(it.toV)+' €';
+  else if(it.kind==='travel'||it.kind==='maj')t=esc(it.id)+' : '+money(it.fromV)+' → '+money(it.toV);
+  else if(it.kind==='removal')t='Supprimé de la NGAP';
+  else{var kv=_ngKeyAt(it.toV.code,it.date||todayKey(),R);t=esc(_ngV(it.fromV))+' → '+esc(_ngV(it.toV))+(kv?' = '+money(_ngR2(it.toV.coef*kv)):'');}
+  var tags=(it.future?' <span class="cvtag w">à venir</span>':'')+(it.isNew?' <span class="cvtag">nouveau</span>':'')+(it.warn||[]).map(function(w){return ' <span class="cvtag r">⚠️ '+esc(w)+'</span>'}).join('');
+  var lab=it.kind==='key'?(it.ids&&it.ids.length>1?'Lettres clés':'Lettre clé')+(it.label?' — '+esc(it.label):''):esc(it.label||'');
+  return '<div class="ngit'+(it.on?'':' off')+'" style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" data-ngit="'+i+'"'+(it.on?' checked':'')+' onchange="this.parentNode.classList.toggle(\'off\',!this.checked)" style="width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--accent)">'+
+    '<div style="flex:1;min-width:0"><div><b>'+t+'</b>'+tags+'</div>'+(lab?'<div style="color:var(--text2)">'+lab+'</div>':'')+
+    (it.kind==='travel'||it.kind==='maj'?'':'<div style="margin-top:4px">'+(it.kind==='removal'?'au':'à partir du')+' <input type="date" value="'+esc(it.date||'')+'" onchange="NGAP.items['+i+'].date=this.value"></div>')+'</div></div>';
+}
 function ngapReview(doc){
   if(!doc||!doc.ref){ngapError('Réponse vide du secrétaire');return;}
   NGAP.doc=doc;
-  var R=doc.ref,cur=D.ngap||null,df=ngapDiff(cur,R);
+  var R=doc.ref,cur=_ngHasObj(D.ngap)?D.ngap:null,df=ngapDiff(cur,R);
   NGAP.items=df.items;NGAP.newItems=df.news;
-  var co=R.consultedOn||todayKey();
-  var kv=(R.keys||[]).filter(function(k){return k.code==='AMK'})[0]||(R.keys||[])[0];
-  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='🔄 NGAP — à valider';
-  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Consultée le '+esc(_ngDay(co))+' par le secrétaire IA · '+(R.acts||[]).length+' actes, '+(R.bilans||[]).length+' bilans'+(kv?' · lettre clé '+esc(String(kv.value).replace('.',','))+' €':'')+(doc.costUsd?' · coût ≈ '+String(doc.costUsd).replace('.',',')+' $':'')+'</div>';
+  var co=R.consultedOn||todayKey(),upd=!!cur;
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent=upd?'🔎 NGAP — changements à valider':'🔄 NGAP — à valider';
+  var h='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Recherche du '+esc(_ngDay(co))+' par le secrétaire IA'+(upd&&cur.base?' · depuis le référentiel vérifié du '+esc(_ngDay(cur.base)):'')+(doc.costUsd?' · coût ≈ '+String(doc.costUsd).replace('.',',')+' $':'')+'</div>';
   if(R.summary)h+='<div class="ngbox" style="font-size:12px;line-height:1.45;margin-bottom:10px">'+esc(R.summary)+'</div>';
-  if(!cur)h+='<div style="font-size:12px;margin-bottom:8px">Première consultation : le référentiel sera enregistré, puis vous pourrez associer une cotation à chaque patient.</div>';
-  /* v102.1 — valeur de la lettre clé non trouvée par le secrétaire (et aucune connue) : le kiné la saisit */
-  NGAP.needKey=!(R.keys||[]).length&&!(cur&&cur.keys&&Object.keys(cur.keys).length);
-  if(NGAP.needKey)h+='<div class="ngbox" style="border-color:#e0a800;margin-bottom:10px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Valeur de la lettre clé à saisir</div><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Le secrétaire a trouvé les actes et leurs coefficients, mais pas la valeur en euros de la lettre clé (AMK et lettres clés descriptives). Indiquez-la : les tarifs en découlent.</div>'+
+  NGAP.needKey=!upd&&!(R.keys||[]).length;
+  if(NGAP.needKey)h+='<div class="ngbox" style="border-color:#e0a800;margin-bottom:10px"><div style="font-size:12px;font-weight:700;margin-bottom:4px">Valeur de la lettre clé à saisir</div><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Indiquez la valeur en euros de la lettre clé (AMK et lettres clés descriptives) : les tarifs en découlent.</div>'+
     '<div class="fr"><div class="fg"><label>Métropole (€)</label><input id="ngKeyV" type="number" step="0.01" min="0.5" max="20" placeholder="ex. 2,21"></div><div class="fg"><label>Outre-mer (€, facultatif)</label><input id="ngKeyD" type="number" step="0.01" min="0.5" max="20"></div></div></div>';
+  var nOn=df.items.filter(function(x){return x.on}).length+df.news.filter(function(x){return x.on}).length;
   if(df.items.length){
-    h+='<h4 style="margin:10px 0 6px">Changements ('+df.items.length+')</h4><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Chaque changement s\'applique à partir de sa date d\'effet (modifiable), pour tous les patients.</div>';
-    df.items.forEach(function(it,i){
-      var price=it.kind==='key'?'':(function(){var kvv=null;try{var K=R.keys||[];var kk=K.filter(function(x){return x.code===it.toV.code})[0]||K.filter(function(x){return x.code==='AMK'})[0]||K[0];kvv=kk?kk.value:null;}catch(e){}return kvv?(' = '+money(it.toV.coef*kvv)):'';})();
-      h+='<div class="ngit"><div><b>'+(it.kind==='key'?(esc(it.id)+' : '+(it.fromV!==null?String(it.fromV).replace('.',',')+' €':'—')+' → '+String(it.toV).replace('.',',')+' €'):(esc(_ngV(it.fromV))+' → '+esc(_ngV(it.toV))+price))+'</b>'+(it.future?' <span class="cvtag w">à venir</span>':'')+'</div>'+
-        (it.kind==='key'?'':'<div style="color:var(--text2)">'+esc(it.label)+'</div>')+
-        '<div style="margin-top:4px">à partir du <input type="date" value="'+esc(it.date||'')+'" onchange="NGAP.items['+i+'].date=this.value">'+(it.sure?'':' <span class="cvtag r">date non trouvée : vérifiez</span>')+'</div></div>';
-    });
-  }else if(cur)h+='<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ Aucun changement de tarif ou de cotation depuis la dernière consultation.</div>';
+    h+='<h4 style="margin:10px 0 4px">Changements ('+df.items.length+')</h4><div style="font-size:11px;color:var(--text2);margin-bottom:6px">Cochez ce que vous acceptez. Chaque changement s\'applique à sa date d\'effet (modifiable), pour tous les patients. Les baisses et ce qui contredit le référentiel vérifié sont décochés : vérifiez-les avant de les cocher.</div>'+
+      df.items.map(function(it,i){return _ngItemHtml(it,i,R)}).join('');
+  }else if(upd)h+='<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ Aucun changement de tarif ou de cotation trouvé'+(cur.base?' depuis le référentiel du '+esc(_ngDay(cur.base)):'')+'.</div>';
   if(df.news.length){
-    h+='<details style="margin:8px 0"><summary style="font-size:12px;cursor:pointer"><b>'+(cur?'➕ Nouveaux éléments ('+df.news.length+')':'📖 Actes, bilans et suppléments ('+df.news.length+')')+'</b></summary>'+
-      df.news.slice(0,400).map(function(a){return '<div class="ngact"><span>'+esc(a.label)+'</span><b>'+esc(a.code+' '+_ngC(a.coef))+'</b></div>'}).join('')+'</details>';
+    h+='<details style="margin:8px 0"'+(upd&&df.news.length<=12?' open':'')+'><summary style="font-size:12px;cursor:pointer"><b>'+(upd?'➕ Nouveaux éléments ('+df.news.length+')':'📖 Actes, bilans et suppléments ('+df.news.length+')')+'</b></summary>'+
+      df.news.slice(0,400).map(function(a,i){
+        var right=(a.kind==='travel'||a.kind==='maj')?(a.id+' · '+money(a.amount)+(a.perKm?'/km':'')):(a.code+' '+_ngC(a.coef));
+        return '<div class="ngact'+(a.on?'':' off')+'" style="align-items:center"><input type="checkbox" data-ngnew="'+i+'"'+(a.on?' checked':'')+' onchange="this.parentNode.classList.toggle(\'off\',!this.checked)" style="width:16px;height:16px;flex:none;accent-color:var(--accent)"><span style="flex:1">'+esc(a.label)+(a.like?' <span class="cvtag r">semble déjà présent : '+esc(a.like.slice(0,40))+'</span>':'')+(a.from&&a.from>todayKey()?' <span class="cvtag w">au '+esc(_ngDay(a.from))+'</span>':'')+'</span><b>'+esc(right)+'</b></div>';
+      }).join('')+'</details>';
   }
+  if(df.items.length+df.news.length>1)h+='<div class="cvbar"><button class="btn bs" onclick="ngapCheckAll(true)">Tout cocher</button><button class="btn bs" onclick="ngapCheckAll(false)">Tout décocher</button></div>';
   if((R.doubts||[]).length)h+='<h4 style="margin:10px 0 6px">⚠️ À vérifier</h4>'+R.doubts.map(function(d){return '<div style="font-size:12px;margin-bottom:4px">• '+esc(d)+'</div>'}).join('');
   if((R.sources||[]).length)h+='<details style="margin:8px 0"><summary style="font-size:12px;cursor:pointer">Sources ('+R.sources.length+')</summary>'+R.sources.map(function(s){return '<div style="font-size:11px;margin:3px 0;word-break:break-all"><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.title||s.url)+'</a></div>'}).join('')+'</details>';
-  h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances déjà facturées ne changent pas. Les séances non facturées sont recalculées selon la date de chaque changement. Vérifiez les points signalés : la cotation reste sous votre responsabilité.</div>'+
-    '<div class="br"><button class="btn" onclick="ngapDismiss()">Ne pas appliquer</button><button class="btn bp bw" onclick="ngapApplyReview()">✅ Appliquer</button></div>';
+  var any=df.items.length+df.news.length;
+  h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances déjà facturées ne changent pas. Les séances non facturées sont recalculées selon la date de chaque changement accepté. La cotation reste sous votre responsabilité.</div>'+
+    '<div class="br">'+(any?'<button class="btn" onclick="ngapDismiss()">Ne rien appliquer</button><button class="btn bp bw" onclick="ngapApplyReview()">✅ Appliquer la sélection</button>':'<button class="btn bp bw" onclick="ngapApplyReview()">OK</button>')+'</div>';
   b.innerHTML=h;opM('mM');
 }
+function ngapCheckAll(on){document.querySelectorAll('#mMB input[data-ngit],#mMB input[data-ngnew]').forEach(function(x){x.checked=on;x.parentNode.classList.toggle('off',!on);});}
 function ngapDismiss(){
   if(NGAP.doc){D.ngapSeenAt=NGAP.doc.at;NGAP.pending=null;sv();}
-  NGAP.doc=null;clM('mM');toast('Résultat non appliqué (vous pourrez relancer une consultation)');
+  NGAP.doc=null;clM('mM');toast('Rien n\'a été appliqué (vous pourrez relancer une recherche)');
 }
 function ngapApplyReview(){
   if(!NGAP.doc)return;
-  var bad=(NGAP.items||[]).filter(function(it){return !/^\d{4}-\d{2}-\d{2}$/.test(it.date||'')});
-  if(bad.length){toast('Indiquez une date d\'effet pour chaque changement');return}
-  if(NGAP.needKey){
+  document.querySelectorAll('#mMB input[data-ngit]').forEach(function(x){var it=NGAP.items[+x.getAttribute('data-ngit')];if(it)it.on=x.checked;});
+  document.querySelectorAll('#mMB input[data-ngnew]').forEach(function(x){var a=NGAP.newItems[+x.getAttribute('data-ngnew')];if(a)a.on=x.checked;});
+  var bad=(NGAP.items||[]).filter(function(it){return it.on&&!it.allowEmpty&&!/^\d{4}-\d{2}-\d{2}$/.test(it.date||'')});
+  if(bad.length){toast('Indiquez une date d\'effet pour chaque changement coché');return}
+  var cur=_ngHasObj(D.ngap)?D.ngap:null;
+  if(!cur&&NGAP.needKey){
     var kv=parseFloat(String((document.getElementById('ngKeyV')||{}).value||'').replace(',','.')),kd=parseFloat(String((document.getElementById('ngKeyD')||{}).value||'').replace(',','.'));
     if(!(kv>=0.5&&kv<=20)){toast('Indiquez la valeur de la lettre clé (ex. 2,21)');var f=document.getElementById('ngKeyV');if(f)f.focus();return}
     var kk={code:'AMK',label:'Lettre clé des actes de kinésithérapie (saisie par le kiné)',value:Math.round(kv*1000)/1000,history:[]};if(kd>=0.5&&kd<=20)kk.valueDom=Math.round(kd*1000)/1000;
     NGAP.doc.ref.keys=[kk];
   }
-  var first=!D.ngap;
-  D.ngap=ngapMerge(D.ngap||null,NGAP.doc,NGAP.items);
+  var nSel=(NGAP.items||[]).filter(function(x){return x.on}).length+(NGAP.newItems||[]).filter(function(x){return x.on}).length;
+  D.ngap=ngapMerge(cur,NGAP.doc,NGAP.items,NGAP.newItems);
   D.ngapSeenAt=NGAP.doc.at;NGAP.pending=null;
-  NGAP.doc=null;invalidateBillCache();sv();R();cvPlanSoon();
-  toast('✅ NGAP appliquée'+((NGAP.items||[]).length?' : '+NGAP.items.length+' changement(s) daté(s)':''),3500);
-  /* après la toute première consultation : associer une cotation à chaque patient */
-  if(first&&ngapPatientsNoCot().length)ngapOpenPatients(true);else clM('mM');
+  NGAP.doc=null;invalidateBillCache();sv();R();try{cvPlanSoon();}catch(e){}
+  toast(cur?(nSel?'✅ NGAP mise à jour : '+nSel+' élément(s) appliqué(s) à leur date':'✅ Recherche enregistrée : aucun changement appliqué'):'✅ NGAP appliquée',3500);
+  if(!cur&&ngapPatientsNoCot().length)ngapOpenPatients(true);else clM('mM');
 }
 
 /* ─── actes : consultation, correction manuelle ─── */
 function ngapOpenActs(){
-  if(!ngapHas()){toast('Consultez d\'abord la NGAP (🔄)');return}
+  if(!ngapHas()){ngapInstallModal();return}
   var b=document.getElementById('mMB');document.getElementById('mMT').textContent='📖 Actes NGAP';
   b.innerHTML='<div class="fg"><input id="ngQ" placeholder="Rechercher : lombalgie, genou, RIM, bilan…" oninput="ngapActsList()" value="'+esc(NGAP.filterAct||'')+'"></div><div id="ngList"></div>'+
-    '<div class="br"><button class="btn bw" onclick="clM(\'mM\')">Fermer</button></div>';
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button><button class="btn bp bw" onclick="ngapNewAct()">➕ Ajouter un acte</button></div>';
   opM('mM');ngapActsList();
 }
 function _ngNorm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
@@ -13351,6 +13682,35 @@ function ngapSaveAct(kind,id){
   invalidateBillCache();sv();R();toast('Cotation corrigée à partir du '+_ngDay(d));ngapOpenActs();
 }
 
+/* v103 — acte absent du référentiel : ajouté par le kiné */
+function ngapNewAct(){
+  var cats={};(D.ngap.acts||[]).forEach(function(a){if(a.cat)cats[a.cat]=1;});
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='➕ Ajouter un acte';
+  b.innerHTML='<div class="fg"><label>Type</label><select id="nnK"><option value="acts">Acte</option><option value="supplements">Supplément</option><option value="bilans">Bilan</option></select></div>'+
+    '<div class="fg"><label>Libellé</label><input id="nnL" maxlength="160" placeholder="ex. Fracture du poignet (référentiel)"></div>'+
+    '<div class="fg"><label>Catégorie</label><input id="nnC" list="nnCats" maxlength="60" placeholder="ex. Membre supérieur"><datalist id="nnCats">'+Object.keys(cats).sort().map(function(c){return '<option value="'+esc(c)+'">'}).join('')+'</datalist></div>'+
+    '<div class="fr"><div class="fg"><label>Lettre clé</label><input id="nnCode" maxlength="4" placeholder="RSC" oninput="this.value=this.value.toUpperCase()"></div>'+
+    '<div class="fg"><label>Coefficient</label><input id="nnCoef" type="number" step="0.01" placeholder="8,11"></div>'+
+    '<div class="fg"><label>À partir du (vide = toujours)</label><input id="nnD" type="date"></div></div>'+
+    '<div class="ngbox" id="nnP" style="font-size:12px"></div>'+
+    '<div class="br"><button class="btn" onclick="ngapOpenActs()">Retour</button><button class="btn bp bw" onclick="ngapSaveNewAct()">Ajouter</button></div>';
+  opM('mM');
+  var upd=function(){var c=String(document.getElementById('nnCode').value||'').trim().toUpperCase(),k=parseFloat(String(document.getElementById('nnCoef').value).replace(',','.')),kv=c?ngapKeyValue(c,document.getElementById('nnD').value||todayKey()):null;document.getElementById('nnP').textContent=(k>0&&kv)?('Tarif : '+money(_ngR2(k*kv))+' (lettre clé '+_ngC(kv)+' €)'):'Tarif : lettre clé × coefficient';};
+  ['nnCode','nnCoef','nnD'].forEach(function(id){document.getElementById(id).addEventListener('input',upd);});upd();
+}
+function ngapSaveNewAct(){
+  var kind=document.getElementById('nnK').value,l=String(document.getElementById('nnL').value||'').trim(),cat=String(document.getElementById('nnC').value||'').trim();
+  var c=String(document.getElementById('nnCode').value||'').trim().toUpperCase(),k=parseFloat(String(document.getElementById('nnCoef').value).replace(',','.')),d=document.getElementById('nnD').value||'';
+  if(l.length<3){toast('Indiquez le libellé');return}
+  if(!/^[A-Z]{2,4}$/.test(c)||!(k>0&&k<100)){toast('Lettre clé (ex. RSC) et coefficient requis');return}
+  var id='kine_'+_ngNorm(l).replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)+'_'+uid().slice(-4);
+  var o={id:id,label:l.slice(0,160),cat:kind==='acts'?(cat||'Autres'):(kind==='bilans'?'Bilans':'Suppléments'),versions:[{from:d,code:c,coef:_ngR2(k),src:'kine'}]};
+  if(kind==='bilans')o.type='autre';
+  D.ngap[kind]=(D.ngap[kind]||[]).concat([o]);
+  invalidateBillCache();sv();R();toast('Acte ajouté : '+c+' '+_ngC(k));
+  NGAP.filterAct='';ngapOpenActs();
+}
+
 /* ─── associer une cotation aux patients (proposée par l'IA à partir de l'indication) ─── */
 function ngapActivePatients(){
   var t=todayKey(),lim=_cvAddDays(t,-90),act={};
@@ -13375,7 +13735,7 @@ function _ngCaseText(p){
   return parts.join(' · ').slice(0,480);
 }
 function ngapOpenPatients(afterFirst){
-  if(!ngapHas()){toast('Consultez d\'abord la NGAP (🔄)');return}
+  if(!ngapHas()){ngapInstallModal();return}
   var pats=ngapActivePatients(),t=todayKey();
   NGAP.rows=pats.map(function(p){var o=ordoCurrent(p);return {p:p,o:o,text:_ngCaseText(p),sugg:null};});
   ngapRenderPatients(afterFirst);
@@ -13387,7 +13747,7 @@ function _ngActOptions(sel){
 function ngapRenderPatients(afterFirst){
   var b=document.getElementById('mMB');document.getElementById('mMT').textContent='👥 Cotations des patients';
   var rows=NGAP.rows||[],miss=rows.filter(function(r){return !(r.o&&r.o.act)});
-  var h=(afterFirst?'<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ Référentiel enregistré. Associez maintenant une cotation à vos patients : le secrétaire IA peut la proposer à partir des motifs et des notes (sans nom ni téléphone).</div>':'')+
+  var h=(afterFirst?'<div class="ngbox" style="font-size:12px;margin-bottom:8px">✅ NGAP installée. Associez maintenant une cotation à vos patients : le secrétaire IA peut la proposer à partir des motifs et des notes (sans nom ni téléphone).</div>':'')+
     '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+rows.length+' patients suivis · '+miss.length+' sans cotation. La cotation s\'applique aux séances non facturées ; les séances déjà facturées ne changent pas.</div>'+
     (miss.length?'<div class="cvbar"><button class="btn bp" id="ngSugBtn" onclick="ngapSuggestMissing()">🤖 Proposer les cotations manquantes</button></div>':'');
   rows.forEach(function(r,i){
@@ -13468,7 +13828,7 @@ function openNewOrdo(pid,apId,ordoId){
       '<div class="fg"><label>🅱️ Bilan</label><select id="noBil">'+(D.ngap.bilans||[]).map(function(x){var pr=ngapPrice('bilans',x.id,t),v=_ngVerAt(x.versions,t)||{};return '<option value="'+esc(x.type||'autre')+'"'+((o.bilan||'general')===x.type?' selected':'')+'>'+esc(x.label+' · '+(v.code||'')+' '+_ngC(v.coef||0)+(pr!==null?' · '+money(pr):''))+'</option>'}).join('')+'</select></div></div>';
     h+='<div class="ngbox" id="noPrice" style="font-size:13px;font-weight:600"></div>';
   }else{
-    h+='<div class="ngbox" style="font-size:12px">💶 Pour la cotation et le tarif NGAP, faites d\'abord consulter la NGAP par le secrétaire IA (⚙ › Facturation). En attendant, le montant manuel de la fiche est utilisé.</div>';
+    h+='<div class="ngbox" style="font-size:12px">💶 Pour la cotation et le tarif NGAP, installez d\'abord la NGAP à jour (intégrée à l\'appli, sans IA). En attendant, le montant manuel de la fiche est utilisé.<div class="cvbar"><button class="btn bp" onclick="ngapInstallModal()">📥 Installer la NGAP</button></div></div>';
   }
   h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les séances sont comptées à partir du début de l\'ordonnance. Le secrétaire vous prévient à l\'approche de la dernière séance. L\'alerte ❗ Ordonnance est retirée.</div>'+
     '<div class="br"><button class="btn" onclick="clM(\'mM\')">Annuler</button>'+(ed?'<button class="btn bd" onclick="delOrdo(\''+pid+'\',\''+ed.id+'\')">🗑</button>':'')+'<button class="btn bp bw" onclick="saveNewOrdo()">Enregistrer</button></div>';
@@ -13549,29 +13909,39 @@ function ordoEditHtml(p){
   return h;
 }
 
-/* ─── réglages : ⚙ › 💵 Facturation › NGAP ─── */
+/* ─── réglages : ⚙ › 💵 Facturation › NGAP (v103 : référentiel intégré + recherche des changements par l'IA) ─── */
 function ngapSettingsHtml(){
-  var t=todayKey(),has=ngapHas(),h='<div class="ngbox" style="margin-top:10px"><div style="font-weight:700;font-size:12px;margin-bottom:6px">💶 Cotations NGAP (consultées par le secrétaire IA)</div>';
+  var t=todayKey(),has=ngapHas(),h='<div class="ngbox" style="margin-top:10px"><div style="font-weight:700;font-size:12px;margin-bottom:6px">💶 Cotations NGAP</div>';
   if(has){
     var kv=ngapKeyValue('AMK',t),nf=0;
     ['acts','bilans','supplements'].forEach(function(k){(D.ngap[k]||[]).forEach(function(a){nf+=(a.versions||[]).filter(function(v){return (v.from||'')>t}).length;});});
     Object.keys(D.ngap.keys||{}).forEach(function(c){nf+=(D.ngap.keys[c].versions||[]).filter(function(v){return (v.from||'')>t}).length;});
-    h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">Consultée le '+esc(_ngDay(D.ngap.consultedOn))+' · '+(D.ngap.acts||[]).length+' actes · lettre clé '+(kv!==null?String(kv).replace('.',',')+' €':'?')+(nf?' · <b>'+nf+' évolution(s) à venir</b> (appliquée(s) à leur date)':'')+'</div>';
-  }else h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">Pas encore consultée. Le secrétaire IA cherche la NGAP en vigueur et ses évolutions datées ; vous validez avant qu\'elle s\'applique. Ensuite, chaque patient a sa cotation (et son tarif), et le bilan est coté selon la NGAP.</div>';
+    var lc=D.ngap.lastCheck;
+    h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">'+(D.ngap.base?'Référentiel intégré, vérifié le '+esc(_ngDay(D.ngap.base)):'Consultée le '+esc(_ngDay(D.ngap.consultedOn)))+
+      (lc?' · changements recherchés le '+esc(_ngDay(lc.on))+(lc.n?' ('+lc.n+' appliqué'+(lc.n>1?'s':'')+')':' (aucun appliqué)'):'')+
+      ' · '+(D.ngap.acts||[]).length+' actes · lettre clé '+(kv!==null?String(kv).replace('.',',')+' €':'?')+(nf?' · <b>'+nf+' évolution(s) à venir</b> (appliquée(s) à leur date)':'')+'</div>';
+  }else h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.45">La NGAP à jour (vérifiée le '+esc(_ngDay(NGAP_BASE_DATE))+') est <b>intégrée à l\'appli</b> : installez-la en un geste, sans IA. Ensuite chaque patient a sa cotation et son tarif, le bilan est coté selon la NGAP, et chaque revalorisation s\'applique à sa date.</div>';
   h+='<div class="fr"><div class="fg"><label>Zone</label><select id="sNgapZone" onchange="D.ngapZone=this.value;if(D.ngap)D.ngap.zone=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')"><option value="metropole"'+(D.ngapZone!=='dom'?' selected':'')+'>Métropole</option><option value="dom"'+(D.ngapZone==='dom'?' selected':'')+'>Outre-mer (DOM)</option></select></div>';
   if(has)h+='<div class="fg"><label>🅱️ Bilan par défaut</label><select id="sBilanType" onchange="D.bilanType=this.value;invalidateBillCache();sv();R();toast(\'Enregistré\')">'+(D.ngap.bilans||[]).map(function(x){var v=_ngVerAt(x.versions,t)||{},pr=ngapPrice('bilans',x.id,t);return '<option value="'+esc(x.type||'autre')+'"'+((D.bilanType||'general')===x.type?' selected':'')+'>'+esc(x.label+' · '+(v.code||'')+' '+_ngC(v.coef||0)+(pr!==null?' · '+money(pr):''))+'</option>'}).join('')+'</select></div>';
   else h+='<div class="fg"><label>🅱️ Montant des bilans (€)</label><input id="sBilanFee" type="number" step="0.01" value="'+(Number(D.bilanFee||0).toFixed(2))+'" onchange="setBilanFee(this.value)"></div>';
-  if(NGAP.busy)h+='</div><div class="ngbox ngprogbox" style="font-size:12px">'+ngapProgHtml()+'</div><div style="font-size:11px;color:var(--text2);margin-top:4px">Consultation en cours sur le serveur : elle continue même appli quittée.</div><div class="cvbar">';
-  else if(NGAP.pending)h+='</div><div class="cvbar"><button class="btn bp" onclick="ngapReview(NGAP.pending)">📋 Résultat à valider</button>';
-  else h+='</div><div class="cvbar">';
-  h+=(NGAP.busy?'':'<button class="btn '+(NGAP.pending?'bs':'bp')+'" onclick="ngapRefresh()">🔄 '+(has?'Actualiser':'Consulter')+' la NGAP</button>')+(has?'<button class="btn bs" onclick="ngapOpenActs()">📖 Actes</button><button class="btn bs" onclick="ngapOpenPatients(false)">👥 Cotations des patients</button>':'')+'</div>';
-  if(!_secrCfg())h+='<div style="font-size:11px;color:#c0392b">Secrétaire IA non connecté : consultation impossible.</div>';
+  h+='</div>';
+  if(!has){
+    h+='<div class="cvbar"><button class="btn bp" onclick="ngapInstallModal()">📥 Installer la NGAP à jour ('+esc(_ngDay(NGAP_BASE_DATE))+')</button></div>';
+    return h+'</div>';
+  }
+  if(NGAP.busy)h+='<div class="ngbox ngprogbox" style="font-size:12px">'+ngapProgHtml()+'</div><div style="font-size:11px;color:var(--text2);margin-top:4px">Recherche en cours sur le serveur : elle continue même appli quittée.</div><div class="cvbar">';
+  else if(NGAP.pending)h+='<div class="cvbar"><button class="btn bp" onclick="ngapReview(NGAP.pending)">📋 Changements à valider</button>';
+  else h+='<div class="cvbar">';
+  h+=(NGAP.busy?'':'<button class="btn '+(NGAP.pending?'bs':'bp')+'" onclick="ngapRefresh()">🔎 Rechercher les changements (IA)</button>')+'<button class="btn bs" onclick="ngapOpenActs()">📖 Actes</button><button class="btn bs" onclick="ngapOpenPatients(false)">👥 Cotations des patients</button>'+
+    (ngapBaseNewer()?'<button class="btn bs" onclick="ngapInstallModal()">📥 Mettre à jour avec le référentiel intégré</button>':'')+'</div>';
+  if(!ngapBaseNewer())h+='<div style="font-size:11px;margin-top:2px"><a href="#" onclick="event.preventDefault();ngapInstallModal()">↺ Réinstaller le référentiel intégré</a></div>';
+  if(!_secrCfg())h+='<div style="font-size:11px;color:var(--text2)">Secrétaire IA non connecté : la recherche des changements est indisponible (le référentiel intégré fonctionne sans).</div>';
   return h+'</div>';
 }
 
 /* v100 — assistant ✨ : cotations NGAP (lecture) et nouvelle ordonnance (action, défaisable) */
 function _asstNgapSearch(i){
-  if(!ngapHas())return {erreur:'La NGAP n\'a pas encore été consultée (Paramètres › Facturation › Consulter la NGAP).'};
+  if(!ngapHas())return {erreur:'La NGAP n\'est pas encore installée (⚙ Paramètres › Facturation › 📥 Installer la NGAP à jour, sans IA).'};
   var q=_ngNorm(i.texte||'').trim(),t=todayKey(),out=[];
   var words=q?q.split(/\s+/).filter(Boolean):[];
   [['acts','acte'],['bilans','bilan'],['supplements','supplément']].forEach(function(kk){
@@ -13610,6 +13980,716 @@ function _prepNouvelleOrdo(i){
     var undo=[_aSet('pat',q,ch)];_aSave();try{cvPlanSoon();}catch(e){}
     return {ok:true,msg:'ordonnance enregistrée : '+lab.replace(/^📄 /,''),undo:undo};
   }};
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v103 — SECRÉTAIRE : rubriques simplifiées + consignes dans « À traiter »
+   Réglages : 6 rubriques (Fonctionnement, Infos et consignes, Canaux,
+   Notifications et résumés, Confidentialité, Avancé) au lieu de 12.
+   « À traiter » : carte épurée (détails repliés) et champ « Consigne au
+   secrétaire » : il réécrit tout de suite la réponse (en partant de votre
+   correction s'il y en a une), et peut retenir la consigne comme règle
+   pour toute la conversation. Rien n'est envoyé sans votre ✅.
+   ═══════════════════════════════════════════════════════════════════ */
+var _SECR_SUB={canaux:['sms','app','callscfg'],notifs:['notif','summ'],avance:['lessons','test','models','connect']};
+var _SECR_ALL={auto:['🤖','Fonctionnement'],infos:['✍️','Infos et consignes'],canaux:['📡','Canaux'],notifs:['🔔','Notifications et résumés'],privacy:['🔒','Confidentialité'],avance:['🛠','Avancé'],
+  sms:['📱','SMS du téléphone'],app:['💬','Messagerie de l\'appli'],callscfg:['📞','Appels entrants'],notif:['🔔','Notifications'],summ:['📋','Résumés'],
+  lessons:['🎓','Apprentissage'],test:['🧪','Tester'],models:['🧠','Modèles d\'IA'],connect:['🔌','Connexion']};
+function _secrParent(k){var p=null;Object.keys(_SECR_SUB).forEach(function(g){if(_SECR_SUB[g].indexOf(k)>=0)p=g;});return p;}
+function _secrSecInfo(k){var x=_SECR_ALL[k];return x?[k,x[0],x[1]]:null;}
+function _secrBackBtn(k){
+  var p=_secrParent(k);
+  if(p==='avance')return '<button class="secrback" onclick="secrSec(\'avance\')">‹ Avancé</button>';
+  return '<button class="secrback" onclick="secrTab(\'settings\')">‹ Réglages</button>';
+}
+/* résumé d'une rubrique (menu) */
+function _secrSub2(k){
+  var st=SECR.status||{},s=st.settings||{},gw=st.gateway||{},c=SECR.calls&&SECR.calls.config;
+  if(k==='canaux')return (gw.configured&&gw.registeredAt?'📱 SMS branché':'📱 SMS à brancher')+' · 💬 appli '+(s.appMessages!==false?'oui':'non')+(c?' · 📞 appels '+(c.enabled?'oui':'non'):'');
+  if(k==='notifs')return _secrSub('notif')+' · '+_secrSub('summ');
+  if(k==='avance')return 'Apprentissage ('+(st.lessons||0)+' leçon'+((st.lessons||0)>1?'s':'')+'), tester, modèles d\'IA, connexion';
+  return _secrSub(k);
+}
+function _secrPart(k){var s=SECR.sec;SECR.sec=k;try{return _secrSettingsPage();}finally{SECR.sec=s;}}
+function _secrPartTitle(k){var x=_SECR_ALL[k];return '<div style="font-size:12px;font-weight:700;color:var(--text2);margin:10px 2px 6px">'+x[0]+' '+x[1]+'</div>';}
+function secrSettingsHtml(){
+  var st=SECR.status,k=SECR.sec;
+  if(!k){
+    if(!st||!st.settings)return '<div style="font-size:13px;color:var(--text2)">Chargement…</div>';
+    var rows=[['auto','infos','canaux'],['notifs','privacy','avance']];
+    return '<div class="secrmenu">'+rows.map(function(g,i){
+      return '<h4>'+(i?'Suivi et sécurité':'L\'essentiel')+'</h4>'+g.map(function(x){var inf=_SECR_ALL[x];
+        return '<button class="secrrow" onclick="secrSec(\''+x+'\')"><span class="i">'+inf[0]+'</span><span class="t"><b>'+inf[1]+'</b><small>'+esc(_secrSub2(x))+'</small></span><span class="c">›</span></button>';
+      }).join('');
+    }).join('')+'</div>';
+  }
+  if(k==='canaux')return _secrPartTitle('sms')+_secrPart('sms')+_secrPartTitle('app')+_secrPart('app')+_secrPartTitle('callscfg')+_secrPart('callscfg');
+  if(k==='notifs')return _secrPartTitle('notif')+_secrPart('notif')+_secrPartTitle('summ')+_secrPart('summ');
+  if(k==='avance'){
+    return '<div class="secrmenu">'+_SECR_SUB.avance.map(function(x){var inf=_SECR_ALL[x];
+      return '<button class="secrrow" onclick="secrSec(\''+x+'\')"><span class="i">'+inf[0]+'</span><span class="t"><b>'+inf[1]+'</b><small>'+esc(_secrSub(x))+'</small></span><span class="c">›</span></button>';
+    }).join('')+'</div>';
+  }
+  return _secrSettingsPage();
+}
+
+/* ─── ⏳ À traiter : carte épurée + consigne ─── */
+function _secrCardHtml(p){
+  var acts=_secrActs(p);
+  var val=p.actionsValides||acts.map(function(){return !!p.actionValide});
+  var al=p.actionsAlertes||acts.map(function(){return p.actionProbleme||''});
+  var tags='<span class="secrtag">'+esc(_secrCatLabel(p.categorie))+'</span>'+(p.categorie==='urgence'?'<span class="secrtag red">URGENT</span>':'')+(p.simulated?'<span class="secrtag warn">🧪 simulation</span>':'')+(p.canal==='app'?'<span class="secrtag app">💬 appli</span>':'');
+  var actsH=acts.map(function(a,i){var w=al[i]||'';return '<label class="secract"><input type="checkbox" id="spa_'+p.id+'_'+i+'" '+(val[i]&&!w?'checked':'')+'> <span>'+esc(_secrActionLabel(a))+(w?' <span class="secrtag warn">⚠️ '+esc(w)+'</span>':'')+'</span></label>'}).join('');
+  var notes='';
+  (p.actionsFaites||[]).forEach(function(x){notes+='<div class="secrnote" style="color:#1e8c4e">✔️ Déjà fait : '+esc(x)+'</div>'});
+  if(p.kineReply)notes+='<div class="secrnote" style="color:#2a5bb8">💬 Vous avez déjà répondu dans la messagerie ('+_secrWhen(p.kineReply.at)+') : « '+esc(p.kineReply.text)+' »</div>';
+  if(!acts.length&&p.actionProbleme)notes+='<div class="secrnote">⚠️ '+esc(p.actionProbleme)+'</div>';
+  (p.consignes||[]).forEach(function(c){notes+='<div class="secrnote" style="color:#6a3fb5">🗣 Consigne appliquée'+(c.regle?' (règle de la conversation)':'')+' : « '+esc(c.text)+' »</div>'});
+  var det=[];
+  if(p.resume)det.push('🤖 '+esc(p.resume));
+  det.push('Confiance '+Math.round((p.confiance||0)*100)+' % · '+esc(_secrPhone(p.phone)));
+  if(p.note&&p.note!==p.question_kine)det.push('ℹ️ '+esc(p.note));
+  if(p.relecture)det.push('🔎 '+esc(p.relecture));
+  (p.controles||[]).forEach(function(c){det.push('📅 '+esc(c))});
+  if(p.analyse)det.push('🧠 '+esc(p.analyse));
+  var warn=(p.controles&&p.controles.length)||p.relecture||(p.confiance<0.8);
+  return '<div class="secrcard" id="sp_'+p.id+'">'+
+    '<div style="display:flex;justify-content:space-between;gap:6px;align-items:baseline"><b style="font-size:14px">'+esc(_secrName(p))+'</b><span class="secrmeta">'+_secrWhen(p.createdAt)+'</span></div>'+
+    '<div style="margin:2px 0">'+tags+'</div>'+
+    '<div class="secrin">'+esc(p.patientText||'')+'</div>'+
+    (p.question_kine?'<div style="font-size:12px;margin:4px 0;color:#c0510f">❓ '+esc(p.question_kine)+'</div>':'')+
+    notes+actsH+
+    '<textarea id="spt_'+p.id+'" rows="4" style="width:100%;font-size:13px;border-radius:8px;border:1px solid var(--border);padding:8px;resize:vertical" placeholder="'+(p.canal==='app'?'Réponse dans la messagerie de l\'appli (vide = pas de réponse)':'Réponse par SMS (vide = pas de SMS)')+'">'+esc(p.reponse||'')+'</textarea>'+
+    '<div class="secrcons"><input id="spc_'+p.id+'" maxlength="600" placeholder="🗣 Consigne au secrétaire : ex. propose plutôt le matin, vouvoie-la…" onkeydown="if(event.key===\'Enter\'){event.preventDefault();secrInstruct(\''+p.id+'\')}">'+
+      '<button class="btn bs" id="spb_'+p.id+'" onclick="secrInstruct(\''+p.id+'\')" title="Le secrétaire réécrit la réponse avec votre consigne (rien n\'est envoyé)">↻ Réécrire</button></div>'+
+    '<label style="font-size:11px;display:flex;gap:6px;align-items:center;margin:4px 0 0;color:var(--text2)"><input type="checkbox" id="spr_'+p.id+'"> Retenir cette consigne pour toute la conversation</label>'+
+    '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrApprove(\''+p.id+'\')">✅ Envoyer</button>'+
+      '<button class="btn bs" style="flex:1" onclick="secrOpenThread(\''+esc(p.tid||p.norm)+'\')" title="Conversation">💬</button>'+
+      '<button class="btn" style="flex:1" onclick="secrIgnore(\''+p.id+'\')">Ignorer</button></div>'+
+    '<details class="secrwhy"><summary>'+(warn?'⚠️ ':'')+'Détails</summary><div>'+det.join('\n')+'</div></details></div>';
+}
+function secrPendingHtml(){
+  if(!_secrCfg())return '';
+  var list=SECR.pending||[];
+  if(!list.length)return '<div class="secrcard" style="text-align:center;padding:18px 12px"><div style="font-size:26px">✅</div><b style="font-size:14px">Rien à traiter</b>'+
+    '<div style="font-size:12px;color:var(--text2);margin:4px 0 12px">Le secrétaire vous prévient dès qu\'un message demande votre avis.</div>'+
+    '<div style="display:flex;gap:6px"><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'activity\')">📬 Voir l\'activité</button><button class="btn bs" style="flex:1;font-size:12px" onclick="secrGo(\'assistant\')">✨ Assistant</button></div></div>';
+  return '<div style="font-size:11px;color:var(--text2);margin:-4px 2px 8px">Corrigez la réponse vous-même, ou donnez une consigne au secrétaire (↻) : il la réécrit aussitôt. Rien ne part sans ✅.</div>'+list.map(_secrCardHtml).join('');
+}
+/* consigne : réécriture immédiate par le secrétaire (la carte seule est redessinée : les autres saisies restent) */
+function secrInstruct(id){
+  var inp=document.getElementById('spc_'+id),ta=document.getElementById('spt_'+id),rg=document.getElementById('spr_'+id),btn=document.getElementById('spb_'+id);
+  var c=String((inp&&inp.value)||'').trim();
+  if(!c){toast('Écrivez d\'abord la consigne (ex. : propose plutôt le matin)');if(inp)inp.focus();return}
+  var p=(SECR.pending||[]).find(function(x){return x.id===id});if(!p)return;
+  var body={consigne:c,regle:!!(rg&&rg.checked)};
+  if(ta&&ta.value.trim()!==String(p.reponse||'').trim())body.texte=ta.value;
+  if(btn){btn.disabled=true;btn.textContent='⏳';}
+  if(inp)inp.disabled=true;
+  var card=document.getElementById('sp_'+id);if(card)card.classList.add('secrbusy');
+  secrApi('POST','pending/'+encodeURIComponent(id)+'/instruct',body).then(function(r){
+    var np=r.pending||p;
+    SECR.pending=(SECR.pending||[]).map(function(x){return x.id===id?np:x});
+    var el=document.getElementById('sp_'+id);if(el)el.outerHTML=_secrCardHtml(np);
+    toast('✍️ Réponse réécrite selon votre consigne'+(r.regle?' · règle retenue pour cette conversation':''),3500);
+  },function(e){
+    if(btn){btn.disabled=false;btn.textContent='↻ Réécrire';}
+    if(inp)inp.disabled=false;
+    var el=document.getElementById('sp_'+id);if(el)el.classList.remove('secrbusy');
+    toast('⚠️ '+e.message,6000);
+  });
+}
+function secrApprove(id){
+  if(SECR.busy)return;
+  var p=(SECR.pending||[]).find(function(x){return x.id===id});
+  var acts=_secrActs(p);var sel=[];
+  acts.forEach(function(a,i){var cb=document.getElementById('spa_'+id+'_'+i);if(cb&&cb.checked)sel.push(i)});
+  var ta=document.getElementById('spt_'+id),ci=document.getElementById('spc_'+id),rg=document.getElementById('spr_'+id);
+  var cons=String((ci&&ci.value)||'').trim(),keep=!!(rg&&rg.checked);
+  if(cons&&!keep&&!confirm('Votre consigne « '+cons+' » n\'a pas été appliquée (bouton ↻ Réécrire).\n\nEnvoyer quand même la réponse telle qu\'elle est ?'))return;
+  if(sel.length&&!confirm('Confirmer :\n'+sel.map(function(i){return '• '+_secrActionLabel(acts[i])}).join('\n')+' ?'))return;
+  if(!sel.length&&!(ta&&ta.value.trim())&&!confirm('Aucun SMS ni aucune action : clore cette proposition ?'))return;
+  if(p&&sel.length<acts.length&&ta&&ta.value.trim()&&ta.value.trim()===String(p.reponse||'').trim()&&!confirm('⚠️ Vous avez décoché une action, mais la réponse n\'a pas changé : elle l\'annonce peut-être encore au patient.\n\nEnvoyer quand même ?'))return;
+  var body={texte:ta?ta.value:'',actions:sel,avecAction:sel.length>0};
+  if(cons&&keep)body.regle=cons; /* règle transmise avec votre réponse (corrigée ou non) */
+  SECR.busy=true;
+  secrApi('POST','pending/'+encodeURIComponent(id)+'/approve',body).then(function(r){
+    SECR.busy=false;toast((r.sent?((p&&p.canal==='app')?'✅ Réponse envoyée dans l\'appli':'✅ SMS envoyé'):'✅ Traité')+(body.regle?' · règle retenue':''));secrLoad();
+  }).catch(function(e){SECR.busy=false;alert(e.message);secrLoad();});
+}
+/* ─── règles d'une conversation (vues et modifiables dans la conversation) ─── */
+function _secrRulesHtml(t){
+  var L=(t.rules||[]).map(function(r){return typeof r==='string'?r:(r&&r.text)}).filter(Boolean);
+  return '<div class="secrcard" style="font-size:12px;padding:8px 10px">📌 <b>Règles pour cette conversation</b>'+
+    (L.length?L.map(function(x,i){return '<div class="secrrule"><span class="t">'+esc(x)+'</span><button title="Retirer" onclick="secrRuleDel('+i+')">✕</button></div>'}).join(''):' : <i style="color:var(--text3)">aucune</i>')+
+    ' <button class="secrlink" onclick="secrRuleAdd()">+ ajouter</button></div>';
+}
+function _secrRulesList(){return ((SECR.thread&&SECR.thread.rules)||[]).map(function(r){return typeof r==='string'?r:(r&&r.text)}).filter(Boolean);}
+function _secrRulesSave(list,msg){
+  secrApi('POST','threads/'+encodeURIComponent(SECR.openTid)+'/rules',{rules:list}).then(function(){toast(msg);secrLoad();}).catch(function(e){alert(e.message)});
+}
+function secrRuleAdd(){
+  var v=prompt('Nouvelle règle pour cette conversation\n(ex. : c\'est la maman qui écrit pour Léa ; proposer seulement le mercredi)','');
+  if(!v||!v.trim())return;
+  _secrRulesSave(_secrRulesList().concat([v.trim()]),'📌 Règle ajoutée');
+}
+function secrRuleDel(i){
+  var L=_secrRulesList();if(!confirm('Retirer la règle « '+L[i]+' » ?'))return;
+  L.splice(i,1);_secrRulesSave(L,'Règle retirée');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v103 — BLOQUER / DÉBLOQUER un patient
+   Menu du patient (agenda, séances du jour, liste des patients) et fiche.
+   Un patient bloqué ne voit plus aucun rendez-vous dans l'appli patient
+   (« Rendez-vous indisponibles ») et le secrétaire IA ne lui en propose plus.
+   Ses RDV déjà pris restent inchangés (il peut encore les annuler).
+   Publié dans la configuration : knownPatients[…].b = 1.
+   ═══════════════════════════════════════════════════════════════════ */
+function patBlocked(p){return !!(p&&p.blocked);}
+function blockEmoji(pid){var p=gp(pid);return patBlocked(p)?'<span class="emji" title="Patient bloqué : rendez-vous indisponibles dans l\'appli patient">⛔</span>':'';}
+function blockCtxItem(pid){
+  var p=gp(pid);if(!p)return '';
+  return p.blocked?'<div class="ci" onclick="togglePatBlock(\''+pid+'\')">✅ Débloquer le patient</div>':'<div class="ci dng" onclick="togglePatBlock(\''+pid+'\')">⛔ Bloquer le patient</div>';
+}
+function togglePatBlock(pid,from){
+  try{clCtx();}catch(e){}
+  var p=gp(pid);if(!p)return;
+  var nm=((p.lastName||'').toUpperCase()+' '+(p.firstName||'')).trim();
+  if(!p.blocked){
+    if(!confirm('⛔ Bloquer '+nm+' ?\n\n• Appli patient : plus aucun rendez-vous visible (« Rendez-vous indisponibles »).\n• Secrétaire IA : ne lui propose plus de rendez-vous.\n• Ses rendez-vous déjà pris restent en place.\n\nVous pourrez le débloquer à tout moment.'))return;
+    p.blocked=true;p.blockedAt=new Date().toISOString();
+    if(!(p.phone&&String(p.phone).replace(/\D/g,'').length>=8))toast('⚠️ Pas de téléphone sur la fiche : le blocage se fera sur le nom dans l\'appli patient',5000);
+  }else{
+    p.blocked=false;p.blockedAt='';
+  }
+  sv();R();
+  try{if(document.getElementById('plw'))rPats();}catch(e){}
+  toast(p.blocked?'⛔ '+nm+' bloqué':'✅ '+nm+' débloqué',3000);
+  if(from==='card'||(document.getElementById('mP')&&document.getElementById('mP').classList.contains('open')))openPC(pid);
+}
+/* menu ⋮ d'une ligne de la liste des patients */
+function showPatCtx(e,pid){
+  e.stopPropagation();e.preventDefault&&e.preventDefault();
+  var p=gp(pid);if(!p)return;
+  var m=document.getElementById('ctx');
+  var it='<div style="padding:8px 12px;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2)">'+blockEmoji(pid)+esc(p.lastName)+' '+esc(p.firstName)+'</div>'+
+    '<div class="ci" onclick="clCtx();openPC(\''+pid+'\')">👤 Fiche patient</div>'+
+    '<div class="ci" onclick="clCtx();openHist(\''+pid+'\')">📋 Historique</div>'+
+    '<div class="ci" onclick="clCtx();billPatient(\''+pid+'\',true)">💵 Facturer</div>'+
+    '<div class="ci" onclick="openNewOrdo(\''+pid+'\')">📄 Nouvelle ordonnance / cotation</div>'+
+    '<div class="ci" onclick="clCtx();openQuickHide(\''+pid+'\')">🙈 Masquer des créneaux à ce patient</div>'+
+    blockCtxItem(pid);
+  m.innerHTML=it;m.style.left='-9999px';m.style.top='0';m.style.maxHeight='';m.classList.add('open');
+  var r=m.getBoundingClientRect(),mW=r.width||210,mH=Math.min(r.height,window.innerHeight-16);
+  var left=(e.clientX||100),top=(e.clientY||100);
+  if(left+mW>window.innerWidth)left=window.innerWidth-mW-6;if(left<4)left=4;
+  if(top+mH>window.innerHeight-8)top=Math.max(8,(e.clientY||100)-mH-4);if(top<4)top=4;
+  m.style.left=left+'px';m.style.top=top+'px';m.style.maxHeight=(window.innerHeight-16)+'px';
+  var ov=document.getElementById('ctxOv');
+  if(!ov){ov=document.createElement('div');ov.id='ctxOv';ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:899';document.body.appendChild(ov)}
+  ov.style.display='block';ov.onclick=function(){ov.style.display='none';clCtx()};
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v103 — SEUILS DE FRÉQUENTATION
+   - 📊 Statistiques : courbe du nombre de séances par semaine (lundi → dimanche),
+     complétée chaque dimanche par la semaine écoulée. Motifs cochés / décochés
+     (tous cochés par défaut, sauf le groupe), seuils en lignes horizontales.
+   - ⚙ Paramètres : seuil de surfréquentation, de sous-fréquentation (et seuils
+     propres à une période de l'année), séances comptées, déclencheurs :
+     SI un seuil est atteint (x semaines de suite) ALORS ouvrir ou fermer
+     exceptionnellement un motif (jours, heures, la semaine suivante ou dans
+     x semaines, pendant x semaines), ou seulement prévenir.
+   - Une fermeture ne touche JAMAIS un RDV déjà pris : elle masque seulement
+     les places libres dans l'appli patient (et pour le secrétaire IA).
+   D.freq = {over, under, excl:{motifId:1}, group:false, bilan:true, periods:[…], triggers:[…], lastEval, log:[…]}
+   D.freqClosures = [{id, motifId, date, time ('' = toute la journée), trig, wk, createdAt}]
+   ═══════════════════════════════════════════════════════════════════ */
+var FREQ={range:26,sel:null,tip:-1,draft:null};
+function getFreq(){
+  if(!D.freq||typeof D.freq!=='object')D.freq={};
+  var f=D.freq;
+  if(!f.excl||typeof f.excl!=='object')f.excl={};
+  if(!Array.isArray(f.periods))f.periods=[];
+  if(!Array.isArray(f.triggers))f.triggers=[];
+  if(!Array.isArray(f.log))f.log=[];
+  if(f.group===undefined)f.group=false;
+  if(f.bilan===undefined)f.bilan=true;
+  return f;
+}
+function getFreqClosures(){if(!Array.isArray(D.freqClosures))D.freqClosures=[];return D.freqClosures;}
+function _fqAdd(k,n){var d=new Date(k+'T12:00:00');d.setDate(d.getDate()+n);return dk(d);}
+function _fqMon(k){var d=new Date(k+'T12:00:00'),w=d.getDay();d.setDate(d.getDate()-(w===0?6:w-1));return dk(d);}
+function _fqDm(k){var p=String(k).split('-');return p[2]+'/'+p[1];}
+function _fqNum(v){var n=parseInt(v,10);return n>=0?n:null;}
+/* dernière semaine complète : celle qui se termine dimanche (aujourd'hui si on est dimanche) */
+function freqLastWeek(){var t=todayKey(),d=new Date(t+'T12:00:00');return d.getDay()===0?_fqMon(t):_fqAdd(_fqMon(t),-7);}
+/* séries : motifs (actuels et futurs), bilans sans motif, motifs supprimés, groupe */
+function freqSeries(){
+  var out=[],seen={};
+  (D.motifs||[]).concat((D.futureAgenda&&D.futureAgenda.motifs)||[]).forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;out.push({id:m.id,label:m.label||'Motif',color:'var(--c'+((parseInt(m.ci,10)||0)%6)+')'});}});
+  out.push({id:'_bilan',label:'Bilans (sans motif)',color:'#8e7cc3'});
+  out.push({id:'_other',label:'Motifs supprimés',color:'#9aa0a6'});
+  out.push({id:'_group',label:(D.groupName?'Groupe '+D.groupName:'Groupe spécial'),color:'#2a7c6f',group:true});
+  return out;
+}
+function _fqKeyOf(a){
+  if(a.motifId&&(gm(a.motifId)||((D.futureAgenda&&D.futureAgenda.motifs)||[]).some(function(m){return m&&m.id===a.motifId})))return a.motifId;
+  if(a.type==='bilan'||a.isBilan)return '_bilan';
+  return a.motifId?'_other':'_bilan';
+}
+/* comptage par semaine et par série : {mon:{key:n}} */
+function freqCounts(fromMon,toMon){
+  var res={},toSun=_fqAdd(toMon,6);
+  for(var w=fromMon;w<=toMon;w=_fqAdd(w,7))res[w]={};
+  (D.appointments||[]).forEach(function(a){
+    if(!a||a.cancelled||a.type==='absence'||!a.date||a.date<fromMon||a.date>toSun)return;
+    var w=_fqMon(a.date),k=_fqKeyOf(a);if(!res[w])return;
+    res[w][k]=(res[w][k]||0)+1;
+  });
+  var g=D.groups||{};
+  Object.keys(g).forEach(function(k){
+    if(k<fromMon||k>toSun)return;var gr=g[k];if(!gr||!gr.members||!gr.members.length)return;
+    var w=_fqMon(k);if(res[w])res[w]._group=(res[w]._group||0)+gr.members.length;
+  });
+  return res;
+}
+/* séances comptées pour les seuils (⚙) */
+function freqBasis(){
+  var f=getFreq(),sel={};
+  freqSeries().forEach(function(s){
+    if(s.id==='_group')sel[s.id]=!!f.group;
+    else if(s.id==='_bilan')sel[s.id]=f.bilan!==false;
+    else sel[s.id]=!f.excl[s.id];
+  });
+  return sel;
+}
+function _fqSum(row,sel){var n=0;Object.keys(row||{}).forEach(function(k){if(sel[k])n+=row[k];});return n;}
+function freqWeekTotal(mon,sel){var c=freqCounts(mon,mon);return _fqSum(c[mon],sel||freqBasis());}
+/* seuils de la semaine (période particulière si la semaine y tombe : on regarde le jeudi) */
+function _fqInPeriod(p,k){
+  var md=k.slice(5);if(!p||!/^\d{2}-\d{2}$/.test(p.from||'')||!/^\d{2}-\d{2}$/.test(p.to||''))return false;
+  return p.from<=p.to?(md>=p.from&&md<=p.to):(md>=p.from||md<=p.to);
+}
+function freqThresholds(mon){
+  var f=getFreq(),th=_fqAdd(mon,3);
+  var p=f.periods.filter(function(x){return _fqInPeriod(x,th)})[0];
+  if(p)return {over:_fqNum(p.over)!==null?_fqNum(p.over):_fqNum(f.over),under:_fqNum(p.under)!==null?_fqNum(p.under):_fqNum(f.under),period:p.label||'période'};
+  return {over:_fqNum(f.over),under:_fqNum(f.under),period:''};
+}
+function freqZone(n,th){
+  if(th.over!==null&&th.over>0&&n>=th.over)return 'over';
+  if(th.under!==null&&th.under>0&&n<=th.under)return 'under';
+  return (th.over||th.under)?'ok':'';
+}
+var _FQZ={over:['Surfréquentation','#e74c3c','fqz over'],under:['Sous-fréquentation','#e08e0b','fqz under'],ok:['Zone idéale','#1e8e3e','fqz ok'],'':['—','var(--text3)','fqz']};
+/* repères pour régler les seuils : 26 dernières semaines avec des séances */
+function freqStats(){
+  var to=freqLastWeek(),from=_fqAdd(to,-7*25),c=freqCounts(from,to),sel=freqBasis(),v=[];
+  Object.keys(c).sort().forEach(function(w){var n=_fqSum(c[w],sel);if(n>0)v.push(n);});
+  if(!v.length)return null;
+  var s=v.slice().sort(function(a,b){return a-b}),avg=Math.round(v.reduce(function(a,b){return a+b},0)/v.length);
+  return {avg:avg,min:s[0],max:s[s.length-1],n:v.length,p20:s[Math.floor(s.length*0.2)],p80:s[Math.min(s.length-1,Math.floor(s.length*0.8))]};
+}
+
+/* ─────────── 📊 Statistiques : la courbe ─────────── */
+function freqStatsHtml(){
+  return '<div class="ss" style="margin-top:16px" id="fqBox">'+
+    '<div class="fqhead"><h3 style="margin:0">📈 Seuils de fréquentation</h3><div class="fqrange">'+[[12,'12 sem.'],[26,'6 mois'],[52,'1 an']].map(function(x){return '<button class="'+(FREQ.range===x[0]?'on':'')+'" onclick="FREQ.range='+x[0]+';freqDraw()">'+x[1]+'</button>'}).join('')+'</div></div>'+
+    '<div id="fqKpis" class="fqkpis"></div>'+
+    '<div id="fqChart" class="fqchart"></div>'+
+    '<div id="fqLegend" class="fqlegend"></div>'+
+    '<div id="fqFoot" class="fqfoot"></div>'+
+  '</div>';
+}
+function _fqNice(v){if(v<=10)return 10;var p=Math.pow(10,Math.floor(Math.log10(v))),n=v/p;return (n<=1.5?1.5:n<=2?2:n<=2.5?2.5:n<=3?3:n<=4?4:n<=5?5:n<=6?6:n<=8?8:10)*p;}
+/* courbe monotone (sans dépassement entre deux points) */
+function _fqPath(pts){
+  if(pts.length<2)return pts.length?'M'+pts[0][0]+','+pts[0][1]:'';
+  var n=pts.length,dx=[],dy=[],m=[],t=[];
+  for(var i=0;i<n-1;i++){dx[i]=pts[i+1][0]-pts[i][0];dy[i]=pts[i+1][1]-pts[i][1];m[i]=dy[i]/dx[i];}
+  t[0]=m[0];t[n-1]=m[n-2];
+  for(i=1;i<n-1;i++)t[i]=(m[i-1]*m[i]<=0)?0:(m[i-1]+m[i])/2;
+  for(i=0;i<n-1;i++){if(m[i]===0){t[i]=0;t[i+1]=0;continue;}var a=t[i]/m[i],b=t[i+1]/m[i],h=a*a+b*b;if(h>9){var s=3/Math.sqrt(h);t[i]=s*a*m[i];t[i+1]=s*b*m[i];}}
+  var d='M'+pts[0][0].toFixed(1)+','+pts[0][1].toFixed(1);
+  for(i=0;i<n-1;i++){var c1x=pts[i][0]+dx[i]/3,c1y=pts[i][1]+t[i]*dx[i]/3,c2x=pts[i+1][0]-dx[i]/3,c2y=pts[i+1][1]-t[i+1]*dx[i]/3;d+=' C'+c1x.toFixed(1)+','+c1y.toFixed(1)+' '+c2x.toFixed(1)+','+c2y.toFixed(1)+' '+pts[i+1][0].toFixed(1)+','+pts[i+1][1].toFixed(1);}
+  return d;
+}
+function freqDraw(){
+  var box=document.getElementById('fqChart');if(!box)return;
+  if(!FREQ.sel)FREQ.sel=freqBasis();
+  document.querySelectorAll('#fqBox .fqrange button').forEach(function(b){b.classList.toggle('on',b.textContent===({12:'12 sem.',26:'6 mois',52:'1 an'})[FREQ.range]);});
+  var to=freqLastWeek(),from=_fqAdd(to,-7*(FREQ.range-1));
+  /* on commence à la première semaine qui a des séances */
+  var first='';(D.appointments||[]).forEach(function(a){if(a&&!a.cancelled&&a.type!=='absence'&&a.date&&(!first||a.date<first))first=a.date;});
+  if(first&&_fqMon(first)>from)from=_fqMon(first);
+  if(from>to)from=to;
+  var C=freqCounts(from,to),weeks=Object.keys(C).sort(),sel=FREQ.sel,S=freqSeries();
+  var vals=weeks.map(function(w){return _fqSum(C[w],sel)}),ths=weeks.map(freqThresholds),zones=vals.map(function(v,i){return freqZone(v,ths[i])});
+  FREQ.data={weeks:weeks,vals:vals,ths:ths,zones:zones,C:C};
+  /* légende : une case par série (avec le total de la période) */
+  var tot={};weeks.forEach(function(w){Object.keys(C[w]).forEach(function(k){tot[k]=(tot[k]||0)+C[w][k];});});
+  var lg=document.getElementById('fqLegend');
+  if(lg)lg.innerHTML=S.filter(function(s){return tot[s.id]||(s.id.charAt(0)!=='_')||s.group}).map(function(s){
+    return '<label class="fqchip'+(sel[s.id]?' on':'')+'"><input type="checkbox" '+(sel[s.id]?'checked':'')+' onchange="FREQ.sel[\''+s.id+'\']=this.checked;freqDraw()"><i style="background:'+s.color+'"></i>'+esc(s.label)+' <small>'+(tot[s.id]||0)+'</small></label>';
+  }).join('');
+  /* chiffres clés */
+  var n=vals.length,last=n?vals[n-1]:0,lz=n?zones[n-1]:'',nz=vals.filter(function(v){return v>0});
+  var avg=nz.length?Math.round(nz.reduce(function(a,b){return a+b},0)/nz.length):0;
+  var r4=vals.slice(-4),p4=vals.slice(-8,-4),a4=r4.length?r4.reduce(function(a,b){return a+b},0)/r4.length:0,b4=p4.length?p4.reduce(function(a,b){return a+b},0)/p4.length:0;
+  var tr=b4>0?Math.round((a4-b4)/b4*100):null;
+  var kp=document.getElementById('fqKpis');
+  if(kp)kp.innerHTML='<div class="fqk"><small>Sem. du '+(n?weeks[n-1].slice(8)+' au '+_fqDm(_fqAdd(weeks[n-1],6)):'—')+'</small><b>'+last+'</b><span class="'+_FQZ[lz][2]+'">'+_FQZ[lz][0]+'</span></div>'+
+    '<div class="fqk"><small>Moyenne</small><b>'+avg+'</b><span class="fqz">séances / sem.</span></div>'+
+    '<div class="fqk"><small>Tendance sur 4 sem.</small><b>'+(tr===null?'—':(tr>2?'↗ +':tr<-2?'↘ ':'→ ')+(tr>2?tr:tr)+' %')+'</b><span class="fqz">vs les 4 d\'avant</span></div>';
+  /* dessin */
+  var hasTh=ths.some(function(t){return t.over||t.under});
+  var W=Math.max(280,box.clientWidth||320),H=230,pl=34,pr=hasTh?40:14,pt=16,pb=28,cw=W-pl-pr,ch=H-pt-pb;
+  if(!n||!vals.some(function(v){return v>0})){box.innerHTML='<div class="fqempty">Aucune séance sur cette période avec les motifs cochés.</div>';_fqFoot();return;}
+  var mx=Math.max.apply(null,vals.concat(ths.map(function(t){return t.over||0}),ths.map(function(t){return t.under||0}),[4]));
+  var ymax=_fqNice(mx*1.12),X=function(i){return pl+(n===1?cw/2:cw*i/(n-1))},Y=function(v){return pt+ch*(1-v/ymax)};
+  var colW=n===1?cw:cw/(n-1),svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" role="img" aria-label="Séances par semaine" style="display:block;overflow:visible">'+
+    '<defs><linearGradient id="fqGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--accent);stop-opacity:.28"/><stop offset="100%" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>';
+  /* zones : idéale (vert), au-dessus du seuil haut (rouge pâle), au-dessous du seuil bas (orange pâle) — une colonne par semaine (seuils par période) */
+  for(var i=0;i<n;i++){
+    var x0=Math.max(pl,X(i)-colW/2),x1=Math.min(pl+cw,X(i)+colW/2),t=ths[i];
+    if(!(t.over||t.under))continue;
+    var yo=t.over?Y(t.over):pt,yu=t.under?Y(t.under):pt+ch;
+    if(t.over)svg+='<rect x="'+x0.toFixed(1)+'" y="'+pt+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,yo-pt).toFixed(1)+'" fill="#e74c3c" fill-opacity=".07"/>';
+    svg+='<rect x="'+x0.toFixed(1)+'" y="'+yo.toFixed(1)+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,yu-yo).toFixed(1)+'" fill="#2ecc71" fill-opacity=".09"/>';
+    if(t.under)svg+='<rect x="'+x0.toFixed(1)+'" y="'+yu.toFixed(1)+'" width="'+(x1-x0).toFixed(1)+'" height="'+Math.max(0,pt+ch-yu).toFixed(1)+'" fill="#f39c12" fill-opacity=".08"/>';
+  }
+  /* grille */
+  for(var g=0;g<=4;g++){var gv=ymax*g/4,gy=Y(gv);svg+='<line x1="'+pl+'" x2="'+(pl+cw)+'" y1="'+gy.toFixed(1)+'" y2="'+gy.toFixed(1)+'" style="stroke:var(--border2)" stroke-width="1"/><text x="'+(pl-6)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end" font-size="10" style="fill:var(--text3)">'+Math.round(gv)+'</text>';}
+  /* lignes de seuil (en escalier si une période a ses propres seuils) */
+  var stepLine=function(key,col,lab){
+    var d='',on=false,lastY=null;
+    for(var i=0;i<n;i++){var v=ths[i][key];var xa=Math.max(pl,X(i)-colW/2),xb=Math.min(pl+cw,X(i)+colW/2);
+      if(!(v>0)){on=false;continue;}var y=Y(v).toFixed(1);d+=(on?(' L'+xa.toFixed(1)+','+y):(' M'+xa.toFixed(1)+','+y))+' L'+xb.toFixed(1)+','+y;on=true;lastY=y;}
+    if(!d)return '';
+    var lv=ths[n-1][key]||ths.filter(function(t){return t[key]>0}).pop()[key];
+    /* étiquette dans la marge de droite, au bout de la ligne (ne cache jamais la courbe) */
+    return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="1.6" stroke-dasharray="5 4" data-lab="'+lab+' '+lv+'"/>'+
+      '<g><rect x="'+(pl+cw+3)+'" y="'+(Y(lv)-8).toFixed(1)+'" width="'+(pr-4)+'" height="16" rx="8" fill="'+col+'"/><text x="'+(pl+cw+3+(pr-4)/2)+'" y="'+(Y(lv)+3.6).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">'+lv+'</text><title>'+lab+' '+lv+'</title></g>';
+  };
+  svg+=stepLine('over','#e74c3c','Surfréquentation')+stepLine('under','#e08e0b','Sous-fréquentation');
+  /* courbe + aire */
+  var pts=vals.map(function(v,i){return [X(i),Y(v)]}),path=_fqPath(pts);
+  if(n>1)svg+='<path d="'+path+' L'+X(n-1).toFixed(1)+','+(pt+ch)+' L'+X(0).toFixed(1)+','+(pt+ch)+' Z" fill="url(#fqGrad)"/>';
+  svg+='<path d="'+path+'" fill="none" style="stroke:var(--accent)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
+  /* axe des semaines */
+  var every=Math.max(1,Math.ceil(n/6));
+  weeks.forEach(function(w,i){if((n-1-i)%every)return;svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" style="fill:var(--text3)">'+_fqDm(w)+'</text>';});
+  /* repère de survol */
+  svg+='<line id="fqGuide" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ch)+'" style="stroke:var(--text3)" stroke-width="1" stroke-dasharray="2 3" opacity="0"/>';
+  /* points colorés selon la zone */
+  pts.forEach(function(p,i){var z=zones[i],col=z==='over'?'#e74c3c':z==='under'?'#e08e0b':'var(--accent)',last=i===n-1;
+    svg+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(last?5:3.2)+'" style="fill:'+col+';stroke:var(--surface)" stroke-width="'+(last?2.2:1.5)+'"/>';});
+  svg+='<text x="'+X(n-1).toFixed(1)+'" y="'+(Y(vals[n-1])-10).toFixed(1)+'" text-anchor="'+(n>1?'end':'middle')+'" font-size="12" font-weight="800" style="fill:var(--text)">'+vals[n-1]+'</text>';
+  /* zones de survol (une par semaine) */
+  for(i=0;i<n;i++){var xa=Math.max(pl,X(i)-colW/2),xb=Math.min(pl+cw,X(i)+colW/2);svg+='<rect x="'+xa.toFixed(1)+'" y="'+pt+'" width="'+(xb-xa).toFixed(1)+'" height="'+ch+'" fill="transparent" style="cursor:pointer" onmouseenter="freqTip('+i+')" onclick="event.stopPropagation();freqTip('+i+',1)"/>';}
+  svg+='</svg>';
+  var key=hasTh?'<div class="fqkey">'+(ths.some(function(t){return t.over})?'<span><i class="dash" style="border-color:#e74c3c"></i>Surfréquentation</span>':'')+'<span><i style="background:#2ecc71;opacity:.35"></i>Zone idéale</span>'+(ths.some(function(t){return t.under})?'<span><i class="dash" style="border-color:#e08e0b"></i>Sous-fréquentation</span>':'')+'</div>':'';
+  box.innerHTML=svg+'<div id="fqTip" class="fqtip"></div>'+key;
+  box.onmouseleave=function(){freqTip(-1)};
+  FREQ.geo={X:X,Y:Y,W:W};
+  _fqFoot();
+}
+function freqTip(i,tap){
+  var tip=document.getElementById('fqTip'),gd=document.getElementById('fqGuide'),F=FREQ.data;if(!tip||!F)return;
+  if(tap&&FREQ.tip===i&&tip.style.display==='block')i=-1; /* 2e appui sur le même point : on referme */
+  FREQ.tip=i;
+  if(i<0||i>=F.weeks.length){tip.style.display='none';if(gd)gd.setAttribute('opacity','0');return;}
+  var w=F.weeks[i],row=F.C[w],S=freqSeries(),t=F.ths[i],z=F.zones[i];
+  var parts=S.filter(function(s){return row[s.id]&&FREQ.sel[s.id]}).sort(function(a,b){return row[b.id]-row[a.id]}).map(function(s){return '<div><i style="background:'+s.color+'"></i>'+esc(s.label)+' <b>'+row[s.id]+'</b></div>'}).join('');
+  tip.innerHTML='<div class="fqtt">Semaine du '+_fqDm(w)+' au '+_fqDm(_fqAdd(w,6))+'</div><div class="fqtv">'+F.vals[i]+' séances <span class="'+_FQZ[z][2]+'">'+_FQZ[z][0]+'</span></div>'+parts+
+    ((t.over||t.under)?'<div class="fqts">Seuils'+(t.period?' ('+esc(t.period)+')':'')+' : '+(t.under?'sous '+t.under:'')+(t.under&&t.over?' · ':'')+(t.over?'sur '+t.over:'')+'</div>':'');
+  var x=FREQ.geo.X(i);tip.style.display='block';
+  var tw=tip.offsetWidth||180,left=Math.min(Math.max(4,x-tw/2),FREQ.geo.W-tw-4);
+  tip.style.left=left+'px';tip.style.top='4px';
+  if(gd){gd.setAttribute('x1',x);gd.setAttribute('x2',x);gd.setAttribute('opacity','1');}
+}
+/* appui en dehors de la courbe : la bulle se referme */
+document.addEventListener('click',function(e){try{if(FREQ.tip>=0&&!(e.target.closest&&e.target.closest('#fqChart')))freqTip(-1);}catch(_){}},true);
+function _fqFoot(){
+  var el=document.getElementById('fqFoot');if(!el)return;
+  var f=getFreq(),hasTh=_fqNum(f.over)||_fqNum(f.under);
+  var h='<div>🗓 Mise à jour chaque dimanche : la semaine écoulée s\'ajoute à la courbe.'+(hasTh?'':' <b>Réglez vos seuils</b> pour les voir sur la courbe.')+' <a href="#" onclick="event.preventDefault();freqOpenSettings()">⚙ Seuils et déclencheurs</a></div>';
+  var L=f.log.slice(-4).reverse();
+  if(L.length)h+='<div class="fqlog"><b>Derniers déclenchements</b>'+L.map(function(e){var idx=f.log.indexOf(e);return '<div>'+esc(_fqLogText(e))+(e.undone?' <i>(annulé)</i>':((e.did||[]).length&&_fqUndoable(e)?' <a href="#" onclick="event.preventDefault();freqUndo('+idx+')">Annuler</a>':''))+'</div>'}).join('')+'</div>';
+  el.innerHTML=h;
+}
+function freqOpenSettings(){try{clM('mST');}catch(e){}if(typeof openSet==='function')openSet();setTimeout(function(){var el=document.getElementById('fqSet');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},350);}
+
+/* ─────────── déclencheurs ─────────── */
+var _FQ_DJ=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'];
+function _fqTrigDefaults(kind){
+  var m=(D.motifs||[])[0]||{},days=(D.days||[1,2,3,4,5]).slice();
+  var t={id:uid(),on:true,when:kind==='close'?'over':'under',weeks:1,action:kind||'open',motifId:m.id||'',dows:days.slice(0,1),times:['18:00'],allDay:false,places:1,start:'next',inWeeks:1,repeat:1,confirm:false};
+  if(kind==='notify'){t.when='over';t.action='notify';}
+  return t;
+}
+function freqTrigText(t){
+  var cond=(t.when==='over'?'surfréquentation':'sous-fréquentation')+(t.weeks>1?' '+t.weeks+' semaines de suite':'');
+  if(t.action==='notify')return 'SI '+cond+' → me prévenir';
+  var m=gm(t.motifId)||((D.futureAgenda&&D.futureAgenda.motifs)||[]).filter(function(x){return x.id===t.motifId})[0];
+  var days=sortDows(t.dows||[]).map(function(d){return _FQ_DJ[d]}).join(', ');
+  var when=t.start==='in'?((t.inWeeks||1)+' semaine'+((t.inWeeks||1)>1?'s':'')+' plus tard'):'les prochains';
+  var hrs=(t.action==='close'&&t.allDay)?'toute la journée':('à '+(t.times||[]).join(', '));
+  return 'SI '+cond+' → '+(t.action==='open'?'ouvrir':'fermer')+' « '+(m?m.label:'motif ?')+' » '+(t.start==='in'?'les '+days+' '+when:when+' '+days)+' '+hrs+(t.action==='open'&&t.places>1?' ('+t.places+' places)':'')+(t.repeat>1?', pendant '+t.repeat+' semaines':'')+(t.confirm?' · avec confirmation':'');
+}
+/* dates visées par un déclencheur, vues depuis « aujourd'hui » */
+function freqTargetDates(t,today){
+  today=today||todayKey();var out=[],dows=(t.dows||[]).map(Number),rep=Math.max(1,Math.min(12,parseInt(t.repeat,10)||1));
+  /* « les prochains » : la prochaine date de chaque jour choisi ; « dans x semaines » : ces mêmes jours, x semaines plus tard */
+  var base=[],shift=t.start==='in'?7*Math.max(1,parseInt(t.inWeeks,10)||1):0;
+  dows.forEach(function(d){for(var i=1;i<=7;i++){var k=_fqAdd(today,i);if(new Date(k+'T12:00:00').getDay()===d){base.push(_fqAdd(k,shift));break;}}});
+  for(var r=0;r<rep;r++)base.forEach(function(k){out.push(_fqAdd(k,7*r));});
+  return out.filter(function(k){return k>today}).sort();
+}
+function _fqDayClosed(k){
+  if((D.days||[]).indexOf(new Date(k+'T12:00:00').getDay())<0)return 'jour non travaillé';
+  var hol=(typeof frenchHolidayName==='function')?frenchHolidayName(k):null;if(hol&&!(D.openHolidays&&D.openHolidays[k]))return 'férié';
+  if((D.vacationPeriods||[]).some(function(v){return v&&v.from&&v.to&&k>=v.from&&k<=v.to}))return 'congés';
+  if((D.appointments||[]).some(function(a){return a&&!a.cancelled&&a.date===k&&a.type==='absence'&&a.allDay}))return 'absent';
+  return '';
+}
+/* ce que ferait un déclencheur (sans rien modifier) */
+function freqPlan(t,wk,today){
+  var out=[],skip=[];if(t.action==='notify')return {items:out,skip:skip};
+  freqTargetDates(t,today).forEach(function(k){
+    var why=_fqDayClosed(k);if(why){skip.push(_fqDm(k)+' ('+why+')');return;}
+    var times=(t.action==='close'&&t.allDay)?['']:(t.times||[]).filter(function(x){return /^\d{2}:\d{2}$/.test(x)});
+    times.forEach(function(tm){
+      if(t.action==='open'){
+        if(getExo().some(function(r){return r.mode!=='rec'&&r.date===k&&r.time===tm&&r.motifId===t.motifId}))return;
+        var r={motifId:t.motifId,time:tm,places:Math.max(1,Math.min(20,parseInt(t.places,10)||1)),mode:'once',date:k};
+        var v=exoValidate(r);if(v.error){skip.push(_fqDm(k)+' '+tm+' ('+v.error+')');return;}
+        out.push({kind:'exo',date:k,time:tm,motifId:t.motifId,places:r.places});
+      }else{
+        if(getFreqClosures().some(function(c){return c.date===k&&c.motifId===t.motifId&&(c.time===tm||c.time==='')}))return;
+        out.push({kind:'close',date:k,time:tm,motifId:t.motifId});
+      }
+    });
+  });
+  return {items:out,skip:skip};
+}
+function freqApplyPlan(t,wk,items){
+  var did=[];
+  items.forEach(function(x){
+    if(x.kind==='exo'){var r={id:uid(),motifId:x.motifId,time:x.time,places:x.places,mode:'once',date:x.date,auto:t.id,autoWk:wk,createdAt:new Date().toISOString()};getExo().push(r);did.push({kind:'exo',id:r.id,date:x.date,time:x.time,motifId:x.motifId});}
+    else{var c={id:uid(),motifId:x.motifId,date:x.date,time:x.time,trig:t.id,wk:wk,createdAt:new Date().toISOString()};getFreqClosures().push(c);did.push({kind:'close',id:c.id,date:x.date,time:x.time,motifId:x.motifId});}
+  });
+  return did;
+}
+function _fqLogText(e){
+  var z=_FQZ[e.zone]||_FQZ[''],m=e.motifLabel?' « '+e.motifLabel+' »':'';
+  var act=e.action==='open'?'ouverture'+m:(e.action==='close'?'fermeture'+m:'alerte');
+  var dts=(e.did||[]).map(function(x){return _FQ_DJ[new Date(x.date+'T12:00:00').getDay()]+' '+_fqDm(x.date)+(x.time?' '+x.time:'')}).slice(0,6).join(', ');
+  return 'Sem. du '+_fqDm(e.wk)+' : '+e.count+' séances ('+z[0].toLowerCase()+') → '+act+(dts?' : '+dts+((e.did||[]).length>6?'…':''):(e.action!=='notify'?' : rien à faire':''));
+}
+function _fqUndoable(e){var t=todayKey();return (e.did||[]).some(function(x){return x.date>t});}
+function freqUndo(idx){
+  var f=getFreq(),e=f.log[idx];if(!e||e.undone)return;
+  if(!confirm('Annuler ce déclenchement ?\nLes ouvertures ou fermetures exceptionnelles encore à venir sont retirées. Aucun RDV n\'est touché.'))return;
+  var ids={};(e.did||[]).forEach(function(x){ids[x.id]=1;});
+  var t=todayKey();
+  D.exceptionalOpenings=getExo().filter(function(r){return !(ids[r.id]&&!_exoExpired(r)&&!(D.appointments||[]).some(function(a){return a&&!a.cancelled&&a.date===r.date&&a.time===r.time&&a.motifId===r.motifId}))});
+  D.freqClosures=getFreqClosures().filter(function(c){return !(ids[c.id]&&c.date>=t)});
+  e.undone=true;sv();R();toast('Déclenchement annulé');_fqFoot();
+  var s=document.getElementById('fqSet');if(s)s.outerHTML=freqSettingsHtml();
+}
+/* chaque dimanche (ou à la première ouverture qui suit) : la semaine écoulée est comparée aux seuils */
+function freqCheck(force){
+  try{
+    if(typeof _pfBootSyncDone!=='undefined'&&!_pfBootSyncDone&&!force){setTimeout(freqCheck,15000);return;}
+    var f=getFreq(),wk=freqLastWeek();
+    if(!force&&f.lastEval&&f.lastEval>=wk)return;
+    var active=f.triggers.filter(function(t){return t&&t.on!==false});
+    if(!active.length){if(!force){f.lastEval=wk;}return;}
+    if(!f.lastEval&&!force){f.lastEval=wk;sv();return;} /* première fois : on attend le prochain dimanche */
+    f.lastEval=wk;
+    var sel=freqBasis(),n=freqWeekTotal(wk,sel),th=freqThresholds(wk),zone=freqZone(n,th),today=todayKey(),report=[];
+    active.forEach(function(t){
+      var need=Math.max(1,parseInt(t.weeks,10)||1),ok=zone===t.when;
+      for(var i=1;ok&&i<need;i++){var w2=_fqAdd(wk,-7*i);ok=freqZone(freqWeekTotal(w2,sel),freqThresholds(w2))===t.when;}
+      if(!ok)return;
+      var m=gm(t.motifId),e={at:Date.now(),wk:wk,count:n,zone:zone,over:th.over,under:th.under,trig:t.id,action:t.action,motifLabel:m?m.label:'',did:[]};
+      var plan=freqPlan(t,wk,today);
+      if(t.action!=='notify'&&t.confirm){e.pending=true;e.plan=plan.items;e.skip=plan.skip;}
+      else e.did=freqApplyPlan(t,wk,plan.items),e.skip=plan.skip;
+      f.log.push(e);report.push(e);
+    });
+    f.log=f.log.slice(-30);
+    sv();
+    if(report.length){R();freqReport(report);}
+  }catch(err){try{console.warn('freqCheck',err);}catch(e){}}
+}
+setTimeout(freqCheck,9000);
+setInterval(function(){freqCheck();},30*60*1000);
+function freqReport(list){
+  var f=getFreq(),b=document.getElementById('mMB');if(!b)return;
+  document.getElementById('mMT').textContent='📈 Fréquentation de la semaine';
+  var e0=list[0],z=_FQZ[e0.zone]||_FQZ[''];
+  var h='<div class="ngbox" style="font-size:13px;margin-bottom:10px">Semaine du '+_fqDm(e0.wk)+' au '+_fqDm(_fqAdd(e0.wk,6))+' : <b>'+e0.count+' séances</b> <span class="'+z[2]+'">'+z[0]+'</span>'+
+    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Seuils : '+(e0.under?'sous-fréquentation '+e0.under:'')+(e0.under&&e0.over?' · ':'')+(e0.over?'surfréquentation '+e0.over:'')+'</div></div>';
+  list.forEach(function(e){
+    var idx=f.log.indexOf(e),t=f.triggers.filter(function(x){return x.id===e.trig})[0];
+    h+='<div class="ngit"><div style="font-weight:700;margin-bottom:4px">⚡ '+esc(t?freqTrigText(t):'Déclencheur')+'</div>';
+    if(e.action==='notify')h+='<div>🔔 Seuil atteint : pensez à ajuster votre agenda.</div>';
+    else if(e.pending){
+      h+=(e.plan.length?'<div>À confirmer : '+e.plan.map(function(x){return (x.kind==='exo'?'ouvrir ':'fermer ')+_FQ_DJ[new Date(x.date+'T12:00:00').getDay()]+' '+_fqDm(x.date)+(x.time?' '+x.time:' (journée)')}).join(', ')+'</div>':'<div>Rien à faire (déjà en place ou jours fermés).</div>')+
+        (e.plan.length?'<div class="cvbar"><button class="btn bp" onclick="freqConfirm('+idx+')">✅ Appliquer</button><button class="btn bs" onclick="freqDecline('+idx+')">Ignorer</button></div>':'');
+    }
+    else h+='<div>'+((e.did||[]).length?'✅ Fait : '+e.did.map(function(x){return (x.kind==='exo'?'ouvert ':'fermé ')+_FQ_DJ[new Date(x.date+'T12:00:00').getDay()]+' '+_fqDm(x.date)+(x.time?' '+x.time:' (journée)')}).join(', '):'Rien à faire (déjà en place ou jours fermés).')+'</div>'+
+      ((e.did||[]).length?'<div class="cvbar"><button class="btn bs" onclick="freqUndo('+idx+');clM(\'mM\')">↩️ Annuler</button></div>':'');
+    if((e.skip||[]).length)h+='<div style="font-size:11px;color:var(--text2)">Non fait : '+esc(e.skip.join(' ; '))+'</div>';
+    h+='</div>';
+  });
+  h+='<div style="font-size:11px;color:var(--text2);margin:8px 0">Les RDV déjà pris ne sont jamais touchés : une fermeture masque seulement les places libres dans l\'appli patient.</div><div class="br"><button class="btn bw" onclick="clM(\'mM\')">OK</button></div>';
+  b.innerHTML=h;opM('mM');
+}
+function freqConfirm(idx){
+  var f=getFreq(),e=f.log[idx];if(!e||!e.pending)return;
+  var t=f.triggers.filter(function(x){return x.id===e.trig})[0]||{id:e.trig};
+  var items=(e.plan||[]).filter(function(x){return x.date>todayKey()&&(x.kind!=='exo'||!getExo().some(function(r){return r.mode!=='rec'&&r.date===x.date&&r.time===x.time&&r.motifId===x.motifId}))});
+  e.did=freqApplyPlan(t,e.wk,items);delete e.pending;delete e.plan;
+  sv();R();toast('✅ Appliqué : '+e.did.length+' créneau'+(e.did.length>1?'x':''));freqReport([e]);
+}
+function freqDecline(idx){var f=getFreq(),e=f.log[idx];if(!e)return;delete e.pending;delete e.plan;e.declined=true;e.did=[];sv();toast('Ignoré');clM('mM');}
+
+/* ─────────── ⚙ Paramètres ─────────── */
+function freqSettingsHtml(){
+  var f=getFreq(),st=freqStats(),S=freqSeries(),bs=freqBasis(),nb=S.filter(function(s){return bs[s.id]&&s.id.charAt(0)!=='_'}).length,nm=S.filter(function(s){return s.id.charAt(0)!=='_'}).length;
+  var h='<div class="ss" id="fqSet"><h3>📈 Seuils de fréquentation</h3>'+
+    '<div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.45">Nombre de séances par semaine. Les seuils s\'affichent sur la courbe (📊 Statistiques). Chaque dimanche, la semaine écoulée est comparée aux seuils : vos déclencheurs ouvrent ou ferment alors des créneaux pour garder une fréquentation idéale. Les RDV déjà pris ne sont jamais touchés.</div>'+
+    '<div class="fr"><div class="fg"><label>🔴 Surfréquentation à partir de</label><input type="number" id="fqOver" min="1" max="999" placeholder="ex. '+(st?st.p80:60)+'" value="'+(_fqNum(f.over)||'')+'" onchange="freqSet(\'over\',this.value)"></div>'+
+    '<div class="fg"><label>🟠 Sous-fréquentation jusqu\'à</label><input type="number" id="fqUnder" min="1" max="999" placeholder="ex. '+(st?st.p20:30)+'" value="'+(_fqNum(f.under)||'')+'" onchange="freqSet(\'under\',this.value)"></div></div>'+
+    (st?'<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px">Repères ('+st.n+' dernières semaines) : moyenne <b>'+st.avg+'</b> · plus basse '+st.min+' · plus haute '+st.max+' séances.</div>':'')+
+    '<details style="margin:6px 0"><summary style="font-size:12px;cursor:pointer"><b>Séances comptées</b> <span style="color:var(--text2)">('+nb+' motif'+(nb>1?'s':'')+' sur '+nm+(bs._group?', groupe compris':', sans le groupe')+')</span></summary><div class="pcks" style="flex-wrap:wrap;margin-top:6px">'+
+      S.map(function(s){return '<label><input type="checkbox" '+(bs[s.id]?'checked':'')+' onchange="freqSetBasis(\''+s.id+'\',this.checked)"> '+esc(s.label)+'</label>'}).join('')+'</div></details>'+
+    '<details style="margin:6px 0"'+(f.periods.length?' open':'')+'><summary style="font-size:12px;cursor:pointer"><b>Seuils par période</b> <span style="color:var(--text2)">('+(f.periods.length||'aucune')+')</span></summary>'+
+      '<div style="font-size:11px;color:var(--text2);margin:4px 0">Ex. : été, rentrée, fêtes. Chaque année aux mêmes dates ; en dehors, les seuils ci-dessus s\'appliquent.</div>'+
+      f.periods.map(function(p,i){return '<div class="fqper"><input value="'+esc(p.label||'')+'" placeholder="Nom" onchange="freqPer('+i+',\'label\',this.value)" style="flex:2">'+
+        '<span>du</span><input type="text" value="'+esc(_fqMd(p.from))+'" placeholder="jj/mm" maxlength="5" onchange="freqPer('+i+',\'from\',this.value)"><span>au</span><input type="text" value="'+esc(_fqMd(p.to))+'" placeholder="jj/mm" maxlength="5" onchange="freqPer('+i+',\'to\',this.value)">'+
+        '<span>🔴</span><input type="number" value="'+(_fqNum(p.over)||'')+'" onchange="freqPer('+i+',\'over\',this.value)"><span>🟠</span><input type="number" value="'+(_fqNum(p.under)||'')+'" onchange="freqPer('+i+',\'under\',this.value)"><button class="btn" onclick="freqPerDel('+i+')">✕</button></div>'}).join('')+
+      '<button class="btn bs" style="font-size:11px;padding:4px 10px" onclick="freqPerAdd()">➕ Ajouter une période</button></details>'+
+    '<div style="font-weight:700;font-size:12px;margin:12px 0 6px">⚡ Déclencheurs</div>';
+  if(!f.triggers.length)h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px">Aucun déclencheur : les seuils sont seulement affichés sur la courbe.</div>';
+  f.triggers.forEach(function(t,i){
+    h+='<div class="fqtrig'+(t.on===false?' off':'')+'"><label class="fqsw"><input type="checkbox" '+(t.on!==false?'checked':'')+' onchange="freqTrigOn('+i+',this.checked)"><span></span></label><div class="fqtt2" onclick="freqEditTrig('+i+')">'+esc(freqTrigText(t))+'</div><button class="btn" onclick="freqEditTrig('+i+')">✏️</button></div>';
+  });
+  h+='<div class="cvbar"><button class="btn bs" onclick="freqNewTrig(\'open\')">➕ Sous-fréquentation → ouvrir</button><button class="btn bs" onclick="freqNewTrig(\'close\')">➕ Surfréquentation → fermer</button><button class="btn bs" onclick="freqNewTrig(\'notify\')">➕ Me prévenir</button></div>';
+  if(f.triggers.length)h+='<div class="cvbar"><button class="btn bs" onclick="freqTest()">▶ Tester sur la semaine dernière</button></div>';
+  var cl=getFreqClosures().filter(function(c){return c.date>=todayKey()}),ex=getExo().filter(function(r){return r.auto&&!_exoExpired(r)});
+  if(cl.length||ex.length){
+    h+='<details style="margin:6px 0"><summary style="font-size:12px;cursor:pointer"><b>En place</b> <span style="color:var(--text2)">('+ex.length+' ouverture'+(ex.length>1?'s':'')+', '+cl.length+' fermeture'+(cl.length>1?'s':'')+' à venir)</span></summary>'+
+      ex.map(function(r){var m=gm(r.motifId);return '<div class="secrrule"><span class="t">➕ '+esc(m?m.label:'?')+' · '+_FQ_DJ[new Date(r.date+'T12:00:00').getDay()]+' '+_fqDm(r.date)+' '+r.time+'</span><button onclick="freqRmExo(\''+r.id+'\')">✕</button></div>'}).join('')+
+      cl.map(function(c){var m=gm(c.motifId);return '<div class="secrrule"><span class="t">➖ '+esc(m?m.label:'?')+' · '+_FQ_DJ[new Date(c.date+'T12:00:00').getDay()]+' '+_fqDm(c.date)+' '+(c.time||'toute la journée')+'</span><button onclick="freqRmClose(\''+c.id+'\')">✕</button></div>'}).join('')+'</details>';
+  }
+  return h+'</div>';
+}
+function _fqMd(md){return /^\d{2}-\d{2}$/.test(md||'')?md.slice(3)+'/'+md.slice(0,2):'';}
+function _fqRefreshSet(){var s=document.getElementById('fqSet');if(s)s.outerHTML=freqSettingsHtml();}
+function freqSet(k,v){var f=getFreq(),n=_fqNum(v);f[k]=n&&n>0?n:'';sv();toast('Enregistré');}
+function freqSetBasis(id,on){var f=getFreq();if(id==='_group')f.group=!!on;else if(id==='_bilan')f.bilan=!!on;else{if(on)delete f.excl[id];else f.excl[id]=1;}FREQ.sel=null;sv();_fqRefreshSet();}
+function freqPerAdd(){getFreq().periods.push({id:uid(),label:'Été',from:'07-01',to:'08-31',over:'',under:''});sv();_fqRefreshSet();}
+function freqPerDel(i){var f=getFreq();f.periods.splice(i,1);sv();_fqRefreshSet();}
+function freqPer(i,k,v){
+  var p=getFreq().periods[i];if(!p)return;
+  if(k==='from'||k==='to'){var m=String(v||'').trim().match(/^(\d{1,2})[\/.\-](\d{1,2})$/);if(!m){toast('Date au format jj/mm');return;}var dd=('0'+m[1]).slice(-2),mm=('0'+m[2]).slice(-2);if(+mm<1||+mm>12||+dd<1||+dd>31){toast('Date invalide');return;}p[k]=mm+'-'+dd;}
+  else if(k==='over'||k==='under'){var n=_fqNum(v);p[k]=n&&n>0?n:'';}
+  else p[k]=String(v||'').slice(0,40);
+  sv();toast('Enregistré');
+}
+function freqTrigOn(i,on){var f=getFreq(),t=f.triggers[i];if(!t)return;t.on=!!on;if(on&&!f.lastEval)f.lastEval=freqLastWeek();sv();_fqRefreshSet();}
+function freqNewTrig(kind){FREQ.draft=_fqTrigDefaults(kind);FREQ.draftIdx=-1;freqTrigForm();}
+function freqEditTrig(i){var t=getFreq().triggers[i];if(!t)return;FREQ.draft=JSON.parse(JSON.stringify(t));FREQ.draftIdx=i;freqTrigForm();}
+function freqRmExo(id){if(!confirm('Retirer cette ouverture exceptionnelle ? (un RDV déjà pris dessus reste en place)'))return;D.exceptionalOpenings=getExo().filter(function(r){return r.id!==id});sv();R();_fqRefreshSet();}
+function freqRmClose(id){D.freqClosures=getFreqClosures().filter(function(c){return c.id!==id});sv();R();_fqRefreshSet();toast('Créneau rouvert dans l\'appli patient');}
+/* éditeur d'un déclencheur (fenêtre) */
+function freqTrigForm(){
+  var t=FREQ.draft,b=document.getElementById('mMB');document.getElementById('mMT').textContent='⚡ Déclencheur';
+  var motifs=(D.motifs||[]).map(function(m){return '<option value="'+esc(m.id)+'"'+(m.id===t.motifId?' selected':'')+'>'+esc(m.label)+'</option>'}).join('');
+  var days=sortDows(D.days||[1,2,3,4,5]);
+  var act=t.action;
+  var h='<div class="fqform">'+
+    '<div class="fqrow"><b class="fqkw">SI</b><select onchange="FREQ.draft.when=this.value;freqTrigForm()"><option value="under"'+(t.when==='under'?' selected':'')+'>le seuil de sous-fréquentation est atteint</option><option value="over"'+(t.when==='over'?' selected':'')+'>le seuil de surfréquentation est atteint</option></select></div>'+
+    '<div class="fqrow"><span class="fqkw"></span><select onchange="FREQ.draft.weeks=+this.value;freqTrigPrev()">'+[1,2,3,4].map(function(n){return '<option value="'+n+'"'+((t.weeks||1)===n?' selected':'')+'>'+(n===1?'la semaine écoulée':n+' semaines de suite')+'</option>'}).join('')+'</select></div>'+
+    '<div class="fqrow"><b class="fqkw">ALORS</b><select onchange="FREQ.draft.action=this.value;freqTrigForm()"><option value="open"'+(act==='open'?' selected':'')+'>ouvrir exceptionnellement</option><option value="close"'+(act==='close'?' selected':'')+'>fermer exceptionnellement</option><option value="notify"'+(act==='notify'?' selected':'')+'>seulement me prévenir</option></select></div>';
+  if(act!=='notify'){
+    h+='<div class="fqrow"><span class="fqkw">le motif</span><select onchange="FREQ.draft.motifId=this.value;freqTrigPrev()">'+motifs+'</select></div>'+
+      '<div class="fqrow"><span class="fqkw">le(s)</span><div class="chips">'+days.map(function(d){return '<div class="chip'+((t.dows||[]).indexOf(d)>=0?' sel':'')+'" style="background:var(--bg)" onclick="freqTrigDow('+d+')">'+DAY_S[d]+'</div>'}).join('')+'</div></div>'+
+      '<div class="fqrow"><span class="fqkw">à</span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+
+        ((act==='close'&&t.allDay)?'<span style="font-size:12px">toute la journée</span>':(t.times||[]).map(function(x,i){return '<span class="fqtime"><input type="time" value="'+esc(x)+'" onchange="FREQ.draft.times['+i+']=this.value;freqTrigPrev()">'+((t.times||[]).length>1?'<button onclick="FREQ.draft.times.splice('+i+',1);freqTrigForm()">✕</button>':'')+'</span>'}).join('')+'<button class="btn bs" style="font-size:11px;padding:3px 8px" onclick="FREQ.draft.times.push(\'18:00\');freqTrigForm()">+ heure</button>')+
+        (act==='close'?'<label style="font-size:12px;display:flex;gap:4px;align-items:center"><input type="checkbox" '+(t.allDay?'checked':'')+' onchange="FREQ.draft.allDay=this.checked;freqTrigForm()"> toute la journée</label>':'')+
+      '</div></div>'+
+      (act==='open'?'<div class="fqrow"><span class="fqkw">places</span><input type="number" min="1" max="20" value="'+(t.places||1)+'" style="width:70px" onchange="FREQ.draft.places=Math.max(1,Math.min(20,parseInt(this.value,10)||1));freqTrigPrev()"></div>':'')+
+      '<div class="fqrow"><span class="fqkw">quand</span><div style="display:flex;flex-direction:column;gap:4px;font-size:12px">'+
+        '<label><input type="radio" name="fqSt" '+(t.start!=='in'?'checked':'')+' onchange="FREQ.draft.start=\'next\';freqTrigForm()"> les prochains jours choisis</label>'+
+        '<label style="display:flex;align-items:center;gap:4px;flex-wrap:wrap"><input type="radio" name="fqSt" '+(t.start==='in'?'checked':'')+' onchange="FREQ.draft.start=\'in\';freqTrigForm()"> les mêmes jours, <input type="number" min="1" max="8" value="'+(t.inWeeks||1)+'" style="width:52px" onchange="FREQ.draft.inWeeks=Math.max(1,Math.min(8,parseInt(this.value,10)||1));FREQ.draft.start=\'in\';freqTrigForm()"> semaine(s) plus tard</label></div></div>'+
+      '<div class="fqrow"><span class="fqkw">pendant</span><select onchange="FREQ.draft.repeat=+this.value;freqTrigPrev()">'+[1,2,3,4,6,8].map(function(n){return '<option value="'+n+'"'+((t.repeat||1)===n?' selected':'')+'>'+n+' semaine'+(n>1?'s':'')+'</option>'}).join('')+'</select></div>'+
+      '<div class="fqrow"><span class="fqkw">appliquer</span><div style="display:flex;flex-direction:column;gap:4px;font-size:12px"><label><input type="radio" name="fqCf" '+(!t.confirm?'checked':'')+' onchange="FREQ.draft.confirm=false;freqTrigPrev()"> automatiquement (je suis prévenu)</label><label><input type="radio" name="fqCf" '+(t.confirm?'checked':'')+' onchange="FREQ.draft.confirm=true;freqTrigPrev()"> après ma confirmation</label></div></div>';
+  }
+  h+='</div><div class="ngbox" id="fqPrev" style="font-size:12px;line-height:1.45"></div>'+
+    '<div style="font-size:11px;color:var(--text2);margin:8px 0">'+(act==='close'?'Une fermeture masque les places libres dans l\'appli patient et pour le secrétaire IA : les RDV déjà pris restent en place.':(act==='open'?'Une ouverture ajoute une ouverture exceptionnelle (visible dans l\'agenda et l\'appli patient), retirable à tout moment.':'Vous êtes prévenu à l\'ouverture de l\'appli, sans rien changer à l\'agenda.'))+'</div>'+
+    '<div class="br">'+(FREQ.draftIdx>=0?'<button class="btn bd" onclick="freqDelTrig()">🗑</button>':'')+'<button class="btn" onclick="clM(\'mM\')">Annuler</button><button class="btn bp bw" onclick="freqSaveTrig()">Enregistrer</button></div>';
+  b.innerHTML=h;opM('mM');freqTrigPrev();
+}
+function freqTrigDow(d){var a=FREQ.draft.dows||(FREQ.draft.dows=[]);var i=a.indexOf(d);if(i>=0)a.splice(i,1);else a.push(d);freqTrigForm();}
+function freqTrigPrev(){
+  var el=document.getElementById('fqPrev');if(!el)return;var t=FREQ.draft;
+  var h='<b>'+esc(freqTrigText(t))+'</b>';
+  if(t.action!=='notify'){
+    var ds=freqTargetDates(t).filter(function(k){return !_fqDayClosed(k)});
+    h+='<div style="margin-top:4px;color:var(--text2)">Exemple, s\'il se déclenchait aujourd\'hui : '+(ds.length?ds.slice(0,8).map(function(k){return _FQ_DJ[new Date(k+'T12:00:00').getDay()]+' '+_fqDm(k)}).join(', ')+(ds.length>8?'…':''):'aucune date (choisissez des jours ouverts)')+'</div>';
+  }
+  el.innerHTML=h;
+}
+function freqSaveTrig(){
+  var t=FREQ.draft,f=getFreq();
+  if(t.action!=='notify'){
+    if(!t.motifId){toast('Choisissez un motif');return}
+    if(!(t.dows||[]).length){toast('Choisissez au moins un jour');return}
+    if(!(t.action==='close'&&t.allDay)&&!(t.times||[]).filter(function(x){return /^\d{2}:\d{2}$/.test(x)}).length){toast('Indiquez au moins une heure');return}
+    t.times=(t.times||[]).filter(function(x){return /^\d{2}:\d{2}$/.test(x)});
+  }
+  if(t.when==='under'&&!_fqNum(f.under))toast('Pensez à régler le seuil de sous-fréquentation',3500);
+  if(t.when==='over'&&!_fqNum(f.over))toast('Pensez à régler le seuil de surfréquentation',3500);
+  if(FREQ.draftIdx>=0)f.triggers[FREQ.draftIdx]=t;else f.triggers.push(t);
+  if(!f.lastEval)f.lastEval=freqLastWeek(); /* premier dimanche à venir */
+  sv();clM('mM');_fqRefreshSet();toast('⚡ Déclencheur enregistré');
+}
+function freqDelTrig(){if(!confirm('Supprimer ce déclencheur ? (les créneaux déjà ouverts ou fermés restent : retirez-les dans « En place »)'))return;getFreq().triggers.splice(FREQ.draftIdx,1);sv();clM('mM');_fqRefreshSet();}
+/* essai : ce qui se passerait avec la semaine dernière (rien n'est fait sans votre accord) */
+function freqTest(){
+  var f=getFreq(),wk=freqLastWeek(),sel=freqBasis(),n=freqWeekTotal(wk,sel),th=freqThresholds(wk),zone=freqZone(n,th),z=_FQZ[zone];
+  var b=document.getElementById('mMB');document.getElementById('mMT').textContent='▶ Essai sur la semaine dernière';
+  var h='<div class="ngbox" style="font-size:13px;margin-bottom:8px">Semaine du '+_fqDm(wk)+' au '+_fqDm(_fqAdd(wk,6))+' : <b>'+n+' séances</b> <span class="'+z[2]+'">'+z[0]+'</span></div>';
+  var any=false;
+  f.triggers.forEach(function(t){
+    if(t.on===false)return;
+    var need=Math.max(1,parseInt(t.weeks,10)||1),ok=zone===t.when;
+    for(var i=1;ok&&i<need;i++){var w2=_fqAdd(wk,-7*i);ok=freqZone(freqWeekTotal(w2,sel),freqThresholds(w2))===t.when;}
+    var pl=ok?freqPlan(t,wk):null;if(ok)any=true;
+    h+='<div class="ngit"><b>'+esc(freqTrigText(t))+'</b><div>'+(ok?(t.action==='notify'?'→ vous seriez prévenu':(pl.items.length?'→ '+pl.items.map(function(x){return (x.kind==='exo'?'ouvrir ':'fermer ')+_FQ_DJ[new Date(x.date+'T12:00:00').getDay()]+' '+_fqDm(x.date)+(x.time?' '+x.time:' (journée)')}).join(', '):'→ rien à faire')):'<span style="color:var(--text2)">ne se déclencherait pas</span>')+'</div></div>';
+  });
+  h+='<div class="br"><button class="btn" onclick="clM(\'mM\')">Fermer</button>'+(any?'<button class="btn bp bw" onclick="clM(\'mM\');freqCheck(true)">Appliquer maintenant</button>':'')+'</div>';
+  b.innerHTML=h;opM('mM');
+}
+/* fermetures → « visible par personne » dans l'appli patient (même circuit que « Masquer des créneaux ») */
+function freqClosuresPublic(out){
+  try{
+  var t=todayKey();
+  getFreqClosures().forEach(function(c){
+    if(!c||!c.motifId||!c.date||c.date<t)return;
+    var m=(typeof _exoMotif==='function'?_exoMotif(c.motifId,c.date):null)||gm(c.motifId);if(!m)return;
+    var times=c.time?[c.time]:_exoNativeTimes(c.date,m).concat(exoAt(c.date).filter(function(x){return x.motifId===m.id}).map(function(x){return x.time}));
+    times.forEach(function(tm){out[c.date+'|'+tm+'|'+m.id]={mode:'only',phones:[],names:[],closed:1};});
+  });
+  }catch(e){try{console.warn('freqClosuresPublic',e);}catch(_){}}
+  return out;
 }
 
 /* Orientation/resize: re-render agenda for optimal display */
