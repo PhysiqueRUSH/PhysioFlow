@@ -539,6 +539,16 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .fqkey{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:10px;color:var(--text2);margin-top:2px}
 .fqkey span{display:inline-flex;align-items:center;gap:4px}.fqkey i{display:inline-block;width:14px;height:8px;border-radius:2px}.fqkey i.dash{height:0;border-top:2px dashed;border-radius:0}
 .fqtime{display:inline-flex;align-items:center;gap:2px}.fqtime input{font-size:13px;padding:3px 4px}.fqtime button{border:none;background:none;color:var(--text3);cursor:pointer}
+/* v106 — montant des séances, annulations */
+.amtdates{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}.amtdates label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}.amtdates input{font-size:13px;padding:5px 6px}
+.amtpre{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}.amtpre button{border:1px solid var(--border2);background:var(--bg);border-radius:14px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer}
+.amtmode{display:inline-flex;margin-bottom:10px}
+.amtbig{margin:4px 0 8px}.amtbig b{display:block;font-size:30px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}.amtbig span{font-size:12px;color:var(--text2)}
+.amtbar{height:10px;border-radius:6px;background:#f5b041;overflow:hidden;margin:4px 0 4px}.amtbar i{display:block;height:100%;background:var(--accent)}
+.amtleg{display:flex;gap:12px;font-size:11px;color:var(--text2);margin-bottom:8px}.amtleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}.amtleg i.b{background:var(--accent)}.amtleg i.u{background:#f5b041}
+.amttiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.amtt{background:var(--bg);border-radius:12px;padding:8px 10px;cursor:pointer;border:2px solid transparent;min-width:0}.amtt.on{border-color:var(--accent);background:var(--surface)}
+.amtt small{display:block;font-size:10px;color:var(--text2)}.amtt b{display:block;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}.amtt span{display:block;font-size:10px;color:var(--text3);line-height:1.3}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -547,7 +557,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 105 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 106 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -1302,6 +1312,7 @@ FB_REF.child('patientBookings').on('child_added',function _pfOnBooking(snap){
     ap.cancelled=true;
     ap.cancelledBy='patient';
     ap.cancelReason=c.reason||'';
+    ap.cancelledAt=c.createdAt||new Date().toISOString(); /* v106 */
     delete ap.restoredAt; /* v93 */
     sv();if(typeof R==='function')R();
     var pat=ap.patientId?gp(ap.patientId):null;
@@ -2497,6 +2508,7 @@ function rAps(){
     let name=isAbs?((ap.isHoliday?'🎌 ':'')+(ap.label||'Absence')):(pat?(pat.lastName+' '+pat.firstName):(ap.label||'?'));if(ap.type==='bilan'||ap.isBilan)name+=' 🅱️'; else if(apHasBilan(ap))name+=' 🅱️';
     if(ap.source==='patient')name=(ap.proModified?'🌐🛠 ':'🌐 ')+name;
     if(ap.patientAbsence)name='🏊 '+name;
+    if(ap.noShow)name='🙅 '+name; /* v106 */
     const al=pat?alrt(pat):'';const mL=mot?mot.label:'';
     const isVeryShort=ht<22;
     const isShort=ht<36&&!isVeryShort;
@@ -2626,6 +2638,7 @@ function rList(){
     let name=isAbs?((ap.isHoliday?'🎌 ':'')+(ap.label||'Absence')):(pat?(pat.lastName+' '+pat.firstName):(ap.label||'?'));if(ap.type==='bilan'||ap.isBilan)name+=' 🅱️'; else if(apHasBilan(ap))name+=' 🅱️';
     if(ap.source==='patient')name=(ap.proModified?'🌐🛠 ':'🌐 ')+name;
     if(ap.patientAbsence)name='🏊 '+name;
+    if(ap.noShow)name='🙅 '+name; /* v106 */
     var _scHtml='';if(pat){var _scL=getSessionCount(pat.id);if(_scL.label)_scHtml=' <span style="font-size:10px;color:var(--text3)">('+_scL.label+')</span>';}
     var _futHtml='';if(pat&&key===todayKey()){var _futN=(D.appointments||[]).filter(function(fa){return fa.patientId===pat.id&&!fa.cancelled&&fa.type!=='absence'&&fa.type!=='bilan'&&fa.date>key}).length;_futHtml='<span style="font-size:10px;color:'+(_futN?'var(--text3)':'#e74c3c')+'"> · '+(_futN?_futN+' RDV prévu'+((_futN>1)?'s':''):'Aucun autre RDV prévu')+'</span>';}
     const al=pat?alrt(pat):'';const mL=mot?mot.label:'';
@@ -3003,6 +3016,7 @@ function showCtx(e,id){
   if(!isAbs)it+='<div class="ci" onclick="exoFromAp(\''+ap.id+'\')">✨ Ajouter une ouv. except. sur ce créneau</div>'; /* v97 */
   if(vM==='grid'&&pat&&!isAbs)it+='<div class="ci" onclick="addPatientSameSlot(\''+ap.id+'\');clCtx()">👥 Ajouter un patient sur ce créneau</div>';
   if(pat&&!isAbs)it+='<div class="ci" onclick="openQuickHide(\''+pat.id+'\',\''+ap.date+'\',\''+(ap.motifId||'')+'\');clCtx()">🙈 Masquer des créneaux à ce patient</div>';
+  if(pat&&!isAbs&&!ap.cancelled&&ap.date<=todayKey())it+='<div class="ci" onclick="apNoShowToggle(\''+ap.id+'\')">'+(ap.noShow?'↩️ Retirer « non venu »':'🙅 Patient non venu (RDV non honoré)')+'</div>'; /* v106 */
   if(pat)it+=blockCtxItem(pat.id); /* v103 */
   it+='<div class="ci dng" onclick="delAp()">🗑 Supprimer</div>';
   m.innerHTML=it;
@@ -3875,7 +3889,7 @@ function openPC(pid){
     '<div class="pag">'+(ag?ag+' ans · ':'')+'Né(e) le '+dobD+'</div>'+
     '<div class="ub">Non facturées : <b>'+ubN+'</b> · <b>'+money(ubS)+'</b></div>'+
     ordoCardHtml(p)+ /* v100 : montant NGAP + ordonnance en cours */
-    scHtml+
+    scHtml+noShowCardHtml(p)+ /* v106 */
     '</div></div>'+
     (p.blocked?'<div class="blkban">⛔ Patient bloqué : rendez-vous indisponibles dans l\'appli patient, et le secrétaire IA ne lui en propose plus.<button class="btn bs" onclick="togglePatBlock(\''+pid+'\',\'card\')">✅ Débloquer</button></div>':'')+ /* v103 */
     '<div class="pacts">'+(p.phone?'<a href="tel:'+esc(p.phone)+'" title="Principal">📞 Appeler</a><a href="sms:'+esc(p.phone)+'" title="Principal">💬 SMS</a>':'')+
@@ -4286,7 +4300,7 @@ function openHist(pid){
     var m=gm(a.motifId);var ci=m?m.ci:0;
     const lab=(a.type==='bilan'||a.isBilan)?'🅱️ Bilan':(m?m.label:'?');
     const onlineTag=(a.source==='patient'?(a.proModified?'🌐🛠 ':'🌐 '):'');
-    const absTag=(a.patientAbsence?'🏊 ':'');
+    const absTag=(a.patientAbsence?'🏊 ':'')+(a.noShow?'🙅 ':''); /* v106 */
     const billedTag=(a.billed?'<span class="hib" style="background:#e6f7ee;color:#1e8e3e">Facturée</span>':'');
     const unbTag=(!a.billed && isBillable(a)?'<span class="hib" style="background:#fff3cd;color:#8a6d3b">Non facturée</span>':'');
     return '<div class="hi'+(isFut?' fut':'')+(a.cancelled?' cncl':'')+'" style="border-left-color:'+CL[ci%6].bd+'" onclick="showCtx(event,\''+a.id+'\')">'+
@@ -4969,6 +4983,7 @@ function editMot(idx){
     '<div class="pcks" style="margin-bottom:10px"><label><input type="checkbox" id="emSimul" '+(m.allowSimul?'checked':'')+' onchange="document.getElementById(\'emSimulW\').style.display=this.checked?\'block\':\'none\'"> Autoriser simultanéité avec un autre motif</label></div>'+
     '<div id="emSimulW" style="display:'+(m.allowSimul?'block':'none')+';margin-bottom:10px"><div class="fg"><label>Simultané avec</label><select id="emSimulWith">'+simulOpts+'</select></div></div>'+
     '<h3>Heures typiques</h3>'+
+    '<div style="font-size:11px;color:var(--text2);margin:-4px 0 8px;line-height:1.4">Seules ces heures sont proposées aux patients. <b>Aucune heure</b> = ce motif n\'est proposé en ligne que par ses ouvertures exceptionnelles.</div>'+ /* v106 */
     '<input type="hidden" id="emT" value="'+esc(tStr)+'">'+
     '<input type="hidden" id="emSlotEx" value="'+esc(JSON.stringify(m.slotExceptions||{}))+'">'+
     '<div class="chips" id="emTCh"></div>'+
@@ -9006,7 +9021,9 @@ window.openStats = function(){
         '<canvas id="stChart" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>'+
         '<div id="stMonthlyText" style="text-align:center;margin-top:6px"></div>'+
       '</div>'+
+      amtStatsHtml()+ /* v106 : montant des séances sur une période */
       freqStatsHtml()+ /* v103 */
+      annStatsHtml()+ /* v106 : annulations et RDV non honorés */
       '<div class="ss" style="margin-top:16px">'+
         '<h3>🥧 Répartition par motif</h3>'+
         '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+
@@ -9159,6 +9176,7 @@ window.openStats = function(){
     run();
     setTimeout(drawChart,100);
     setTimeout(drawPie,150);
+    setTimeout(function(){try{amtRun();annDraw();}catch(e){console.warn(e)}},130); /* v106 */
     FREQ.sel=null;setTimeout(function(){try{freqDraw();}catch(e){var c=document.getElementById('fqChart');if(c)c.innerHTML='<div class="fqempty">Courbe indisponible : '+esc(String(e&&e.message||e))+'</div>';}},120); /* v103 */
   }catch(e){
     console.error(e);
@@ -9848,12 +9866,7 @@ function _exoRuleOn(r,dateKey){
 function exoAt(dateKey){return getExo().filter(function(r){return _exoRuleOn(r,dateKey)}).map(function(r){return {rule:r,id:r.id,motifId:r.motifId,time:r.time,places:_exoPlaces(r)}});}
 function _exoMotif(id,dateKey){if(!id)return null;return (getEffectiveMotifs(dateKey||todayKey())||[]).find(function(m){return m.id===id})||(D.motifs||[]).find(function(m){return m.id===id})||null;}
 function _exoNativeTimes(dateKey,motif){
-  var times=(motif.times||[]).filter(Boolean).slice();
-  if(!times.length){
-    var dow=new Date(dateKey+'T00:00:00').getDay();
-    (D.openings||[]).filter(function(o){return o.day===dow}).forEach(function(o){var s=t2m(o.start),e=t2m(o.end);for(var m=s;m+motif.duration<=e;m+=motif.duration)times.push(m2t(m));});
-  }
-  return times;
+  return (motif.times||[]).filter(Boolean).slice(); /* v106 : pas d'heure typique = aucun créneau régulier */
 }
 /* Places par horaire à cette date (même calcul que l'appli patient v67 : _slotExFor) */
 function exoSlotEx(dateKey,motif){
@@ -10255,6 +10268,7 @@ function _aApOut(a,full){
   else{o.patient=_aWho(a);if(a.patientId)o.patient_id=a.patientId;o.motif=_aMotifLabel(a.motifId);if(a.type==='bilan')o.type='bilan';}
   o.statut=a.cancelled?('annulé'+(a.cancelledBy==='pro'?' par le kiné':(a.cancelledBy?' par le patient':''))+(a.cancelReason?' ('+a.cancelReason+')':'')):'actif';
   if(a.patientAbsence)o.absence_signalee=true;
+  if(a.noShow)o.non_venu=true; /* v106 */
   if(a.billed)o.facturee=true;
   if(a.isBilan||(a.type!=='absence'&&apHasBilan(a)))o.bilan=true;
   if(a.source==='patient')o.pris_en_ligne=true;
@@ -11314,7 +11328,7 @@ var PFENG=(function(){
   (function(module){
 /* ═══════════════════════════════════════════════════════════════════
    FICHIER GÉNÉRÉ — ne pas modifier à la main (tools/gen_engine.py).
-   Copie exacte des règles de créneaux de l'appli patient v67, pour que le
+   Copie exacte des règles de créneaux de l'appli patient v71, pour que le
    secrétaire propose EXACTEMENT les mêmes créneaux que l'appli patient.
    ═══════════════════════════════════════════════════════════════════ */
 module.exports = function makePatientRules(CFG, APTS, who, opts) {
@@ -11427,16 +11441,28 @@ function _exoAt(dateKey){
 }
 function isExoSlot(dateKey,time,motifId){return _exoAt(dateKey).some(function(r){return r.time===time&&r.motifId===motifId});}
 function _exoTimesFor(dateKey,motifId){var out=[];_exoAt(dateKey).forEach(function(r){if(r.motifId===motifId&&out.indexOf(r.time)<0)out.push(r.time)});return out;}
+function isForcedExo(dateKey,time,motifId){return _exoAt(dateKey).some(function(r){return r.time===time&&r.motifId===motifId&&r.force!==false});}
+function _forcedAbsOverlap(dateKey,time,motif,dayApts){
+  var tm=t2m(time),be=tm+(motif.duration||30);
+  return dayApts.some(function(a){if(!a||a.type!=='absence'||a.cancelled)return false;var as=t2m(a.time||'00:00'),ae=as+(a.duration||30);return tm<ae&&be>as;});
+}
+function forcedExoOpenOn(dateKey,motif,nowMs){
+  if(!motif||!dateKey)return false;
+  var list=_exoAt(dateKey).filter(function(r){return r.motifId===motif.id&&r.force!==false});
+  if(!list.length)return false;
+  var now=nowMs||Date.now();
+  var dayApts=APTS.filter(function(a){return a&&a.date===dateKey&&!a.cancelled&&!(window._rescheduleOldApId&&a.id===window._rescheduleOldApId)});
+  var slotEx=_slotExFor(dateKey,motif);
+  return list.some(function(r){
+    var tm=t2m(r.time),d=new Date(dateKey+'T00:00:00');d.setHours(Math.floor(tm/60),tm%60,0,0);
+    if(d.getTime()<=now)return false;
+    var max=parseInt(slotEx[r.time]||motif.slots||1,10)||1;
+    var n=dayApts.filter(function(a){return a.motifId===motif.id&&a.time===r.time}).length;
+    return n<max&&slotVisibleToMe(dateKey,r.time,motif.id)&&!_forcedAbsOverlap(dateKey,r.time,motif,dayApts);
+  });
+}
 function _motifNativeTimes(dateKey,motif){
-  var times=(motif.times||[]).filter(Boolean).slice();
-  if(!times.length){
-    var dt=new Date(dateKey+'T00:00:00');
-    var dow=dt.getDay();
-    (CFG.openings||[]).filter(function(o){return o.day===dow}).forEach(function(o){
-      var s2=t2m(o.start),e2=t2m(o.end);
-      for(var m=s2;m+motif.duration<=e2;m+=motif.duration)times.push(m2t(m));
-    });
-  }
+  var times=(motif.times||[]).filter(Boolean).slice(); /* v71 — pas d'heure typique = aucun créneau régulier (seules les ouvertures exceptionnelles de ce motif) */
   return times.sort(function(a,b){return t2m(a)-t2m(b)});
 }
 function _slotExFor(dateKey,motif){
@@ -11513,16 +11539,7 @@ function checkDateHasSlots(dateKey){
   var motif=SEL.motif;
   var maxSlots=motif.slots||1;
   var slotEx=_slotExFor(dateKey,motif); /* v67 */
-  var times=(motif.times||[]).filter(Boolean).slice();
-  if(!times.length){
-    var dt=new Date(dateKey+'T00:00:00');
-    var dow=dt.getDay();
-    var ops=(CFG.openings||[]).filter(function(o){return o.day===dow});
-    ops.forEach(function(o){
-      var s=t2m(o.start),e=t2m(o.end);
-      for(var m=s;m+motif.duration<=e;m+=motif.duration){times.push(m2t(m))}
-    });
-  }
+  var times=(motif.times||[]).filter(Boolean).slice(); /* v71 — pas d'heure typique = aucun créneau régulier (seules les ouvertures exceptionnelles de ce motif) */
   var dayApts=APTS.filter(function(a){return a.date===dateKey&&!a.cancelled});
   /* v63 — places supplémentaires encore offertes */
   _extraLinksAt(dateKey).forEach(function(x){
@@ -11562,6 +11579,7 @@ function checkDateHasSlots(dateKey){
         return tm<ae && (tm+(motif.duration||30))>as;
       });
     }
+    if(!_isX&&isForcedExo(dateKey,t,motif.id))generalOverlap=_forcedAbsOverlap(dateKey,t,motif,dayApts); /* v70 */
     /* v64 — même restriction pour le grisage du calendrier */
     if(window._reschedExtraOnly&&window._rescheduleOldApId&&!_isX)continue;
     if(bookingsAtSlot<thisMax&&!generalOverlap&&slotVisibleToMe(dateKey,t,motif.id)
@@ -11821,6 +11839,7 @@ function findPatientsForPhone(phone){
     dk: dk, t2m: t2m, m2t: m2t, normPhone: _normPhoneMatch,
     extraLinksAt: _extraLinksAt, isExtraSlot: isExtraSlot, extraTakenForSlot: extraTakenForSlot, extraSlotOpen: extraSlotOpen,
     exoAt: _exoAt, isExoSlot: isExoSlot, exoTimesFor: _exoTimesFor, slotExFor: _slotExFor,
+    isForcedExo: isForcedExo, forcedAbsOverlap: _forcedAbsOverlap, forcedExoOpenOn: forcedExoOpenOn,
     slotBlockedByBreak: slotBlockedByBreak, resetBreakCache: function () { _brkSatCache = {}; },
     closedHolidayName: closedHolidayName, frenchHolidayName: frenchHolidayName,
     isDateHoliday: isDateHoliday, isDateAllDayAbsence: isDateAllDayAbsence,
@@ -11830,7 +11849,7 @@ function findPatientsForPhone(phone){
     patientIsKnown: _pfPatientIsKnown, motifForMe: _pfMotifForMe, findPatientsForPhone: findPatientsForPhone
   };
 };
-module.exports.PATIENT_APP_VERSION = 67;
+module.exports.PATIENT_APP_VERSION = 71;
 
   })(module);
   var _mpr=module.exports,module2={exports:{}};
@@ -11888,9 +11907,26 @@ function createEngine(CFG, APTS, who, o) {
   /* ── Identité : patient connu ? (même logique que l'appli patient v66) ── */
   function isKnown() { return base.patientIsKnown(); }
 
+  /* v103 — même règle que l'appli patient v69 : numéro dont tous les patients sont bloqués,
+     ou personne bloquée désignée par son nom (numéro partagé en famille) */
+  function isBlocked() {
+    const kp = (CFG.knownPatients || []).filter(Boolean);
+    const ph = normPhone(who.phone);
+    const nm = ((who.lastName || '') + ' ' + (who.firstName || '')).trim().toLowerCase();
+    const same = x => !!(x && nm && (x === nm || nm.indexOf(x) >= 0 || x.indexOf(nm) >= 0));
+    const B = kp.filter(k => k.b && k.ph && k.ph === ph);
+    if (ph && B.length) {
+      if (!kp.some(k => !k.b && k.ph === ph)) return true;
+      return B.some(k => same(k.name));
+    }
+    return nm.length > 4 && kp.some(k => k.b && (!k.ph || String(k.ph).length < 8) && k.name === nm);
+  }
+
   /* ── tryStartBooking : fermeture, refus des nouveaux patients, délai ── */
   function eligibility() {
     const res = { ok: true, delayDays: 0, known: isKnown(), inactive: false, reason: null };
+    /* v103 — patient bloqué par le kiné : plus aucun rendez-vous proposé (appli patient : « Rendez-vous indisponibles ») */
+    if (isBlocked()) { res.ok = false; res.reason = 'blocked'; return res; }
     const vac = CFG.vacationMode || {};
     const todayK = dk(nowFn());
     if (vac.enabled && todayK >= vac.from && todayK <= vac.to) {
@@ -11988,10 +12024,12 @@ function createEngine(CFG, APTS, who, o) {
     const past = dt < w.today;
     let onVacation = false;
     w.vac.forEach(v => { if (v.from && v.to && dateKey >= v.from && dateKey <= v.to) onVacation = true; });
-    if (!ok || tooSoon || tooLate || past || onVacation) return false;
+    if (!ok || past || onVacation) return false;
     if (base.closedHolidayName(dateKey) || base.isDateHoliday(dateKey) || base.isDateAllDayAbsence(dateKey)) return false;
     const r = makePatientRules(CFG, APTS, who, { forceNew: !!o.forceNew, motif: motif, date: dateKey, delayDays: ctx.delayDays || 0,
       reschedExtraOnly: !!ctx.extraOnly, rescheduleApId: ctx.rescheduleApId || null });
+    /* v105 — hors délais : seule une ouverture exceptionnelle « forcée » (encore à venir, avec une place) ouvre le jour */
+    if ((tooSoon || tooLate) && !r.forcedExoOpenOn(dateKey, motif, nowFn().getTime())) return false;
     return r.checkDateHasSlots(dateKey);
   }
 
@@ -12004,18 +12042,15 @@ function createEngine(CFG, APTS, who, o) {
       reschedExtraOnly: !!ctx.extraOnly, rescheduleApId: ctx.rescheduleApId || null });
     const maxSlots = motif.slots || 1;
     const slotEx = r.slotExFor(dateKey, motif); /* v67 : places des ouvertures exceptionnelles */
+    /* v106 — pas d'heure typique = aucun créneau régulier (seules les ouvertures exceptionnelles de ce motif) */
     let times = (motif.times || []).filter(Boolean).slice().sort((a, b) => t2m(a) - t2m(b));
-    if (!times.length) {
-      const dow = new Date(dateKey + 'T00:00:00').getDay();
-      (CFG.openings || []).filter(op => op.day === dow).forEach(op => {
-        const s = t2m(op.start), e = t2m(op.end);
-        for (let m = s; m + motif.duration <= e; m += motif.duration) times.push(m2t(m));
-      });
-    }
     const rules = CFG.bookingRules || {};
     const minH = rules.minHoursBefore || 2;
     const minTime = new Date(nowFn().getTime() + minH * 3600000);
     const selDate = new Date(dateKey + 'T00:00:00');
+    /* v105 — jour hors délais (ouvert seulement grâce à une ouverture forcée) : ses autres horaires restent fermés */
+    const wd = window_(ctx.delayDays || 0);
+    const dayOut = selDate < new Date(wd.minDate.getFullYear(), wd.minDate.getMonth(), wd.minDate.getDate()) || selDate > wd.maxDate;
     const dayApts = APTS.filter(a => {
       if (a.date !== dateKey || a.cancelled) return false;
       if (ctx.rescheduleApId && a.id === ctx.rescheduleApId) return false;
@@ -12067,9 +12102,11 @@ function createEngine(CFG, APTS, who, o) {
         });
       }
       const restrictedOut = !!(ctx.extraOnly && ctx.rescheduleApId && !isExtra);
+      const forced = !isExtra && r.isForcedExo(dateKey, t, motif.id); /* v105 : ouverture forcée */
+      if (forced) overlap = r.forcedAbsOverlap(dateKey, t, motif, dayApts);
       const taken = booked >= thisMax || overlap || hidden || brk || restrictedOut;
       const slotDate = new Date(selDate); slotDate.setHours(Math.floor(tm / 60), tm % 60, 0, 0);
-      const tooSoon = slotDate < minTime;
+      const tooSoon = forced ? slotDate.getTime() <= nowFn().getTime() : (slotDate < minTime || dayOut);
       return { time: t, free: !(taken || tooSoon), remaining: Math.max(0, thisMax - booked), max: thisMax, extra: isExtra };
     });
   }
@@ -12087,8 +12124,15 @@ function createEngine(CFG, APTS, who, o) {
     }
     const w = window_(elig.delayDays);
     const from = q.from ? new Date(q.from + 'T00:00:00') : startOfDay(nowFn());
-    let to = q.to ? new Date(q.to + 'T00:00:00') : new Date(w.maxDate);
-    if (to > w.maxDate) to = new Date(w.maxDate);
+    /* v105 : les ouvertures exceptionnelles forcées au-delà du délai maximum sont aussi cherchées */
+    let cap = new Date(w.maxDate);
+    (Array.isArray(CFG.exceptionalOpenings) ? CFG.exceptionalOpenings : Object.values(CFG.exceptionalOpenings || {})).forEach(x => {
+      if (!x || x.force === false || x.motifId !== motif.id) return;
+      const last = x.mode === 'rec' ? x.to : x.date;
+      if (last && /^\d{4}-\d{2}-\d{2}$/.test(last)) { const ld = new Date(last + 'T00:00:00'); if (ld > cap) cap = ld; }
+    });
+    let to = q.to ? new Date(q.to + 'T00:00:00') : new Date(cap);
+    if (to > cap) to = new Date(cap);
     if (q.maxDate) { const md = new Date(q.maxDate + 'T00:00:00'); md.setDate(md.getDate() - 1); if (md < to) to = md; }
     const dows = Array.isArray(q.weekdays) && q.weekdays.length ? q.weekdays : null;
     const hMin = q.timeMin ? t2m(q.timeMin) : 0, hMax = q.timeMax ? t2m(q.timeMax) : 24 * 60;
@@ -14362,7 +14406,7 @@ function freqDraw(){
   if(n>1)step=(plotW-2*ins)/(n-1);
   var vert=n>1&&step<36,pb=vert?44:26,H=vert?250:232,ch=H-pt-pb,scroll=plotW>cw0+1;
   var mx=Math.max.apply(null,vals.concat(ths.map(function(t){return t.over||0}),ths.map(function(t){return t.under||0}),[4]));
-  var ymax=_fqNice(mx*1.12),X=function(i){return n===1?plotW/2:ins+step*i},Y=function(v){return pt+ch*(1-v/ymax)};
+  var ymax=Math.ceil(_fqNice(mx*1.12)/4)*4,X=function(i){return n===1?plotW/2:ins+step*i},Y=function(v){return pt+ch*(1-v/ymax)};
   var cA=function(i){return i===0?0:X(i)-step/2},cB=function(i){return i===n-1?plotW:X(i)+step/2};
   var svg='<svg width="'+plotW.toFixed(0)+'" height="'+H+'" viewBox="0 0 '+plotW.toFixed(1)+' '+H+'" role="img" aria-label="Séances par semaine" style="display:block">'+
     '<defs><linearGradient id="fqGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--accent);stop-opacity:.28"/><stop offset="100%" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>';
@@ -14400,7 +14444,7 @@ function freqDraw(){
   weeks.forEach(function(w,i){
     var nm=i===0||w.slice(5,7)!==weeks[i-1].slice(5,7),fw=nm?' font-weight="700"':'',st=nm?'fill:var(--text2)':'fill:var(--text3)';
     if(vert)svg+='<text transform="translate('+(X(i)+3.4).toFixed(1)+','+(pt+ch+8)+') rotate(-90)" text-anchor="end" font-size="9.5"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
-    else svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle" font-size="10"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
+    else svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(n>1&&i===0?'start':(n>1&&i===n-1?'end':'middle'))+'" font-size="10"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
   });
   /* repère de survol */
   svg+='<line id="fqGuide" x1="0" x2="0" y1="'+pt+'" y2="'+(pt+ch)+'" style="stroke:var(--text3)" stroke-width="1" stroke-dasharray="2 3" opacity="0"/>';
@@ -14716,6 +14760,166 @@ function freqClosuresPublic(out){
   });
   }catch(e){try{console.warn('freqClosuresPublic',e);}catch(_){}}
   return out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   v106 — STATISTIQUES
+   1. 💶 Montant des séances sur une période (facturées, non facturées, les deux),
+      selon la date des séances. Facturées : montant facturé ; non facturées :
+      tarif du jour de la séance (NGAP ou montant manuel), séances à venir comprises.
+   2. 🚫 Annulations et rendez-vous non honorés par semaine (semaines terminées).
+   ═══════════════════════════════════════════════════════════════════ */
+var AMT={from:'',to:'',mode:'both'};
+function _amtR2(x){return Math.round((Number(x)+Number.EPSILON)*100)/100;}
+function amtCalc(from,to){
+  var b={n:0,sum:0},u={n:0,sum:0,fut:0,futSum:0},t=todayKey();
+  (D.appointments||[]).forEach(function(a){
+    if(!a||!a.date||a.date<from||a.date>to||a.type==='absence')return;
+    if(a.billed){b.n++;b.sum+=Number(a.billedAmount)||0;return;}
+    if(a.cancelled)return;
+    var p=a.patientId?gp(a.patientId):null;if(!p)return;
+    var x=Number(apAmount(a,p))||0;u.n++;u.sum+=x;if(a.date>t){u.fut++;u.futSum+=x;}
+  });
+  b.sum=_amtR2(b.sum);u.sum=_amtR2(u.sum);u.futSum=_amtR2(u.futSum);
+  return {b:b,u:u,tot:{n:b.n+u.n,sum:_amtR2(b.sum+u.sum)}};
+}
+function amtStatsHtml(){
+  var t=todayKey();if(!AMT.from){AMT.from=t.slice(0,8)+'01';AMT.to=t;}
+  return '<div class="ss" style="margin-top:16px" id="amtBox"><h3 style="margin-bottom:8px">💶 Montant des séances sur une période</h3>'+
+    '<div class="amtdates"><label>Du <input type="date" id="amtFrom" value="'+AMT.from+'" onchange="AMT.from=this.value;amtRun()"></label><label>au <input type="date" id="amtTo" value="'+AMT.to+'" onchange="AMT.to=this.value;amtRun()"></label></div>'+
+    '<div class="amtpre">'+[['m0','Ce mois'],['m1','Mois dernier'],['y0','Cette année'],['y1','Année dernière']].map(function(x){return '<button onclick="amtPreset(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>'+
+    '<div class="fqrange amtmode">'+[['billed','Facturées'],['unbilled','Non facturées'],['both','Les deux']].map(function(x){return '<button data-m="'+x[0]+'" class="'+(AMT.mode===x[0]?'on':'')+'" onclick="AMT.mode=\''+x[0]+'\';amtRun()">'+x[1]+'</button>'}).join('')+'</div>'+
+    '<div id="amtRes"></div></div>';
+}
+function amtPreset(k){
+  var d=new Date(todayKey()+'T12:00:00'),y=d.getFullYear(),m=d.getMonth(),f,to;
+  if(k==='m0'){f=new Date(y,m,1);to=new Date(y,m+1,0);}
+  else if(k==='m1'){f=new Date(y,m-1,1);to=new Date(y,m,0);}
+  else if(k==='y0'){f=new Date(y,0,1);to=new Date(y,11,31);}
+  else{f=new Date(y-1,0,1);to=new Date(y-1,11,31);}
+  AMT.from=dk(f);AMT.to=dk(to);
+  var a=document.getElementById('amtFrom'),b=document.getElementById('amtTo');if(a)a.value=AMT.from;if(b)b.value=AMT.to;
+  amtRun();
+}
+function amtRun(){
+  var el=document.getElementById('amtRes');if(!el)return;
+  document.querySelectorAll('#amtBox .amtmode button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-m')===AMT.mode);});
+  if(!AMT.from||!AMT.to){el.innerHTML='<div class="fqempty">Choisissez la date de début et la date de fin.</div>';return;}
+  if(AMT.from>AMT.to){el.innerHTML='<div class="fqempty">La date de début est après la date de fin.</div>';return;}
+  var r=amtCalc(AMT.from,AMT.to),m=AMT.mode;
+  var big=m==='billed'?r.b:(m==='unbilled'?r.u:r.tot);
+  var lab=m==='billed'?'facturées':(m==='unbilled'?'non facturées':'facturées et non facturées');
+  var pb=r.tot.sum>0?Math.round(r.b.sum/r.tot.sum*100):0;
+  var tile=function(k,t,x,sub){return '<div class="amtt'+(m===k?' on':'')+'" onclick="AMT.mode=\''+k+'\';amtRun()"><small>'+t+'</small><b>'+money(x.sum)+'</b><span>'+x.n+' séance'+(x.n>1?'s':'')+(sub||'')+'</span></div>';};
+  el.innerHTML='<div class="amtbig"><b>'+money(big.sum)+'</b><span>'+big.n+' séance'+(big.n>1?'s':'')+' '+lab+' du '+_fqDm(AMT.from)+(AMT.from.slice(0,4)!==AMT.to.slice(0,4)?'/'+AMT.from.slice(0,4):'')+' au '+_fqDm(AMT.to)+'/'+AMT.to.slice(0,4)+'</span></div>'+
+    (r.tot.sum>0?'<div class="amtbar"><i style="width:'+pb+'%"></i></div><div class="amtleg"><span><i class="b"></i>Facturé '+pb+' %</span><span><i class="u"></i>Non facturé '+(100-pb)+' %</span></div>':'')+
+    '<div class="amttiles">'+tile('billed','✅ Facturées',r.b)+tile('unbilled','⏳ Non facturées',r.u,r.u.fut?' · dont '+r.u.fut+' à venir ('+money(r.u.futSum)+')':'')+tile('both','Σ Les deux',r.tot)+'</div>'+
+    '<div class="fqfoot">Selon la date des séances. Facturées : montant facturé. Non facturées : tarif du jour de chaque séance (cotation NGAP du patient, ou montant manuel) ; les séances annulées ne comptent pas.</div>';
+}
+
+/* ─────────── 🚫 Annulations et rendez-vous non honorés ─────────── */
+var ANN={range:26};
+function annStatsHtml(){
+  return '<div class="ss" style="margin-top:16px" id="annBox">'+
+    '<div class="fqhead"><h3 style="margin:0">🚫 Annulations et RDV non honorés</h3><div class="fqrange" id="annRange">'+[[12,'12 sem.'],[26,'6 mois'],[52,'1 an']].map(function(x){return '<button data-r="'+x[0]+'" class="'+(ANN.range===x[0]?'on':'')+'" onclick="ANN.range='+x[0]+';annDraw()">'+x[1]+'</button>'}).join('')+'</div></div>'+
+    '<div id="annKpis" class="fqkpis"></div><div id="annChart" class="fqchart"></div><div id="annTop"></div></div>';
+}
+function annWeeks(from,to){
+  var res={},toSun=_fqAdd(to,6);
+  for(var w=from;w<=to;w=_fqAdd(w,7))res[w]={pris:0,annP:0,annK:0,nh:0};
+  (D.appointments||[]).forEach(function(a){
+    if(!a||!a.date||a.type==='absence'||a.date<from||a.date>toSun)return;
+    if(!a.patientId&&!a.patientName)return;
+    if(a.cancelled&&a.cancelledBy==='patient-report')return; /* décalage : le nouveau RDV compte */
+    var r=res[_fqMon(a.date)];if(!r)return;
+    r.pris++;
+    if(a.cancelled){if(a.cancelledBy==='pro')r.annK++;else r.annP++;}
+    else if(a.noShow||a.patientAbsence)r.nh++;
+  });
+  return res;
+}
+function annDraw(){
+  var box=document.getElementById('annChart');if(!box)return;
+  document.querySelectorAll('#annRange button').forEach(function(b){b.classList.toggle('on',+b.getAttribute('data-r')===ANN.range);});
+  var to=freqLastWeek(),from=_fqAdd(to,-7*(ANN.range-1));
+  var first='';(D.appointments||[]).forEach(function(a){if(a&&!a.cancelled&&a.type!=='absence'&&a.date&&(!first||a.date<first))first=a.date;});
+  if(first&&_fqMon(first)>from)from=_fqMon(first);if(from>to)from=to;
+  var W0=annWeeks(from,to),weeks=Object.keys(W0).sort(),n=weeks.length,rows=weeks.map(function(w){return W0[w]});
+  var S={pris:0,annP:0,annK:0,nh:0};rows.forEach(function(r){S.pris+=r.pris;S.annP+=r.annP;S.annK+=r.annK;S.nh+=r.nh;});
+  var rate=function(r){return r.pris?Math.round((r.annP+r.nh)/r.pris*1000)/10:0;};
+  /* jour de la semaine le plus touché */
+  var byD=[0,0,0,0,0,0,0],allD=[0,0,0,0,0,0,0],toSun=_fqAdd(to,6);
+  (D.appointments||[]).forEach(function(a){if(!a||!a.date||a.type==='absence'||a.date<from||a.date>toSun||(a.cancelled&&a.cancelledBy==='patient-report'))return;var d=new Date(a.date+'T12:00:00').getDay();allD[d]++;if((a.cancelled&&a.cancelledBy!=='pro')||(!a.cancelled&&(a.noShow||a.patientAbsence)))byD[d]++;});
+  var wd=-1,wr=0;for(var d=0;d<7;d++){if(allD[d]>=5){var x=byD[d]/allD[d];if(x>wr){wr=x;wd=d;}}}
+  var DJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  var kp=document.getElementById('annKpis');
+  if(kp)kp.innerHTML='<div class="fqk"><small>Taux sur la période</small><b>'+String(rate(S)).replace('.',',')+' %</b><span class="fqz">'+(S.annP+S.nh)+' sur '+S.pris+' RDV</span></div>'+
+    '<div class="fqk"><small>Annulations patient</small><b style="color:#e08e0b">'+S.annP+'</b><span class="fqz">par vous : '+S.annK+'</span></div>'+
+    '<div class="fqk"><small>Non honorés</small><b style="color:#e74c3c">'+S.nh+'</b><span class="fqz">'+(wd>=0&&wr>0?'jour le + touché : '+DJ[wd]:'—')+'</span></div>';
+  if(!S.pris){box.innerHTML='<div class="fqempty">Aucun rendez-vous sur cette période.</div>';var tp0=document.getElementById('annTop');if(tp0)tp0.innerHTML='';return;}
+  /* barres empilées (annulés patient + non honorés), courbe du taux (axe de droite) */
+  var Wd=Math.max(280,box.clientWidth||320),pl=30,pr=34,pt=16,cw0=Wd-pl-pr,ins=9;
+  var step=n>1?Math.max((cw0-2*ins)/(n-1),13):0,plotW=n>1?Math.max(cw0,step*(n-1)+2*ins):cw0;if(n>1)step=(plotW-2*ins)/(n-1);
+  var vert=n>1&&step<36,pb=vert?44:26,H=vert?236:218,ch=H-pt-pb,scroll=plotW>cw0+1;
+  var mx=Math.max.apply(null,rows.map(function(r){return r.annP+r.nh}).concat([4])),ymax=Math.max(4,Math.ceil(mx*1.15/4)*4);
+  var rmax=Math.max.apply(null,rows.map(rate).concat([10]));rmax=Math.min(100,_fqNice(rmax*1.15));
+  var X=function(i){return n===1?plotW/2:ins+step*i},Y=function(v){return pt+ch*(1-v/ymax)},YR=function(v){return pt+ch*(1-v/rmax)};
+  var bw=Math.max(4,Math.min(18,(n>1?step:plotW)*0.62));
+  var svg='<svg width="'+plotW.toFixed(0)+'" height="'+H+'" viewBox="0 0 '+plotW.toFixed(1)+' '+H+'" style="display:block">',yax='',yr='';
+  for(var g=0;g<=4;g++){var gy=Y(ymax*g/4);svg+='<line x1="0" x2="'+plotW.toFixed(1)+'" y1="'+gy.toFixed(1)+'" y2="'+gy.toFixed(1)+'" style="stroke:var(--border2)"/>';yax+='<text x="'+(pl-6)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end" font-size="10" style="fill:var(--text3)">'+Math.round(ymax*g/4)+'</text>';yr+='<text x="4" y="'+(gy+3.5).toFixed(1)+'" font-size="10" style="fill:#8e44ad">'+Math.round(rmax*g/4)+'%</text>';}
+  rows.forEach(function(r,i){
+    var x=X(i)-bw/2,y1=Y(r.annP),y2=Y(r.annP+r.nh);
+    if(r.annP)svg+='<rect x="'+x.toFixed(1)+'" y="'+y1.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(pt+ch-y1).toFixed(1)+'" rx="2" fill="#f5b041"/>';
+    if(r.nh)svg+='<rect x="'+x.toFixed(1)+'" y="'+y2.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(y1-y2).toFixed(1)+'" rx="2" fill="#e74c3c"/>';
+  });
+  var pts=rows.map(function(r,i){return [X(i),YR(rate(r))]});
+  svg+='<path d="'+_fqPath(pts)+'" fill="none" stroke="#8e44ad" stroke-width="2" stroke-linejoin="round"/>';
+  pts.forEach(function(p){svg+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.6" fill="#8e44ad" style="stroke:var(--surface)" stroke-width="1.2"/>';});
+  weeks.forEach(function(w,i){var nm=i===0||w.slice(5,7)!==weeks[i-1].slice(5,7),fw=nm?' font-weight="700"':'',st=nm?'fill:var(--text2)':'fill:var(--text3)';
+    if(vert)svg+='<text transform="translate('+(X(i)+3.4).toFixed(1)+','+(pt+ch+8)+') rotate(-90)" text-anchor="end" font-size="9.5"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
+    else svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(n>1&&i===0?'start':(n>1&&i===n-1?'end':'middle'))+'" font-size="10"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
+    svg+='<rect x="'+(X(i)-(n>1?step:plotW)/2).toFixed(1)+'" y="'+pt+'" width="'+(n>1?step:plotW).toFixed(1)+'" height="'+(ch+pb-4)+'" fill="transparent" style="cursor:pointer"><title>Semaine du '+_fqDm(w)+' au '+_fqDm(_fqAdd(w,6))+' : '+rows[i].pris+' RDV · '+rows[i].annP+' annulé(s) par le patient · '+rows[i].nh+' non honoré(s) · '+rows[i].annK+' annulé(s) par vous · taux '+String(rate(rows[i])).replace('.',',')+' %</title></rect>';});
+  svg+='</svg>';
+  box.innerHTML='<div class="fqscroll" id="annScroll" style="margin:0 '+pr+'px 0 '+pl+'px">'+svg+'</div><svg class="fqyax" width="'+pl+'" height="'+H+'" style="left:0">'+yax+'</svg><svg class="fqyax" width="'+pr+'" height="'+H+'" style="right:0">'+yr+'</svg>'+
+    '<div class="fqkey"><span><i style="background:#f5b041"></i>Annulés par le patient</span><span><i style="background:#e74c3c"></i>Non honorés</span><span><i class="dash" style="border-color:#8e44ad;border-top-style:solid"></i>Taux (%)</span>'+(scroll?'<span>◂ glissez pour voir les semaines précédentes</span>':'')+'</div>';
+  var sc=document.getElementById('annScroll');if(sc)sc.scrollLeft=sc.scrollWidth;
+  /* patients les plus concernés */
+  var per={};(D.appointments||[]).forEach(function(a){if(!a||!a.patientId||!a.date||a.date<from||a.date>toSun||a.type==='absence'||(a.cancelled&&a.cancelledBy==='patient-report'))return;
+    var o=per[a.patientId]||(per[a.patientId]={a:0,n:0});if(a.cancelled){if(a.cancelledBy!=='pro')o.a++;}else if(a.noShow||a.patientAbsence)o.n++;});
+  var top=Object.keys(per).filter(function(k){return per[k].a+per[k].n>=2&&gp(k)}).sort(function(x,y){return (per[y].n*2+per[y].a)-(per[x].n*2+per[x].a)}).slice(0,6);
+  var tp=document.getElementById('annTop');
+  if(tp)tp.innerHTML=top.length?'<div class="fqlog"><b>Patients les plus concernés</b>'+top.map(function(k){var p=gp(k),o=per[k];return '<div style="cursor:pointer" onclick="openPC(\''+k+'\')">'+blockEmoji(k)+esc(p.lastName+' '+p.firstName)+' — '+(o.a?o.a+' annulation'+(o.a>1?'s':''):'')+(o.a&&o.n?' · ':'')+(o.n?'<b style="color:#e74c3c">'+o.n+' non honoré'+(o.n>1?'s':'')+'</b>':'')+'</div>'}).join('')+'</div>':'';
+}
+
+/* ─────────── 🙅 rendez-vous non honorés ─────────── */
+function patNoShows(pid,days){
+  var lim=_fqAdd(todayKey(),-(days||365));
+  return (D.appointments||[]).filter(function(a){return a&&a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.date>=lim&&(a.noShow||a.patientAbsence)}).sort(function(a,b){return a.date<b.date?-1:1});
+}
+function apNoShowToggle(apId){
+  try{clCtx();}catch(e){}
+  var ap=(D.appointments||[]).find(function(a){return a.id===apId});if(!ap)return;
+  var p=ap.patientId?gp(ap.patientId):null;
+  if(ap.noShow){ap.noShow=false;ap.noShowAt='';sv();R();toast('« Non venu » retiré');return;}
+  ap.noShow=true;ap.noShowAt=new Date().toISOString();sv();R();
+  if(!p){toast('🙅 Noté : rendez-vous non honoré');return;}
+  var L=patNoShows(p.id);
+  if(L.length>=2&&!p.blocked)noShowAlert(p.id);
+  else toast('🙅 Noté : '+L.length+' rendez-vous non honoré'+(L.length>1?'s':'')+' en 12 mois',3500);
+}
+function noShowAlert(pid){
+  var p=gp(pid);if(!p)return;var L=patNoShows(pid),b=document.getElementById('mMB');
+  document.getElementById('mMT').textContent='🙅 '+L.length+'e rendez-vous non honoré';
+  b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:8px"><b>'+esc(p.lastName+' '+p.firstName)+'</b> n\'a pas honoré '+L.length+' rendez-vous en 12 mois :</div>'+
+    L.map(function(a){return '<div class="secrrule"><span class="t">'+esc(_fqDm(a.date)+'/'+a.date.slice(0,4)+' à '+a.time)+' — '+(a.noShow?'non venu':'absence signalée par le patient')+'</span></div>'}).join('')+
+    '<div style="font-size:12px;color:var(--text2);margin:10px 0">Bloquer ce patient : plus aucun rendez-vous dans l\'appli patient (« Rendez-vous indisponibles ») ni par le secrétaire. Ses RDV déjà pris restent en place.</div>'+
+    '<div class="br"><button class="btn" onclick="clM(\'mM\')">Plus tard</button><button class="btn bd bw" onclick="clM(\'mM\');togglePatBlock(\''+pid+'\')">⛔ Bloquer le patient</button></div>';
+  opM('mM');
+}
+function noShowCardHtml(p){
+  var L=patNoShows(p.id);if(!L.length)return '';
+  var nAbs=L.filter(function(a){return !a.noShow}).length;
+  return '<div class="ub" style="color:#c0392b">🙅 RDV non honorés (12 mois) : <b>'+L.length+'</b>'+(nAbs?' <span style="font-size:11px;color:var(--text2)">(dont '+nAbs+' absence'+(nAbs>1?'s':'')+' signalée'+(nAbs>1?'s':'')+')</span>':'')+'</div>';
 }
 
 /* Orientation/resize: re-render agenda for optimal display */
