@@ -547,7 +547,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 104 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 105 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -8705,7 +8705,7 @@ function isoToKey(iso){
           const isSel=(k===dk(cD));
           const isToday=(k===todayKey());
           // séances du jour (les bilans comptent comme une seule séance => on ignore les objets type 'bilan')
-const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan');
+const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan' && !a.cancelled); /* v105 */
 const cnt=aps.length;
 
 let coolCnt=0;
@@ -9256,7 +9256,7 @@ window.openStats = function(){
           const isSel=(k===dk(cD));
           const isToday=(k===todayKey());
 
-          const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan' && !a.hiddenInAgenda);
+          const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan' && !a.hiddenInAgenda && !a.cancelled); /* v105 */
           const cnt=aps.length;
 
           let coolCnt=0;
@@ -9400,7 +9400,7 @@ window.openStats = function(){
           const k=dk(new Date(y,m,d));
           const isSel=(k===dk(cD));
           const isToday=(k===todayKey());
-          const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan' && !a.hiddenInAgenda);
+          const aps=(D.appointments||[]).filter(a=>a && a.date===k && a.type!=='bilan' && !a.hiddenInAgenda && !a.cancelled); /* v105 */
           const cnt=aps.length;
 
           let coolCnt=0;
@@ -9878,7 +9878,7 @@ function exoFirstDate(r){
 function buildExoPublic(){
   var t=todayKey();
   return getExo().filter(function(r){return r&&r.motifId&&r.time&&!_exoExpired(r)}).map(function(r){
-    var o={id:r.id,motifId:r.motifId,time:r.time,places:_exoPlaces(r),mode:r.mode==='rec'?'rec':'once'};
+    var o={id:r.id,motifId:r.motifId,time:r.time,places:_exoPlaces(r),mode:r.mode==='rec'?'rec':'once',force:r.force!==false}; /* v105 : forcée par défaut */
     if(o.mode==='rec'){o.dows=(r.dows||[]).map(Number);o.from=r.from||'';o.to=r.to||'';}else o.date=r.date;
     var sk=(r.skip||[]).filter(function(k){return k>=t});if(sk.length)o.skip=sk;
     return o;
@@ -9894,6 +9894,7 @@ function exoSummary(r){
     s+=r.to?(' · du '+_exoFr(r.from)+' au '+_exoFr(_exoLastDate(r))):(' · à partir du '+_exoFr(r.from)+', sans fin');
     var sk=(r.skip||[]).length;if(sk)s+=' · '+sk+' date'+(sk>1?'s':'')+' retirée'+(sk>1?'s':'');
   }else s+=' · le '+_exoFr(r.date);
+  if(r.force===false)s+=' · sans forçage'; /* v105 */
   return s;
 }
 /* Contrôles communs (formulaire et assistant) */
@@ -9929,15 +9930,18 @@ function exoValidate(r,ignoreId){
     if(mf.allowSimul&&a.motifId===mf.simulWith)return false;
     var as=t2m(a.time),ae=as+(a.duration||30);return tm<ae&&te>as;
   });
-  if(ov.length)w.push('Le '+_exoFr(first)+', ce créneau chevauche '+ov.map(function(a){var p=a.patientId?gp(a.patientId):null;return a.time+' '+(a.type==='absence'?(a.label||'Absence'):(p?p.lastName:(a.patientName||'RDV')))}).join(', ')+' : il ne sera pas proposé aux patients ce jour-là.');
+  var _forced=r.force!==false,_ovAbs=ov.filter(function(a){return a.type==='absence'}); /* v105 */
+  if(ov.length)w.push('Le '+_exoFr(first)+', ce créneau chevauche '+ov.map(function(a){var p=a.patientId?gp(a.patientId):null;return a.time+' '+(a.type==='absence'?(a.label||'Absence'):(p?p.lastName:(a.patientName||'RDV')))}).join(', ')+(_forced&&!_ovAbs.length?' : forcé, il sera quand même proposé aux patients.':(_forced?' : une absence bloque toujours le créneau, il ne sera pas proposé ce jour-là.':' : il ne sera pas proposé aux patients ce jour-là (cochez « Forcer » pour le proposer quand même).')));
   var hol=frenchHolidayName(first);if(hol&&!(D.openHolidays&&D.openHolidays[first]))w.push('Le '+_exoFr(first)+' est férié ('+hol+') et fermé à la réservation.');
   var vac=(D.vacationPeriods||[]).some(function(v){return v&&v.from&&v.to&&first>=v.from&&first<=v.to});if(vac)w.push('Le '+_exoFr(first)+' tombe pendant vos congés.');
   if((D.appointments||[]).some(function(a){return a&&!a.cancelled&&a.date===first&&a.type==='absence'&&a.allDay}))w.push('Vous êtes absent toute la journée le '+_exoFr(first)+'.');
   var maxD=(D.bookingRules&&D.bookingRules.maxDaysAhead)||60;
-  if(first>_exoAdd(todayKey(),maxD))w.push('Les patients réservent au plus '+maxD+' jours à l\'avance : ce créneau apparaîtra dans l\'appli à partir du '+_exoFr(_exoAdd(first,-maxD))+'.');
+  if(first>_exoAdd(todayKey(),maxD)&&!_forced)w.push('Les patients réservent au plus '+maxD+' jours à l\'avance : ce créneau apparaîtra dans l\'appli à partir du '+_exoFr(_exoAdd(first,-maxD))+' (cochez « Forcer » pour le proposer dès maintenant).');
+  var _minH=parseFloat((D.bookingRules&&D.bookingRules.minHoursBefore)||2),_fm=new Date(first+'T'+r.time+':00').getTime()-Date.now();
+  if(!_forced&&_fm<_minH*3600000)w.push('Les patients réservent au moins '+String(_minH).replace('.',',')+' h à l\'avance : ce créneau n\'apparaîtra pas dans l\'appli (cochez « Forcer » pour le proposer quand même).');
   if(mf.hiddenForPatient)w.push('Ce motif est masqué dans l\'appli patient : le créneau ne sera visible que dans votre agenda.');
   var aud=mf.audience==='new'?'aux nouveaux patients seulement':(mf.audience==='known'?'aux patients déjà venus seulement':'à tous les patients');
-  return {motif:mf,first:first,warnings:w,info:'Visible dans l\'appli patient '+aud+' à qui « '+mf.label+' » est proposé.'+more};
+  return {motif:mf,first:first,warnings:w,info:'Visible dans l\'appli patient '+aud+' à qui « '+mf.label+' » est proposé'+(_forced?' — ⚡ forcé : même hors délais de réservation et malgré un chevauchement':'')+'.'+more};
 }
 
 /* ─────────── formulaire (dans « Nouveau rendez-vous ») ─────────── */
@@ -9953,6 +9957,7 @@ function _exoFormBlock(){
       '<div class="fg" id="exoToW" style="display:none"><label>Dernier jour</label><input type="date" id="fExoTo" onchange="_exoInfoUi()"></div>'+
       '<div class="fg" id="exoWW" style="display:none"><label>Semaines</label><input type="number" id="fExoW" min="1" max="104" value="4" oninput="_exoInfoUi()"></div></div>'+
     '</div>'+
+    '<label style="font-size:12px;display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;line-height:1.4"><input type="checkbox" id="fExoF" checked onchange="_exoInfoUi()" style="width:18px;height:18px;flex:none;margin-top:1px;accent-color:var(--accent)"> <span>⚡ <b>Forcer la disponibilité dans l\'appli patient</b><br><span style="color:var(--text2);font-size:11px">Visible même hors des délais de réservation (minimum et maximum des paramètres) et même si le créneau chevauche un autre motif non simultané.</span></span></label>'+ /* v105 */
     '<div id="exoInfo" style="font-size:11px;color:var(--text2);margin:-2px 0 10px;line-height:1.4"></div>'+
     '<div id="exoEditBtns"></div>'+
   '</div>';
@@ -9983,6 +9988,7 @@ function _exoRecUi(){
 function _exoReadForm(){
   var k=_exoFormDate(),t=(document.getElementById('fTm')||{}).value||'';
   var r={motifId:(document.getElementById('fExoM')||{}).value||'',time:t,places:Math.min(20,Math.max(1,parseInt((document.getElementById('fExoP')||{}).value,10)||1)),mode:(document.getElementById('fExoRec')||{}).value==='rec'?'rec':'once'};
+  var _fF=document.getElementById('fExoF');r.force=_fF?!!_fF.checked:true; /* v105 */
   if(r.mode==='rec'){
     r.dows=sortDows((window._exoDows||[]).slice());r.from=k;
     var end=(document.getElementById('fExoEnd')||{}).value;
@@ -10064,6 +10070,7 @@ function exoOpenForm(o){
   }
   if(r){
     var P=document.getElementById('fExoP');if(P)P.value=_exoPlaces(r);
+    var F0=document.getElementById('fExoF');if(F0)F0.checked=r.force!==false; /* v105 */
     var R0=document.getElementById('fExoRec');if(R0)R0.value=r.mode==='rec'?'rec':'once';
     if(r.mode==='rec'){var E=document.getElementById('fExoEnd');if(E)E.value=r.to?'date':'none';var T=document.getElementById('fExoTo');if(T)T.value=r.to||'';}
     _exoFillMotifs();_exoRecUi();
@@ -10081,7 +10088,7 @@ function svExoFromForm(){
   var id=window._exoEditId;
   if(id){
     var x=getExo().find(function(e){return e.id===id});if(!x){toast('Ouverture introuvable');return;}
-    ['motifId','time','places','mode','date','dows','from','to'].forEach(function(k){delete x[k]});
+    ['motifId','time','places','mode','date','dows','from','to','force'].forEach(function(k){delete x[k]});
     Object.assign(x,r);x.updatedAt=new Date().toISOString();
     if(x.mode!=='rec')delete x.skip;
   }else{r.id='x'+uid();r.createdAt=new Date().toISOString();getExo().push(r);}
@@ -14065,7 +14072,7 @@ function _secrCardHtml(p){
     '<textarea id="spt_'+p.id+'" rows="4" style="width:100%;font-size:13px;border-radius:8px;border:1px solid var(--border);padding:8px;resize:vertical" placeholder="'+(p.canal==='app'?'Réponse dans la messagerie de l\'appli (vide = pas de réponse)':'Réponse par SMS (vide = pas de SMS)')+'">'+esc(p.reponse||'')+'</textarea>'+
     '<div class="secrcons"><input id="spc_'+p.id+'" maxlength="600" placeholder="🗣 Consigne au secrétaire : ex. propose plutôt le matin, vouvoie-la…" onkeydown="if(event.key===\'Enter\'){event.preventDefault();secrInstruct(\''+p.id+'\')}">'+
       '<button class="btn bs" id="spb_'+p.id+'" onclick="secrInstruct(\''+p.id+'\')" title="Le secrétaire réécrit la réponse avec votre consigne (rien n\'est envoyé)">↻ Réécrire</button></div>'+
-    '<label style="font-size:11px;display:flex;gap:6px;align-items:center;margin:4px 0 0;color:var(--text2)"><input type="checkbox" id="spr_'+p.id+'"> Retenir cette consigne pour toute la conversation</label>'+
+    '<label style="font-size:11px;display:flex;gap:6px;align-items:center;margin:4px 0 0;color:var(--text2)"><input type="checkbox" id="spr_'+p.id+'" checked> Retenir cette consigne pour toute la conversation</label>'+
     '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="btn bp" style="flex:2" onclick="secrApprove(\''+p.id+'\')">✅ Envoyer</button>'+
       '<button class="btn bs" style="flex:1" onclick="secrOpenThread(\''+esc(p.tid||p.norm)+'\')" title="Conversation">💬</button>'+
       '<button class="btn" style="flex:1" onclick="secrIgnore(\''+p.id+'\')">Ignorer</button></div>'+
