@@ -557,7 +557,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 106 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 107 · Firebase</div></div><button id="btnSecr" class="secrbtn" onclick="openSecr('pending')" title="Secrétaire IA (SMS)" style="display:none">🤖<span id="secrBadge"></span></button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -1632,7 +1632,7 @@ function _pfApplyRecovery(remote,queue){
     if(la){
       if(firstRun){
         if(ra.cancelled&&!la.cancelled){la.cancelled=true;la.cancelledBy=ra.cancelledBy||'patient';la.cancelReason=ra.cancelReason||la.cancelReason||'';synced.push({a:la,what:'annulé par le patient'+(ra.cancelReason?' ('+ra.cancelReason+')':'')});}
-        if(ra.patientAbsence&&!la.patientAbsence){la.patientAbsence=true;synced.push({a:la,what:'absence signalée'});}
+        if(ra.patientAbsence&&!la.patientAbsence){la.patientAbsence=true;} /* v107 : ancien type, conservé sans affichage */
       }
       return;
     }
@@ -2507,7 +2507,6 @@ function rAps(){
     const cc=isAbs?'abs':(mot?CL[mot.ci%6].css:'mc0');
     let name=isAbs?((ap.isHoliday?'🎌 ':'')+(ap.label||'Absence')):(pat?(pat.lastName+' '+pat.firstName):(ap.label||'?'));if(ap.type==='bilan'||ap.isBilan)name+=' 🅱️'; else if(apHasBilan(ap))name+=' 🅱️';
     if(ap.source==='patient')name=(ap.proModified?'🌐🛠 ':'🌐 ')+name;
-    if(ap.patientAbsence)name='🏊 '+name;
     if(ap.noShow)name='🙅 '+name; /* v106 */
     const al=pat?alrt(pat):'';const mL=mot?mot.label:'';
     const isVeryShort=ht<22;
@@ -2637,7 +2636,6 @@ function rList(){
     const cv=isAbs?'var(--absence)':CL[ci2%6].bd;
     let name=isAbs?((ap.isHoliday?'🎌 ':'')+(ap.label||'Absence')):(pat?(pat.lastName+' '+pat.firstName):(ap.label||'?'));if(ap.type==='bilan'||ap.isBilan)name+=' 🅱️'; else if(apHasBilan(ap))name+=' 🅱️';
     if(ap.source==='patient')name=(ap.proModified?'🌐🛠 ':'🌐 ')+name;
-    if(ap.patientAbsence)name='🏊 '+name;
     if(ap.noShow)name='🙅 '+name; /* v106 */
     var _scHtml='';if(pat){var _scL=getSessionCount(pat.id);if(_scL.label)_scHtml=' <span style="font-size:10px;color:var(--text3)">('+_scL.label+')</span>';}
     var _futHtml='';if(pat&&key===todayKey()){var _futN=(D.appointments||[]).filter(function(fa){return fa.patientId===pat.id&&!fa.cancelled&&fa.type!=='absence'&&fa.type!=='bilan'&&fa.date>key}).length;_futHtml='<span style="font-size:10px;color:'+(_futN?'var(--text3)':'#e74c3c')+'"> · '+(_futN?_futN+' RDV prévu'+((_futN>1)?'s':''):'Aucun autre RDV prévu')+'</span>';}
@@ -2996,7 +2994,7 @@ function showCtx(e,id){
   const isAbs=(ap.type==='absence');
   const m=document.getElementById('ctx');
   let it='';
-  if(pat)it+='<div style="padding:8px 12px;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center"><span>'+(ap.patientAbsence?'🏊 ':'')+esc(pat.lastName)+' '+esc(pat.firstName)+'</span><span style="font-weight:400;font-size:11px;color:var(--text2)">'+ap.time+'</span></div>';
+  if(pat)it+='<div style="padding:8px 12px;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center"><span>'+(ap.noShow?'🙅 ':'')+esc(pat.lastName)+' '+esc(pat.firstName)+'</span><span style="font-weight:400;font-size:11px;color:var(--text2)">'+ap.time+'</span></div>';
   else if(isAbs)it+='<div style="padding:8px 12px;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center"><span>'+(ap.label||'Absence')+'</span><span style="font-weight:400;font-size:11px;color:var(--text2)">'+ap.time+'</span></div>';
   it+='<div class="ci" onclick="editAp()">✏️ Modifier</div>';
   if(pat)it+='<div class="ci" onclick="openPC(\''+pat.id+'\');clCtx()">👤 Fiche patient</div>';
@@ -3016,7 +3014,7 @@ function showCtx(e,id){
   if(!isAbs)it+='<div class="ci" onclick="exoFromAp(\''+ap.id+'\')">✨ Ajouter une ouv. except. sur ce créneau</div>'; /* v97 */
   if(vM==='grid'&&pat&&!isAbs)it+='<div class="ci" onclick="addPatientSameSlot(\''+ap.id+'\');clCtx()">👥 Ajouter un patient sur ce créneau</div>';
   if(pat&&!isAbs)it+='<div class="ci" onclick="openQuickHide(\''+pat.id+'\',\''+ap.date+'\',\''+(ap.motifId||'')+'\');clCtx()">🙈 Masquer des créneaux à ce patient</div>';
-  if(pat&&!isAbs&&!ap.cancelled&&ap.date<=todayKey())it+='<div class="ci" onclick="apNoShowToggle(\''+ap.id+'\')">'+(ap.noShow?'↩️ Retirer « non venu »':'🙅 Patient non venu (RDV non honoré)')+'</div>'; /* v106 */
+  if(pat&&!isAbs&&!ap.cancelled&&ap.date<=todayKey())it+='<div class="ci" onclick="apNoShowToggle(\''+ap.id+'\')">'+(ap.noShow?'↩️ Retirer « Absence sans prévenir »':'🙅 Absence sans prévenir')+'</div>'; /* v106/v107 */
   if(pat)it+=blockCtxItem(pat.id); /* v103 */
   it+='<div class="ci dng" onclick="delAp()">🗑 Supprimer</div>';
   m.innerHTML=it;
@@ -4300,7 +4298,7 @@ function openHist(pid){
     var m=gm(a.motifId);var ci=m?m.ci:0;
     const lab=(a.type==='bilan'||a.isBilan)?'🅱️ Bilan':(m?m.label:'?');
     const onlineTag=(a.source==='patient'?(a.proModified?'🌐🛠 ':'🌐 '):'');
-    const absTag=(a.patientAbsence?'🏊 ':'')+(a.noShow?'🙅 ':''); /* v106 */
+    const absTag=(a.noShow?'🙅 ':''); /* v107 */
     const billedTag=(a.billed?'<span class="hib" style="background:#e6f7ee;color:#1e8e3e">Facturée</span>':'');
     const unbTag=(!a.billed && isBillable(a)?'<span class="hib" style="background:#fff3cd;color:#8a6d3b">Non facturée</span>':'');
     return '<div class="hi'+(isFut?' fut':'')+(a.cancelled?' cncl':'')+'" style="border-left-color:'+CL[ci%6].bd+'" onclick="showCtx(event,\''+a.id+'\')">'+
@@ -4649,6 +4647,7 @@ function openSet(){
       '<div class="fg"><label>💤 Patient inactif après (mois sans séance + sans RDV futur)</label>'+
         '<input type="number" id="sInactiveMonths" min="1" max="24" value="'+(D.inactiveMonths||3)+'" onchange="D.inactiveMonths=parseInt(this.value)||3;sv()">'+
       '</div>'+
+      noShowSettingsHtml()+ /* v107 */
       '<div class="fg"><label>🏋️ Nom du groupe spécial</label>'+
         '<input type="text" id="sGroupName" value="'+esc(D.groupName||'')+'" placeholder="ex: Groupe Sport, Pilates..." onchange="D.groupName=this.value.trim();sv();toast(\'Enregistré\')">'+
       '</div>'+
@@ -9023,7 +9022,7 @@ window.openStats = function(){
       '</div>'+
       amtStatsHtml()+ /* v106 : montant des séances sur une période */
       freqStatsHtml()+ /* v103 */
-      annStatsHtml()+ /* v106 : annulations et RDV non honorés */
+      annStatsHtml()+ /* v106 : annulations et absences sans prévenir */
       '<div class="ss" style="margin-top:16px">'+
         '<h3>🥧 Répartition par motif</h3>'+
         '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+
@@ -10267,8 +10266,7 @@ function _aApOut(a,full){
   if(a.type==='absence'){o.type='absence';o.libelle=a.label||'Absence';if(a.allDay)o.journee_entiere=true;}
   else{o.patient=_aWho(a);if(a.patientId)o.patient_id=a.patientId;o.motif=_aMotifLabel(a.motifId);if(a.type==='bilan')o.type='bilan';}
   o.statut=a.cancelled?('annulé'+(a.cancelledBy==='pro'?' par le kiné':(a.cancelledBy?' par le patient':''))+(a.cancelReason?' ('+a.cancelReason+')':'')):'actif';
-  if(a.patientAbsence)o.absence_signalee=true;
-  if(a.noShow)o.non_venu=true; /* v106 */
+  if(a.noShow)o.absence_sans_prevenir=true; /* v107 */
   if(a.billed)o.facturee=true;
   if(a.isBilan||(a.type!=='absence'&&apHasBilan(a)))o.bilan=true;
   if(a.source==='patient')o.pris_en_ligne=true;
@@ -10334,7 +10332,7 @@ function _aPStats(p){
   var aps=(D.appointments||[]).filter(function(a){return a&&a.patientId===p.id&&_aIsSess(a)});
   var isPast=function(a){return a.date<t||(a.date===t&&a.time<=hm)};
   var byD=function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)};
-  var past=aps.filter(function(a){return !a.cancelled&&!a.patientAbsence&&isPast(a)}).sort(byD);
+  var past=aps.filter(function(a){return !a.cancelled&&!a.noShow&&isPast(a)}).sort(byD);
   var fut=aps.filter(function(a){return !a.cancelled&&!isPast(a)}).sort(byD);
   return {aps:aps,past:past,fut:fut,last:past[past.length-1]||null,next:fut[0]||null};
 }
@@ -10487,7 +10485,7 @@ function _asstPat(q){
   else if(p.prescribedSessions)o.seances_prescrites=p.prescribedSessions;
   if(p.linkedTo){var lp=gp(p.linkedTo);if(lp)o.lie_a=_aPName(lp);}
   o.annulations=s.aps.filter(function(a){return a.cancelled}).length;
-  o.absences_signalees=s.aps.filter(function(a){return a.patientAbsence}).length;
+  o.absences_sans_prevenir=s.aps.filter(function(a){return !a.cancelled&&a.noShow}).length;o.absences_sans_prevenir_d_affilee=patNoShowStreak(p.id).length;if(p.blocked)o.bloque=true;
   o.seances_non_facturees=unbilledCount(p.id);o.montant_non_facture=_aEuro(unbilledAmount(p.id));
   if(p.lastBillAt)o.derniere_facturation=p.lastBillAt;
   if(s.aps.length){var first=s.aps.slice().sort(function(a,b){return (a.date+a.time).localeCompare(b.date+b.time)})[0];o.premier_rdv=_aDateFr(first.date);}
@@ -10500,14 +10498,14 @@ function _asstStats(q){
   var t0=todayKey(),from=_aKey(q.du)||(t0.slice(0,8)+'01'),to=_aKey(q.au)||t0;
   var aps=(D.appointments||[]).filter(function(a){return a&&a.date>=from&&a.date<=to});
   var sess=aps.filter(_aIsSess);
-  var done=sess.filter(function(a){return !a.cancelled&&!a.patientAbsence&&a.date<=t0});
+  var done=sess.filter(function(a){return !a.cancelled&&!a.noShow&&a.date<=t0});
   var billed=(D.appointments||[]).filter(function(a){return a&&a.billed&&a.billedAt&&a.billedAt>=from&&a.billedAt<=to});
   var parMotif={};done.forEach(function(a){var l=_aMotifLabel(a.motifId)||'?';parMotif[l]=(parMotif[l]||0)+1});
   var pats={};done.forEach(function(a){if(a.patientId)pats[a.patientId]=(pats[a.patientId]||0)+1});
   var top=Object.keys(pats).sort(function(a,b){return pats[b]-pats[a]}).slice(0,5).map(function(id){return {patient:_aPName(gp(id))||'?',seances:pats[id]}});
   return {periode:{du:from,au:to},seances_effectuees:done.length,rdv_a_venir:sess.filter(function(a){return !a.cancelled&&a.date>t0}).length,
     annulations_par_les_patients:sess.filter(function(a){return a.cancelled&&a.cancelledBy!=='pro'}).length,annulations_par_le_kine:sess.filter(function(a){return a.cancelled&&a.cancelledBy==='pro'}).length,
-    absences_signalees:sess.filter(function(a){return a.patientAbsence}).length,actes_factures:billed.length,montant_facture:_aEuro(billed.reduce(function(s,a){return s+(Number(a.billedAmount)||0)},0)),
+    absences_sans_prevenir:sess.filter(function(a){return !a.cancelled&&a.noShow}).length,actes_factures:billed.length,montant_facture:_aEuro(billed.reduce(function(s,a){return s+(Number(a.billedAmount)||0)},0)),
     seances_passees_non_facturees:sess.filter(function(a){return !a.cancelled&&!a.billed&&a.date<=t0}).length,patients_distincts:Object.keys(pats).length,
     nouveaux_patients:(D.patients||[]).filter(function(p){return p.addedAt&&String(p.addedAt).slice(0,10)>=from&&String(p.addedAt).slice(0,10)<=to}).length,
     par_motif:parMotif,patients_les_plus_vus:top,reste_a_facturer_tous_patients:_aEuro(typeof totalUnbilledAmount==='function'?totalUnbilledAmount():0),patients_enregistres:(D.patients||[]).length};
@@ -10995,7 +10993,7 @@ function _asstSystem(){
   L.push('Où le kiné fait lui-même ce qui ne t\'est pas permis (ne cite que ces chemins) :');
   L.push('- horaires, jours travaillés, motifs (durées, places, heures) : bouton ⚙ Paramètres, rubriques « Mon agenda » et « Motifs de consultation » ;');
   L.push('- rappels carte Vitale (envoyés par le secrétaire), NGAP (installer le référentiel intégré, rechercher les changements, actes, cotations des patients) et bilan : ⚙ Paramètres, rubrique « Facturation » ; envoi immédiat : bouton 💵 en haut de l\'écran ;');
-  L.push('- bloquer / débloquer un patient (plus de rendez-vous dans l\'appli patient) : menu du patient (agenda, liste) ou sa fiche ; seuils de fréquentation et déclencheurs : ⚙ Paramètres, rubrique « Seuils de fréquentation » (courbe : 📊 Statistiques) ;');
+  L.push('- bloquer / débloquer un patient (plus de rendez-vous dans l\'appli patient) : menu du patient (agenda, liste) ou sa fiche ; « 🙅 Absence sans prévenir » : menu du rendez-vous passé (blocage proposé après le nombre d\'absences consécutives réglé dans ⚙ Paramètres › Suivi des patients) ; seuils de fréquentation et déclencheurs : ⚙ Paramètres, rubrique « Seuils de fréquentation » (courbe : 📊 Statistiques) ;');
   L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
   L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
   L.push('- supprimer une fiche patient : ouvrir la fiche du patient, bouton 🗑 en bas ; documents (ordonnance, photos) : fiche du patient, rubrique « Documents ».');
@@ -14763,11 +14761,13 @@ function freqClosuresPublic(out){
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   v106 — STATISTIQUES
+   v106/v107 — STATISTIQUES
    1. 💶 Montant des séances sur une période (facturées, non facturées, les deux),
       selon la date des séances. Facturées : montant facturé ; non facturées :
       tarif du jour de la séance (NGAP ou montant manuel), séances à venir comprises.
-   2. 🚫 Annulations et rendez-vous non honorés par semaine (semaines terminées).
+   2. 🚫 Annulations et absences sans prévenir par semaine (semaines terminées).
+   v107 : « 🙅 Absence sans prévenir » ; blocage proposé après N absences CONSÉCUTIVES
+   (⚙ Paramètres › Suivi des patients) ; l’ancien type « absence signalée par le patient » est supprimé (ignoré).
    ═══════════════════════════════════════════════════════════════════ */
 var AMT={from:'',to:'',mode:'both'};
 function _amtR2(x){return Math.round((Number(x)+Number.EPSILON)*100)/100;}
@@ -14817,11 +14817,11 @@ function amtRun(){
     '<div class="fqfoot">Selon la date des séances. Facturées : montant facturé. Non facturées : tarif du jour de chaque séance (cotation NGAP du patient, ou montant manuel) ; les séances annulées ne comptent pas.</div>';
 }
 
-/* ─────────── 🚫 Annulations et rendez-vous non honorés ─────────── */
+/* ─────────── 🚫 Annulations et absences sans prévenir ─────────── */
 var ANN={range:26};
 function annStatsHtml(){
   return '<div class="ss" style="margin-top:16px" id="annBox">'+
-    '<div class="fqhead"><h3 style="margin:0">🚫 Annulations et RDV non honorés</h3><div class="fqrange" id="annRange">'+[[12,'12 sem.'],[26,'6 mois'],[52,'1 an']].map(function(x){return '<button data-r="'+x[0]+'" class="'+(ANN.range===x[0]?'on':'')+'" onclick="ANN.range='+x[0]+';annDraw()">'+x[1]+'</button>'}).join('')+'</div></div>'+
+    '<div class="fqhead"><h3 style="margin:0">🚫 Annulations et absences sans prévenir</h3><div class="fqrange" id="annRange">'+[[12,'12 sem.'],[26,'6 mois'],[52,'1 an']].map(function(x){return '<button data-r="'+x[0]+'" class="'+(ANN.range===x[0]?'on':'')+'" onclick="ANN.range='+x[0]+';annDraw()">'+x[1]+'</button>'}).join('')+'</div></div>'+
     '<div id="annKpis" class="fqkpis"></div><div id="annChart" class="fqchart"></div><div id="annTop"></div></div>';
 }
 function annWeeks(from,to){
@@ -14834,7 +14834,7 @@ function annWeeks(from,to){
     var r=res[_fqMon(a.date)];if(!r)return;
     r.pris++;
     if(a.cancelled){if(a.cancelledBy==='pro')r.annK++;else r.annP++;}
-    else if(a.noShow||a.patientAbsence)r.nh++;
+    else if(a.noShow)r.nh++;
   });
   return res;
 }
@@ -14849,15 +14849,15 @@ function annDraw(){
   var rate=function(r){return r.pris?Math.round((r.annP+r.nh)/r.pris*1000)/10:0;};
   /* jour de la semaine le plus touché */
   var byD=[0,0,0,0,0,0,0],allD=[0,0,0,0,0,0,0],toSun=_fqAdd(to,6);
-  (D.appointments||[]).forEach(function(a){if(!a||!a.date||a.type==='absence'||a.date<from||a.date>toSun||(a.cancelled&&a.cancelledBy==='patient-report'))return;var d=new Date(a.date+'T12:00:00').getDay();allD[d]++;if((a.cancelled&&a.cancelledBy!=='pro')||(!a.cancelled&&(a.noShow||a.patientAbsence)))byD[d]++;});
+  (D.appointments||[]).forEach(function(a){if(!a||!a.date||a.type==='absence'||a.date<from||a.date>toSun||(a.cancelled&&a.cancelledBy==='patient-report'))return;var d=new Date(a.date+'T12:00:00').getDay();allD[d]++;if((a.cancelled&&a.cancelledBy!=='pro')||(!a.cancelled&&(a.noShow)))byD[d]++;});
   var wd=-1,wr=0;for(var d=0;d<7;d++){if(allD[d]>=5){var x=byD[d]/allD[d];if(x>wr){wr=x;wd=d;}}}
   var DJ=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
   var kp=document.getElementById('annKpis');
   if(kp)kp.innerHTML='<div class="fqk"><small>Taux sur la période</small><b>'+String(rate(S)).replace('.',',')+' %</b><span class="fqz">'+(S.annP+S.nh)+' sur '+S.pris+' RDV</span></div>'+
     '<div class="fqk"><small>Annulations patient</small><b style="color:#e08e0b">'+S.annP+'</b><span class="fqz">par vous : '+S.annK+'</span></div>'+
-    '<div class="fqk"><small>Non honorés</small><b style="color:#e74c3c">'+S.nh+'</b><span class="fqz">'+(wd>=0&&wr>0?'jour le + touché : '+DJ[wd]:'—')+'</span></div>';
+    '<div class="fqk"><small>Absences sans prévenir</small><b style="color:#e74c3c">'+S.nh+'</b><span class="fqz">'+(wd>=0&&wr>0?'jour le + touché : '+DJ[wd]:'—')+'</span></div>';
   if(!S.pris){box.innerHTML='<div class="fqempty">Aucun rendez-vous sur cette période.</div>';var tp0=document.getElementById('annTop');if(tp0)tp0.innerHTML='';return;}
-  /* barres empilées (annulés patient + non honorés), courbe du taux (axe de droite) */
+  /* barres empilées (annulés patient + absences sans prévenir), courbe du taux (axe de droite) */
   var Wd=Math.max(280,box.clientWidth||320),pl=30,pr=34,pt=16,cw0=Wd-pl-pr,ins=9;
   var step=n>1?Math.max((cw0-2*ins)/(n-1),13):0,plotW=n>1?Math.max(cw0,step*(n-1)+2*ins):cw0;if(n>1)step=(plotW-2*ins)/(n-1);
   var vert=n>1&&step<36,pb=vert?44:26,H=vert?236:218,ch=H-pt-pb,scroll=plotW>cw0+1;
@@ -14878,48 +14878,73 @@ function annDraw(){
   weeks.forEach(function(w,i){var nm=i===0||w.slice(5,7)!==weeks[i-1].slice(5,7),fw=nm?' font-weight="700"':'',st=nm?'fill:var(--text2)':'fill:var(--text3)';
     if(vert)svg+='<text transform="translate('+(X(i)+3.4).toFixed(1)+','+(pt+ch+8)+') rotate(-90)" text-anchor="end" font-size="9.5"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
     else svg+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(n>1&&i===0?'start':(n>1&&i===n-1?'end':'middle'))+'" font-size="10"'+fw+' style="'+st+'" data-wk="'+w+'">'+_fqDm(w)+'</text>';
-    svg+='<rect x="'+(X(i)-(n>1?step:plotW)/2).toFixed(1)+'" y="'+pt+'" width="'+(n>1?step:plotW).toFixed(1)+'" height="'+(ch+pb-4)+'" fill="transparent" style="cursor:pointer"><title>Semaine du '+_fqDm(w)+' au '+_fqDm(_fqAdd(w,6))+' : '+rows[i].pris+' RDV · '+rows[i].annP+' annulé(s) par le patient · '+rows[i].nh+' non honoré(s) · '+rows[i].annK+' annulé(s) par vous · taux '+String(rate(rows[i])).replace('.',',')+' %</title></rect>';});
+    svg+='<rect x="'+(X(i)-(n>1?step:plotW)/2).toFixed(1)+'" y="'+pt+'" width="'+(n>1?step:plotW).toFixed(1)+'" height="'+(ch+pb-4)+'" fill="transparent" style="cursor:pointer"><title>Semaine du '+_fqDm(w)+' au '+_fqDm(_fqAdd(w,6))+' : '+rows[i].pris+' RDV · '+rows[i].annP+' annulé(s) par le patient · '+rows[i].nh+' absence(s) sans prévenir · '+rows[i].annK+' annulé(s) par vous · taux '+String(rate(rows[i])).replace('.',',')+' %</title></rect>';});
   svg+='</svg>';
   box.innerHTML='<div class="fqscroll" id="annScroll" style="margin:0 '+pr+'px 0 '+pl+'px">'+svg+'</div><svg class="fqyax" width="'+pl+'" height="'+H+'" style="left:0">'+yax+'</svg><svg class="fqyax" width="'+pr+'" height="'+H+'" style="right:0">'+yr+'</svg>'+
-    '<div class="fqkey"><span><i style="background:#f5b041"></i>Annulés par le patient</span><span><i style="background:#e74c3c"></i>Non honorés</span><span><i class="dash" style="border-color:#8e44ad;border-top-style:solid"></i>Taux (%)</span>'+(scroll?'<span>◂ glissez pour voir les semaines précédentes</span>':'')+'</div>';
+    '<div class="fqkey"><span><i style="background:#f5b041"></i>Annulés par le patient</span><span><i style="background:#e74c3c"></i>Absences sans prévenir</span><span><i class="dash" style="border-color:#8e44ad;border-top-style:solid"></i>Taux (%)</span>'+(scroll?'<span>◂ glissez pour voir les semaines précédentes</span>':'')+'</div>';
   var sc=document.getElementById('annScroll');if(sc)sc.scrollLeft=sc.scrollWidth;
   /* patients les plus concernés */
   var per={};(D.appointments||[]).forEach(function(a){if(!a||!a.patientId||!a.date||a.date<from||a.date>toSun||a.type==='absence'||(a.cancelled&&a.cancelledBy==='patient-report'))return;
-    var o=per[a.patientId]||(per[a.patientId]={a:0,n:0});if(a.cancelled){if(a.cancelledBy!=='pro')o.a++;}else if(a.noShow||a.patientAbsence)o.n++;});
+    var o=per[a.patientId]||(per[a.patientId]={a:0,n:0});if(a.cancelled){if(a.cancelledBy!=='pro')o.a++;}else if(a.noShow)o.n++;});
   var top=Object.keys(per).filter(function(k){return per[k].a+per[k].n>=2&&gp(k)}).sort(function(x,y){return (per[y].n*2+per[y].a)-(per[x].n*2+per[x].a)}).slice(0,6);
   var tp=document.getElementById('annTop');
-  if(tp)tp.innerHTML=top.length?'<div class="fqlog"><b>Patients les plus concernés</b>'+top.map(function(k){var p=gp(k),o=per[k];return '<div style="cursor:pointer" onclick="openPC(\''+k+'\')">'+blockEmoji(k)+esc(p.lastName+' '+p.firstName)+' — '+(o.a?o.a+' annulation'+(o.a>1?'s':''):'')+(o.a&&o.n?' · ':'')+(o.n?'<b style="color:#e74c3c">'+o.n+' non honoré'+(o.n>1?'s':'')+'</b>':'')+'</div>'}).join('')+'</div>':'';
+  if(tp)tp.innerHTML=top.length?'<div class="fqlog"><b>Patients les plus concernés</b>'+top.map(function(k){var p=gp(k),o=per[k];return '<div style="cursor:pointer" onclick="openPC(\''+k+'\')">'+blockEmoji(k)+esc(p.lastName+' '+p.firstName)+' — '+(o.a?o.a+' annulation'+(o.a>1?'s':''):'')+(o.a&&o.n?' · ':'')+(o.n?'<b style="color:#e74c3c">'+o.n+' absence'+(o.n>1?'s':'')+' sans prévenir</b>':'')+'</div>'}).join('')+'</div>':'';
 }
 
-/* ─────────── 🙅 rendez-vous non honorés ─────────── */
+/* ─────────── 🙅 absences sans prévenir (v107) ─────────── */
+function getNoShowBlockAfter(){ /* 0 = ne jamais proposer le blocage */
+  var v=D.noShowBlockAfter;if(v===undefined||v===null||v==='')return 2;
+  v=parseInt(v,10);return isNaN(v)||v<0?2:v;
+}
+function setNoShowBlockAfter(v){
+  v=parseInt(v,10);D.noShowBlockAfter=isNaN(v)||v<0?0:Math.min(v,20);sv();
+  toast(D.noShowBlockAfter?'Blocage proposé après '+D.noShowBlockAfter+' absence'+(D.noShowBlockAfter>1?'s':'')+' sans prévenir consécutive'+(D.noShowBlockAfter>1?'s':''):'Blocage jamais proposé');
+}
 function patNoShows(pid,days){
   var lim=_fqAdd(todayKey(),-(days||365));
-  return (D.appointments||[]).filter(function(a){return a&&a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.date>=lim&&(a.noShow||a.patientAbsence)}).sort(function(a,b){return a.date<b.date?-1:1});
+  return (D.appointments||[]).filter(function(a){return a&&a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.date>=lim&&a.noShow}).sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1});
+}
+/* série en cours : derniers RDV passés du patient (non annulés), du plus récent au plus ancien,
+   comptés tant qu'ils sont marqués « 🙅 absence sans prévenir ». Une séance honorée remet à zéro. */
+function patNoShowStreak(pid){
+  var t=todayKey(),d=new Date(),hm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  var L=(D.appointments||[]).filter(function(a){return a&&a.patientId===pid&&!a.cancelled&&a.type!=='absence'&&a.date&&(a.noShow||a.date<t||(a.date===t&&(a.time||'')<=hm))})
+    .sort(function(a,b){return (b.date+(b.time||''))<(a.date+(a.time||''))?-1:1});
+  var r=[];for(var i=0;i<L.length;i++){if(!L[i].noShow)break;r.push(L[i]);}
+  return r;
 }
 function apNoShowToggle(apId){
   try{clCtx();}catch(e){}
   var ap=(D.appointments||[]).find(function(a){return a.id===apId});if(!ap)return;
   var p=ap.patientId?gp(ap.patientId):null;
-  if(ap.noShow){ap.noShow=false;ap.noShowAt='';sv();R();toast('« Non venu » retiré');return;}
+  if(ap.noShow){ap.noShow=false;ap.noShowAt='';sv();R();toast('« Absence sans prévenir » retirée');return;}
   ap.noShow=true;ap.noShowAt=new Date().toISOString();sv();R();
-  if(!p){toast('🙅 Noté : rendez-vous non honoré');return;}
-  var L=patNoShows(p.id);
-  if(L.length>=2&&!p.blocked)noShowAlert(p.id);
-  else toast('🙅 Noté : '+L.length+' rendez-vous non honoré'+(L.length>1?'s':'')+' en 12 mois',3500);
+  if(!p){toast('🙅 Absence sans prévenir notée');return;}
+  var S=patNoShowStreak(p.id),N=getNoShowBlockAfter(),y=patNoShows(p.id).length;
+  if(N>0&&S.length>=N&&!p.blocked)noShowAlert(p.id);
+  else toast('🙅 Absence sans prévenir notée · '+S.length+' consécutive'+(S.length>1?'s':'')+' · '+y+' en 12 mois',3500);
 }
 function noShowAlert(pid){
-  var p=gp(pid);if(!p)return;var L=patNoShows(pid),b=document.getElementById('mMB');
-  document.getElementById('mMT').textContent='🙅 '+L.length+'e rendez-vous non honoré';
-  b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:8px"><b>'+esc(p.lastName+' '+p.firstName)+'</b> n\'a pas honoré '+L.length+' rendez-vous en 12 mois :</div>'+
-    L.map(function(a){return '<div class="secrrule"><span class="t">'+esc(_fqDm(a.date)+'/'+a.date.slice(0,4)+' à '+a.time)+' — '+(a.noShow?'non venu':'absence signalée par le patient')+'</span></div>'}).join('')+
+  var p=gp(pid);if(!p)return;var S=patNoShowStreak(pid),b=document.getElementById('mMB');
+  document.getElementById('mMT').textContent='🙅 '+S.length+' absence'+(S.length>1?'s':'')+' sans prévenir d\'affilée';
+  b.innerHTML='<div style="font-size:13px;line-height:1.5;margin-bottom:8px"><b>'+esc(p.lastName+' '+p.firstName)+'</b> ne s\'est pas présenté(e) sans prévenir à ses '+S.length+' derniers rendez-vous :</div>'+
+    S.slice().reverse().map(function(a){return '<div class="secrrule"><span class="t">🙅 '+esc(_fqDm(a.date)+'/'+a.date.slice(0,4)+' à '+a.time)+'</span></div>'}).join('')+
     '<div style="font-size:12px;color:var(--text2);margin:10px 0">Bloquer ce patient : plus aucun rendez-vous dans l\'appli patient (« Rendez-vous indisponibles ») ni par le secrétaire. Ses RDV déjà pris restent en place.</div>'+
+    '<div style="font-size:11px;color:var(--text3);margin-bottom:10px">Seuil réglable dans ⚙ Paramètres › Suivi des patients (actuellement '+getNoShowBlockAfter()+').</div>'+
     '<div class="br"><button class="btn" onclick="clM(\'mM\')">Plus tard</button><button class="btn bd bw" onclick="clM(\'mM\');togglePatBlock(\''+pid+'\')">⛔ Bloquer le patient</button></div>';
   opM('mM');
 }
 function noShowCardHtml(p){
   var L=patNoShows(p.id);if(!L.length)return '';
-  var nAbs=L.filter(function(a){return !a.noShow}).length;
-  return '<div class="ub" style="color:#c0392b">🙅 RDV non honorés (12 mois) : <b>'+L.length+'</b>'+(nAbs?' <span style="font-size:11px;color:var(--text2)">(dont '+nAbs+' absence'+(nAbs>1?'s':'')+' signalée'+(nAbs>1?'s':'')+')</span>':'')+'</div>';
+  var S=patNoShowStreak(p.id).length;
+  return '<div class="ub" style="color:#c0392b">🙅 Absences sans prévenir (12 mois) : <b>'+L.length+'</b>'+(S?' <span style="font-size:11px;color:var(--text2)">· '+S+' d\'affilée actuellement</span>':'')+'</div>';
+}
+function noShowSettingsHtml(){
+  var N=getNoShowBlockAfter();
+  return '<div class="fg"><label>🙅 Proposer de bloquer un patient après (absences sans prévenir consécutives)</label>'+
+    '<input type="number" id="sNoShowBlock" min="0" max="20" value="'+N+'" onchange="setNoShowBlockAfter(this.value)">'+
+    '<div style="font-size:11px;color:var(--text2);margin-top:3px">Compte les derniers rendez-vous du patient marqués « 🙅 Absence sans prévenir » à la suite ; une séance honorée remet le compteur à zéro. 0 = ne jamais proposer.</div>'+
+  '</div>';
 }
 
 /* Orientation/resize: re-render agenda for optimal display */
