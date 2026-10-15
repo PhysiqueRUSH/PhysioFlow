@@ -628,6 +628,22 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 .famfind{padding:7px 9px;background:var(--bg);border-radius:8px;margin-bottom:4px;font-size:13px;cursor:pointer}
 .famfind.on{background:var(--accentbg);outline:1px solid var(--accent)}
 .famfind span{color:var(--text3);font-size:11px}
+
+/* v110 — label : agenda actuel / agenda futur */
+.lvscope{display:flex;gap:6px;margin-bottom:10px}
+.lvscope button{flex:1;font-size:12px;padding:8px 6px;border-radius:10px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);font-weight:600}
+.lvscope button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.lvfut{font-size:12px;line-height:1.45;background:var(--accentbg);border:1px solid var(--border2);border-radius:10px;padding:8px 10px;margin-bottom:10px}
+.lvfut button{margin-top:6px}
+
+/* v110 — difficulté des horaires */
+.lvcap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:11px;color:var(--text2);padding:2px 0 8px 52px;border-bottom:1px dashed var(--border2);margin-bottom:4px}
+.lvcap input[type=number]{width:54px;padding:4px 6px;font-size:12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);color:var(--text)}
+.lvcap label{display:flex;align-items:center;gap:4px}
+.lvcap input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+.lvcap.on{color:var(--text)}
+.lvcap .lvpl{color:var(--text3)}
+.lvpts{font-size:11px;color:var(--text2);margin-top:6px}
 </style>
 <link rel="icon" href="PhysioFlow.png">
 <link rel="apple-touch-icon" href="PhysioFlow.png">
@@ -636,7 +652,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 109 · Firebase</div></div><button id="btnAsst" class="secrbtn on" onclick="openAsst()" title="✨ Assistant du cabinet">✨</button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 110 · Firebase</div></div><button id="btnAsst" class="secrbtn on" onclick="openAsst()" title="✨ Assistant du cabinet">✨</button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -927,6 +943,7 @@ function fbPush(){
         patientId:a.patientId||'',
         patientName:_pubApName(a,a.patientId?_lpMap[a.patientId]:null), /* v109 : nom de la personne soignée (« Pour qui ? », « Mes RDV ») */
         patientPhone:_pubApPhone(a,a.patientId?_lpMap[a.patientId]:null), /* v109 : téléphone qui a réservé, sinon celui de la fiche */
+        pts:(function(){var p=a.patientId?_lpMap[a.patientId]:null;return p?patLabelPts(p):(+a.pts||0);})(), /* v110 : points de label (difficulté des horaires) */
         source:a.source||'pro',
         bookedAt:a.bookedAt||'',
         allDay:!!a.allDay,
@@ -5293,6 +5310,7 @@ function applyFutureAgenda(force){
   D.motifArchive=arch.filter(function(x){return x&&futIds.indexOf(x.id)<0});
   D.motifs=clone(fa.motifs).filter(Boolean);
   D.motifs.forEach(function(m){if(!m.slots)m.slots=1;_pfNormMotifTimes(m);});
+  if(fa.labelVisOwn){prev.labelVis=clone(D.labelVis||{});prev.labelCap=clone(D.labelCap||{});D.labelVis=clone(fa.labelVis||{});D.labelCap=clone(fa.labelCap||{});} /* v110 : règles par label et maximums de points de l'agenda futur */
   if(fa.daysCustom&&Array.isArray(fa.days)&&fa.days.length)D.days=sortDows([...new Set(fa.days.map(Number))].filter(function(d){return d>=0&&d<=6}));
   if(fa.openingsCustom&&Array.isArray(fa.openings))D.openings=clone(fa.openings);
   /* répartition intelligente : la liste « agenda futur » devient la liste actuelle */
@@ -5548,10 +5566,77 @@ function _labelCounts(){var c={simple:0,standard:0,complexe:0};(D.patients||[]).
 
 /* ─── visibilité des créneaux par label ─── */
 function getLabelVis(){if(!D.labelVis||typeof D.labelVis!=='object'||Array.isArray(D.labelVis))D.labelVis={};return D.labelVis;}
-function _lvAllowed(mid,key){var lv=getLabelVis()[mid];var a=lv&&lv[key];return Array.isArray(a)?a.filter(function(x){return TL_ALL.indexOf(x)>=0}):TL_ALL.slice();}
+/* v110 — règles par label propres à l'agenda futur (D.futureAgenda.labelVis, labelVisOwn) :
+   tant qu'elles ne sont pas modifiées, l'agenda futur reprend les règles actuelles */
+var LVS={scope:'cur'};
+function _lvFut(){return LVS.scope==='fut'&&typeof _faValid==='function'&&_faValid();}
+function _lvFutOwn(){return !!(typeof _faValid==='function'&&_faValid()&&D.futureAgenda.labelVisOwn);}
+function _lvRead(){
+  if(_lvFut()){var fa=D.futureAgenda;return fa.labelVisOwn?((fa.labelVis&&typeof fa.labelVis==='object'&&!Array.isArray(fa.labelVis))?fa.labelVis:{}):getLabelVis();}
+  return getLabelVis();
+}
+function _lvStore(){
+  if(!_lvFut())return getLabelVis();
+  var fa=D.futureAgenda;
+  if(!fa.labelVisOwn){fa.labelVis=JSON.parse(JSON.stringify(getLabelVis()));fa.labelCap=JSON.parse(JSON.stringify(getLabelCap()));fa.labelVisOwn=true;} /* 1re modification : on part des règles et des maximums actuels */
+  if(!fa.labelVis||typeof fa.labelVis!=='object'||Array.isArray(fa.labelVis))fa.labelVis={};
+  return fa.labelVis;
+}
+/* v110 — difficulté des horaires : D.labelCap[motifId]['HH:MM'] = {max:n, fill:bool}
+   (agenda futur : D.futureAgenda.labelCap, avec ses propres règles par label) */
+var TL_PTS={simple:1,standard:2,complexe:3};
+function patLabelPts(p){return TL_PTS[patLabel(p)];}
+function getLabelCap(){if(!D.labelCap||typeof D.labelCap!=='object'||Array.isArray(D.labelCap))D.labelCap={};return D.labelCap;}
+function _lcRead(){
+  if(_lvFut()){var fa=D.futureAgenda;return fa.labelVisOwn?((fa.labelCap&&typeof fa.labelCap==='object'&&!Array.isArray(fa.labelCap))?fa.labelCap:{}):getLabelCap();}
+  return getLabelCap();
+}
+function _lcStore(){
+  if(!_lvFut())return getLabelCap();
+  _lvStore(); /* 1re modification de l'agenda futur : copie des règles ET des maximums actuels */
+  var fa=D.futureAgenda;if(!fa.labelCap||typeof fa.labelCap!=='object'||Array.isArray(fa.labelCap))fa.labelCap={};
+  return fa.labelCap;
+}
+function _lcGet(mid,t){var c=(_lcRead()[mid]||{})[t];return (c&&typeof c==='object'&&+c.max>0)?c:null;}
+function _lcCountOf(C){var n=0;Object.keys(C||{}).forEach(function(mid){Object.keys(C[mid]||{}).forEach(function(k){var c=C[mid][k];if(c&&+c.max>0)n++;});});return n;}
+function labelCapMax(mid,t,el){
+  var v=parseInt(el&&el.value,10),C=_lcStore();
+  if(!(v>0)){if(C[mid]){delete C[mid][t];if(!Object.keys(C[mid]).length)delete C[mid];}}
+  else{if(!C[mid])C[mid]={};var c=C[mid][t]||{};c.max=Math.min(99,v);c.fill=!!c.fill;C[mid][t]=c;}
+  sv();renderSlotVis();
+}
+function labelCapFill(mid,t,el){
+  var C=_lcStore(),c=C[mid]&&C[mid][t];if(!c)return;
+  c.fill=!!(el&&el.checked);sv();renderSlotVis();
+}
+function _lcRowHtml(m,t){
+  var c=_lcGet(m.id,t),ex=(m.slotExceptions||{}),pl=parseInt(ex[t]||m.slots||1,10)||1;
+  return '<div class="lvcap'+(c?' on':'')+'">⚖️ Max <input type="number" min="1" max="99" placeholder="—" value="'+(c?c.max:'')+'" onchange="labelCapMax(\''+m.id+'\',\''+t+'\',this)"> points'+
+    '<label><input type="checkbox"'+(c&&c.fill?' checked':'')+(c?'':' disabled')+' onchange="labelCapFill(\''+m.id+'\',\''+t+'\',this)"> Combler avec des traitements simples</label>'+
+    '<span class="lvpl">'+pl+' place'+(pl>1?'s':'')+'</span></div>';
+}
+/* publication : seulement les heures limitées, heures au format HH:MM */
+function buildLabelCapPublic(src){
+  var out={},C=src||getLabelCap();
+  Object.keys(C).forEach(function(mid){
+    var o={};
+    Object.keys(C[mid]||{}).forEach(function(k){var c=C[mid][k],key=_pfNormT(k);if(!key||!c||!(+c.max>0))return;o[key]={max:Math.min(99,parseInt(c.max,10)),fill:!!c.fill};});
+    if(Object.keys(o).length)out[mid]=o;
+  });
+  return out;
+}
+function _labelVisCountOf(L){var n=0;Object.keys(L||{}).forEach(function(mid){Object.keys(L[mid]||{}).forEach(function(k){if(Array.isArray(L[mid][k])&&L[mid][k].length<3)n++;});});return n;}
+function labelVisScope(sc){LVS.scope=(sc==='fut'&&typeof _faValid==='function'&&_faValid())?'fut':'cur';renderSlotVis();}
+function labelVisFutReset(){
+  if(!_lvFutOwn())return;
+  if(!confirm('L\'agenda futur reprendra les règles par label de l\'agenda actuel. Continuer ?'))return;
+  delete D.futureAgenda.labelVis;delete D.futureAgenda.labelCap;D.futureAgenda.labelVisOwn=false;
+  sv();renderSlotVis();toast('Agenda futur : mêmes règles que l\'agenda actuel');
+}
+function _lvAllowed(mid,key){var lv=_lvRead()[mid];var a=lv&&lv[key];return Array.isArray(a)?a.filter(function(x){return TL_ALL.indexOf(x)>=0}):TL_ALL.slice();}
 function _labelVisCount(){var n=0,L=getLabelVis();Object.keys(L).forEach(function(mid){Object.keys(L[mid]||{}).forEach(function(k){if(Array.isArray(L[mid][k])&&L[mid][k].length<3)n++;});});return n;}
 function labelVisToggle(mid,key,label){
-  var L=getLabelVis(),cur=_lvAllowed(mid,key),i=cur.indexOf(label);
+  var L=_lvStore(),cur=_lvAllowed(mid,key),i=cur.indexOf(label); /* v110 : agenda actuel ou futur */
   if(i>=0)cur.splice(i,1);else cur.push(label);
   cur=TL_ALL.filter(function(x){return cur.indexOf(x)>=0});
   if(!L[mid])L[mid]={};
@@ -5560,48 +5645,67 @@ function labelVisToggle(mid,key,label){
   sv();renderSlotVis();
 }
 function labelVisReset(mid){
-  var L=getLabelVis();if(!L[mid])return;
+  if(!_lvRead()[mid]&&!_lcRead()[mid])return;
+  var L=_lvStore(),C=_lcStore(); /* v110 : règles et maximums de points */
+  delete C[mid];
   delete L[mid];sv();renderSlotVis();toast('Tous les labels voient tous les créneaux de ce motif');
 }
-/* motifs à régler : actuels, puis ceux de l'agenda futur (même id = même motif) */
+/* motifs à régler : ceux de l'agenda choisi (v110 : actuel ou futur) ; un motif qui a encore des règles reste listé */
 function _lvMotifs(){
-  var out=[],seen={};
-  (D.motifs||[]).forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;out.push({m:m,fut:false});}});
-  if(typeof _faValid==='function'&&_faValid())D.futureAgenda.motifs.forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;out.push({m:m,fut:true});}});
+  var out=[],seen={},fut=_lvFut(),src=fut?D.futureAgenda.motifs:(D.motifs||[]);
+  src.forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;out.push({m:m,fut:false});}});
+  Object.keys(_lvRead()).forEach(function(id){if(seen[id])return;var m=gmAny(id);if(m){seen[id]=1;out.push({m:m,fut:false,gone:true});}});
   return out;
 }
 function _lvTimes(mid){
-  var t=[];
-  (D.motifs||[]).forEach(function(m){if(m&&m.id===mid)t=t.concat(m.times||[]);});
-  if(typeof _faValid==='function'&&_faValid())D.futureAgenda.motifs.forEach(function(m){if(m&&m.id===mid)t=t.concat(m.times||[]);});
-  var L=getLabelVis()[mid]||{};Object.keys(L).forEach(function(k){if(k!=='*')t.push(k);}); /* une règle sur une heure retirée reste visible (et supprimable) */
+  var t=[],src=_lvFut()?D.futureAgenda.motifs:(D.motifs||[]);
+  src.forEach(function(m){if(m&&m.id===mid)t=t.concat(m.times||[]);});
+  var L=_lvRead()[mid]||{};Object.keys(L).forEach(function(k){if(k!=='*')t.push(k);}); /* une règle sur une heure retirée reste visible (et supprimable) */
   return _pfNormTimes(t);
 }
 function labelVisSummary(){
-  var n=_labelVisCount();
-  if(!n)return 'Par label de traitement : aucune restriction (tous les labels voient tous les créneaux).';
+  var n=_labelVisCount(),fut='',nc=_lcCountOf(getLabelCap()),cs=nc?' '+nc+' horaire'+(nc>1?'s':'')+' avec un maximum de points.':'';
+  if(_lvFutOwn()){var nf=_labelVisCountOf(D.futureAgenda.labelVis),nfc=_lcCountOf(D.futureAgenda.labelCap);fut=' Agenda futur (dès le '+dKeyToFr(D.futureAgenda.date)+') : '+(nf?nf+' horaire'+(nf>1?'s':'')+' restreint'+(nf>1?'s':''):'aucune restriction')+(nfc?', '+nfc+' maximum'+(nfc>1?'s':'')+' de points':'')+'.';} /* v110 */
+  if(!n)return 'Par label de traitement : aucune restriction (tous les labels voient tous les créneaux).'+cs+fut;
   var M=Object.keys(getLabelVis()).length;
-  return 'Par label de traitement : '+n+' horaire'+(n>1?'s':'')+' restreint'+(n>1?'s':'')+' sur '+M+' motif'+(M>1?'s':'')+'.';
+  return 'Par label de traitement : '+n+' horaire'+(n>1?'s':'')+' restreint'+(n>1?'s':'')+' sur '+M+' motif'+(M>1?'s':'')+'.'+cs+fut;
 }
-function openLabelVis(){openSlotVis();SVIS.tab='label';renderSlotVis();}
+function openLabelVis(){openSlotVis();SVIS.tab='label';if(!(typeof _faValid==='function'&&_faValid()))LVS.scope='cur';renderSlotVis();}
 function _renderLabelVisTab(){
   var c=_labelCounts();
   var h='<div class="lvintro">Par défaut, <b>tous les labels voient tous les créneaux</b>. Touchez un label pour lui retirer (ou lui rendre) une heure type : '+
     'pour ces patients, le créneau apparaît « complet » dans l\'appli patient. Le label se choisit sur la fiche du patient.'+
-    '<div class="lvcnt">'+TL_ALL.map(function(l){return '<span class="tlb '+TL_INFO[l].cls+'">'+TL_INFO[l].ic+' '+TL_INFO[l].lb+' : '+c[l]+'</span>'}).join(' ')+'</div></div>';
+    '<div class="lvpts"><b>⚖️ Gestion de la difficulté des horaires</b> : chaque patient compte 🟢 1 point (simple), 🔵 2 points (standard) ou 🟠 3 points (complexe). '+
+    'Pour une heure typique, « Max » limite le total des points des patients de ce motif ce jour-là (vide = sans limite) ; un horaire trop chargé apparaît « complet ». '+
+    '« Combler avec des traitements simples » : des patients simples peuvent encore prendre les places restantes au-delà du maximum.</div>'+
+    '<div class="lvcnt">'+TL_ALL.map(function(l){return '<span class="tlb '+TL_INFO[l].cls+'">'+TL_INFO[l].ic+' '+TL_INFO[l].lb+' · '+TL_PTS[l]+' pt'+(TL_PTS[l]>1?'s':'')+' : '+c[l]+'</span>'}).join(' ')+'</div></div>';
+  /* v110 — agenda actuel / agenda futur */
+  if(typeof _faValid==='function'&&_faValid()){
+    var fd=dKeyToFr(D.futureAgenda.date),fut=_lvFut();
+    h+='<div class="lvscope"><button class="'+(fut?'':'on')+'" onclick="labelVisScope(\'cur\')">📅 Agenda actuel</button>'+
+      '<button class="'+(fut?'on':'')+'" onclick="labelVisScope(\'fut\')">🔮 Agenda futur (dès le '+fd+')</button></div>';
+    if(fut){
+      h+='<div class="lvfut">'+(_lvFutOwn()
+        ?'Règles propres à l\'agenda futur : elles s\'appliquent aux RDV à partir du <b>'+fd+'</b>, dès que les patients peuvent réserver ces dates. Elles remplaceront les règles actuelles le jour du changement.<br><button class="btn bs" style="font-size:11px;padding:4px 8px" onclick="labelVisFutReset()">↩️ Reprendre les règles de l\'agenda actuel</button>'
+        :'Pour l\'instant, l\'agenda futur reprend les règles de l\'agenda actuel. Modifiez ici : vos choix ne concerneront que les RDV à partir du <b>'+fd+'</b>.')+'</div>';
+    }else{
+      h+='<div class="lvfut">Règles de l\'agenda actuel : jusqu\'au '+fd+(_lvFutOwn()?' (l\'agenda futur a ses propres règles).':' — et après aussi, tant que l\'agenda futur n\'a pas ses propres règles.')+'</div>';
+    }
+  }
   var list=_lvMotifs();
   if(!list.length)return h+'<div class="fqempty">Aucun motif.</div>';
   list.forEach(function(x){
-    var m=x.m,times=_lvTimes(m.id),L=getLabelVis()[m.id]||{},nR=Object.keys(L).length;
+    var m=x.m,times=_lvTimes(m.id),L=_lvRead()[m.id]||{},nR=Object.keys(L).length+Object.keys(_lcRead()[m.id]||{}).length; /* v110 */
     h+='<div class="lvm"><div class="lvmh"><span class="md" style="background:'+((CL[(m.ci||0)%6]||{}).bd||'var(--border)')+'"></span><b>'+esc(m.label)+'</b>'+
-      (x.fut?'<span class="lvtag">agenda futur</span>':'')+(m.hiddenForPatient?'<span class="lvtag">masqué aux patients</span>':'')+
+      (x.fut?'<span class="lvtag">agenda futur</span>':'')+(x.gone?'<span class="lvtag">plus proposé</span>':'')+(m.hiddenForPatient?'<span class="lvtag">masqué aux patients</span>':'')+
       (nR?'<button class="secrlink" onclick="labelVisReset(\''+m.id+'\')">Tout autoriser</button>':'')+'</div>';
     var rows=times.map(function(t){return [t,t]});rows.push(['*','Autres horaires']);
     rows.forEach(function(r){
       var al=_lvAllowed(m.id,r[0]);
       h+='<div class="lvr'+(al.length<3?' lim':'')+'"><span class="lvt"'+(r[0]==='*'?' title="Ouvertures exceptionnelles, places supplémentaires"':'')+'>'+esc(r[1])+'</span><span class="lvchips">'+
         TL_ALL.map(function(l){var on=al.indexOf(l)>=0;return '<button class="'+(on?'on '+TL_INFO[l].cls:'')+'" onclick="labelVisToggle(\''+m.id+'\',\''+r[0]+'\',\''+l+'\')" title="'+(on?'Visible':'Masqué')+' pour les patients au traitement '+TL_INFO[l].lb.toLowerCase()+'">'+TL_INFO[l].ic+' '+TL_INFO[l].lb+'</button>';}).join('')+
-        '</span>'+(!al.length?'<span class="lvwarn">masqué pour tous</span>':'')+'</div>';
+        '</span>'+(!al.length?'<span class="lvwarn">masqué pour tous</span>':'')+'</div>'+
+        (r[0]==='*'?'':_lcRowHtml(m,r[0])); /* v110 : difficulté de l'horaire */
     });
     if(!times.length)h+='<div class="lvnote">Aucune heure type : seules les ouvertures exceptionnelles de ce motif sont proposées.</div>';
     h+='</div>';
@@ -5609,8 +5713,8 @@ function _renderLabelVisTab(){
   return h;
 }
 /* publication : seulement les restrictions, heures au format HH:MM */
-function buildLabelVisPublic(){
-  var out={},L=getLabelVis();
+function buildLabelVisPublic(src){
+  var out={},L=src||getLabelVis(); /* v110 : aussi pour l'agenda futur */
   Object.keys(L).forEach(function(mid){
     var o={};
     Object.keys(L[mid]||{}).forEach(function(k){
@@ -5647,7 +5751,9 @@ function _pubFutureAgenda(){
   if(!_faValid())return null;
   _faNormalize();
   var fa=D.futureAgenda,days=(fa.daysCustom&&fa.days&&fa.days.length)?fa.days:(D.days||[]),ops=fa.openingsCustom?fa.openings:(D.openings||[]);
-  return {date:fa.date,motifs:fa.motifs.filter(Boolean).map(_pubMotif),days:days.map(Number),openings:_pubOpenings(ops)};
+  var o={date:fa.date,motifs:fa.motifs.filter(Boolean).map(_pubMotif),days:days.map(Number),openings:_pubOpenings(ops)};
+  if(fa.labelVisOwn){o.labelVisOwn=true;o.labelVis=buildLabelVisPublic(fa.labelVis||{});o.labelCap=buildLabelCapPublic(fa.labelCap||{});} /* v110 : règles par label et maximums de points de l'agenda futur */
+  return o;
 }
 function buildBreakRulesPublic(){
   return getBreaks().filter(function(b){return b&&b.from&&b.to&&t2m(b.to)>t2m(b.from)}).map(function(b){
@@ -5712,9 +5818,10 @@ function buildPublicConfig(){
     announcements:buildAnnouncementsPublic(),/* v87 */
     openHolidays:D.openHolidays||{},
     labelVis:buildLabelVisPublic(),          /* v108 */
+    labelCap:buildLabelCapPublic(),          /* v110 : difficulté des horaires (maximum de points de label) */
     motifArchive:_motifArchive().filter(Boolean).map(function(m){return {id:m.id,label:m.label||'',duration:parseInt(m.duration,10)||30}}),
     knownPatients:_pubKnownPatients(),
-    proVersion:109
+    proVersion:110
   };
 }
 
@@ -5795,6 +5902,8 @@ function _pfNormDataTimes(){
     });
   }
   if(D.labelVis&&typeof D.labelVis==='object')Object.keys(D.labelVis).forEach(function(mid){n+=_pfNormTimeKeys(D.labelVis[mid]);});
+  if(D.futureAgenda&&D.futureAgenda.labelVis&&typeof D.futureAgenda.labelVis==='object')Object.keys(D.futureAgenda.labelVis).forEach(function(mid){n+=_pfNormTimeKeys(D.futureAgenda.labelVis[mid]);}); /* v110 */
+  [D.labelCap,D.futureAgenda&&D.futureAgenda.labelCap].forEach(function(C){if(C&&typeof C==='object')Object.keys(C).forEach(function(mid){if(C[mid]&&typeof C[mid]==='object')n+=_pfNormTimeKeys(C[mid]);});}); /* v110 */
   return n;
 }
 /* après tout chargement de données venues d'ailleurs (autre appareil, Firebase, sauvegarde) :
@@ -7060,7 +7169,7 @@ function renderSlotVis(){
   var tabs='<div style="display:flex;gap:6px;margin-bottom:12px">'+
     '<button class="btn '+(SVIS.tab==='rec'?'bp':'bs')+'" style="flex:1;font-size:11px" onclick="SVIS.tab=\'rec\';renderSlotVis()">🔁 Récurrentes'+(nRec?' ('+nRec+')':'')+'</button>'+
     '<button class="btn '+(SVIS.tab==='once'?'bp':'bs')+'" style="flex:1;font-size:11px" onclick="SVIS.tab=\'once\';renderSlotVis()">📅 Ponctuelles'+(nOnce?' ('+nOnce+')':'')+'</button>'+
-    '<button class="btn '+(SVIS.tab==='label'?'bp':'bs')+'" style="flex:1;font-size:11px" onclick="SVIS.tab=\'label\';renderSlotVis()">🏷️ Par label'+(_labelVisCount()?' ('+_labelVisCount()+')':'')+'</button>'+ /* v108 */
+    '<button class="btn '+(SVIS.tab==='label'?'bp':'bs')+'" style="flex:1;font-size:11px" onclick="SVIS.tab=\'label\';renderSlotVis()">🏷️ Par label'+((_labelVisCount()+_lcCountOf(getLabelCap()))?' ('+(_labelVisCount()+_lcCountOf(getLabelCap()))+')':'')+'</button>'+ /* v108 */
   '</div>';
   b.innerHTML=(SVIS.tab==='label'?'':intro)+tabs+(SVIS.tab==='label'?_renderLabelVisTab():(SVIS.tab==='rec'?_renderSlotVisRecList():_renderSlotVisOnceList()))+
     '<div class="br" style="margin-top:16px"><button class="btn bs" onclick="clM(\'mSVIS\')">Fermer</button></div>';
@@ -11288,7 +11397,7 @@ function _asstEngCfg(){
 }
 function _asstEngApts(){
   var pats={};(D.patients||[]).forEach(function(p){pats[p.id]=p});
-  return (D.appointments||[]).filter(function(a){return a&&a.type!=='bilan'}).map(function(a){var p=a.patientId?pats[a.patientId]:null;return Object.assign({},a,{patientPhone:_pubApPhone(a,p)||a.patientPhone||'',patientName:p?_aPName(p):(a.patientName||'')});}); /* v109 */
+  return (D.appointments||[]).filter(function(a){return a&&a.type!=='bilan'}).map(function(a){var p=a.patientId?pats[a.patientId]:null;return Object.assign({},a,{patientPhone:_pubApPhone(a,p)||a.patientPhone||'',patientName:p?_aPName(p):(a.patientName||''),pts:p?patLabelPts(p):(+a.pts||0)});}); /* v109 · v110 */
 }
 function _asstEng(p){
   var who=p?{phone:p.phone||'',lastName:p.lastName||'',firstName:p.firstName||'',extraPhones:p.extraPhones||[],patientId:p.id}:{phone:''};
@@ -11318,7 +11427,7 @@ function _aSlotCheck(o){
         var s=eng.slotsFor(k,m2,{rescheduleApId:o.excludeApId||null}).find(function(x){return x.time===t});
         var typical=(o.motif.times||[]).filter(Boolean);
         if(!s&&typical.length)w.push('horaire hors des heures habituelles de « '+o.motif.label+' »');
-        else if(s&&!s.free)w.push('créneau non proposé aux patients (absence, pause, créneau masqué à ce patient ou délai de réservation)'); /* v109 */
+        else if(s&&!s.free)w.push('créneau non proposé aux patients (absence, pause, créneau masqué à ce patient, horaire trop chargé en points de label ou délai de réservation)'); /* v109 */
       }catch(e){console.warn('[assistant] créneau',e);}
     }
   }
@@ -11940,7 +12049,7 @@ function _asstSystem(){
   L.push('- horaires, jours travaillés, motifs (durées, places, heures) : bouton ⚙ Paramètres, rubriques « Mon agenda » et « Motifs de consultation » ;');
   L.push('- rappels carte Vitale automatiques (envoyés par le serveur dans l\'appli patient, même appli fermée), NGAP (référentiel intégré, actes, cotations des patients) et bilan : ⚙ Paramètres, rubrique « Facturation » ; envoi immédiat : bouton 💵 en haut de l\'écran ;');
   L.push('- rappels de RDV aux patients (notification dans l\'appli patient, la veille et/ou le jour même) : ⚙ Paramètres, rubrique « Rappels de RDV aux patients » ;');
-  L.push('- créneaux visibles selon le label de traitement : ⚙ Paramètres, rubrique « Visibilité des créneaux » › « Créneaux visibles par label » ; changement d\'agenda futur : ⚙ Paramètres, rubrique « Motifs de consultation » ; projection du chiffre d\'affaires : 📊 Statistiques ;');
+  L.push('- créneaux visibles selon le label de traitement (agenda actuel, ou agenda futur s\'il est programmé) : ⚙ Paramètres, rubrique « Visibilité des créneaux » › « Créneaux visibles par label » ; changement d\'agenda futur : ⚙ Paramètres, rubrique « Motifs de consultation » ; projection du chiffre d\'affaires : 📊 Statistiques ;');
   L.push('- bloquer / débloquer un patient (plus de rendez-vous dans l\'appli patient) : menu du patient (agenda, liste) ou sa fiche ; « 🙅 Absence sans prévenir » : menu du rendez-vous passé (blocage proposé après le nombre d\'absences consécutives réglé dans ⚙ Paramètres › Suivi des patients) ; seuils de fréquentation et déclencheurs : ⚙ Paramètres, rubrique « Seuils de fréquentation » (courbe : 📊 Statistiques) ;');
   L.push('- tarifs par défaut et bilan : ⚙ Paramètres, rubrique « Facturation » ; réservation en ligne : ⚙ Paramètres, rubrique « Réservation patient en ligne » ;');
   L.push('- congés : bouton 🏖️ en haut de l\'écran ; fermer une plage horaire : bouton ☕ en haut de l\'écran ;');
@@ -12607,7 +12716,7 @@ var PFENG=(function(){
   (function(module){
 /* ═══════════════════════════════════════════════════════════════════
    FICHIER GÉNÉRÉ — ne pas modifier à la main (tools/gen_engine.py).
-   Copie exacte des règles de créneaux de l'appli patient v74, pour que
+   Copie exacte des règles de créneaux de l'appli patient v75, pour que
    l'assistant propose EXACTEMENT les mêmes créneaux que l'appli patient.
    ═══════════════════════════════════════════════════════════════════ */
 module.exports = function makePatientRules(CFG, APTS, who, opts) {
@@ -12721,7 +12830,9 @@ function _pfMyLabel(){
   return l==='s'?'simple':(l==='c'?'complexe':'standard');
 }
 function _pfLabelAllows(motifId,time,dateKey){
-  var lv=CFG&&CFG.labelVis&&CFG.labelVis[motifId];
+  /* v75 — dates de l'agenda futur : ses propres règles par label, si le kiné en a défini */
+  var _fa=_pfFA(),_src=(_fa&&dateKey&&dateKey>=_fa.date&&_fa.labelVisOwn)?(_fa.labelVis||{}):(CFG&&CFG.labelVis);
+  var lv=_src&&_src[motifId];
   if(!lv||typeof lv!=='object')return true;
   var allowed;
   if(Object.prototype.hasOwnProperty.call(lv,time))allowed=lv[time];
@@ -12958,7 +13069,7 @@ function checkDateHasSlots(dateKey){
     if(_fx73?(_sl73.getTime()<=Date.now()):(_sl73<_minT73||_dayOut73))continue;
     /* v64 — même restriction pour le grisage du calendrier */
     if(window._reschedExtraOnly&&window._rescheduleOldApId&&!_isX)continue;
-    if(bookingsAtSlot<thisMax&&!generalOverlap&&slotVisibleToMe(dateKey,t,motif.id)
+    if(bookingsAtSlot<thisMax&&!generalOverlap&&slotVisibleToMe(dateKey,t,motif.id)&&_pfPtsOk(dateKey,t,motif,dayApts) /* v75 */
        &&(isExoSlot(dateKey,t,motif.id)||!slotBlockedByBreak(dateKey,t,motif,dayApts)))freeCount++;
   }
   return freeCount>0;
@@ -13261,6 +13372,21 @@ function _pfBlockedFor(name){
   }
   return nm.length>4&&kp.some(function(k){return k.b&&(!k.ph||String(k.ph).length<8)&&_pfNm(k.name)===nm});
 }
+function _pfLabelPts(l){return l==='simple'?1:(l==='complexe'?3:2);}
+function _pfApPts(a){var p=a?+a.pts:0;return (p>=1&&p<=3)?p:2;}
+function _pfCapFor(motifId,time,dateKey){
+  var fa=_pfFA(),src=(fa&&dateKey&&dateKey>=fa.date&&fa.labelVisOwn)?(fa.labelCap||{}):(CFG&&CFG.labelCap);
+  var c=src&&src[motifId]&&src[motifId][time];
+  return (c&&typeof c==='object'&&+c.max>0)?c:null;
+}
+function _pfPtsOk(dateKey,t,motif,dayApts,pts){
+  var c=motif&&_pfCapFor(motif.id,t,dateKey);if(!c)return true;
+  if((motif.times||[]).map(_pfT).indexOf(t)<0)return true;
+  var used=0;(dayApts||[]).forEach(function(a){if(_pfOcc(a)&&a.type!=='absence'&&a.motifId===motif.id&&_pfT(a.time)===t)used+=_pfApPts(a);});
+  var me=pts||_pfLabelPts(_pfMyLabel());
+  if(used+me<=+c.max)return true;
+  return !!(c.fill&&me===1);
+}
   /* Identité du patient : son numéro (au lieu du champ de saisie de l'appli) */
   function getMyNormPhone() { return _normPhoneMatch(who.phone || ''); }
   function getMyNormName() { return ((who.lastName || '') + ' ' + (who.firstName || '')).trim().toLowerCase(); }
@@ -13279,10 +13405,10 @@ function _pfBlockedFor(name){
     reschedEmptiesSlot: _reschedEmptiesSlot, hasOpenExtraSlotFor: _hasOpenExtraSlotFor,
     patientIsKnown: _pfPatientIsKnown, motifForMe: _pfMotifForMe, findPatientsForPhone: findPatientsForPhone,
     motifById: _pfMotifById, motifAt: _pfMotifAt, daysAt: _pfDaysAt, motifChoices: _pfMotifChoices, myLabel: _pfMyLabel, labelAllows: _pfLabelAllows,
-    occ: _pfOcc, seance: _pfSeance, eligibility: _pfEligibility, apName: _pfApName, blockedFor: _pfBlockedFor
+    occ: _pfOcc, seance: _pfSeance, eligibility: _pfEligibility, apName: _pfApName, blockedFor: _pfBlockedFor, ptsOk: _pfPtsOk
   };
 };
-module.exports.PATIENT_APP_VERSION = 74;
+module.exports.PATIENT_APP_VERSION = 75;
 
   })(module);
   var _mpr=module.exports,module2={exports:{}};
@@ -13472,7 +13598,7 @@ function createEngine(CFG, APTS, who, o) {
       const restrictedOut = !!(ctx.extraOnly && ctx.rescheduleApId && !isExtra);
       const forced = !isExtra && r.isForcedExo(dateKey, t, motif.id); /* v105 : ouverture forcée */
       if (forced) overlap = r.forcedAbsOverlap(dateKey, t, motif, dayApts);
-      const taken = booked >= thisMax || overlap || hidden || brk || restrictedOut;
+      const taken = booked >= thisMax || overlap || hidden || brk || restrictedOut || !r.ptsOk(dateKey, t, motif, dayApts); /* v110 : difficulté de l'horaire */
       const slotDate = new Date(selDate); slotDate.setHours(Math.floor(tm / 60), tm % 60, 0, 0);
       const tooSoon = forced ? slotDate.getTime() <= nowFn().getTime() : (slotDate < minTime || dayOut);
       return { time: t, free: !(taken || tooSoon), remaining: Math.max(0, thisMax - booked), max: thisMax, extra: isExtra };
@@ -13972,7 +14098,7 @@ function remBuildPlan(){
       });
     });
   }
-  return {v:109,at:Date.now(),pro:D.proName||'',rdv:R,cv:C,motifs:mot,items:items,cvItems:cv};
+  return {v:110,at:Date.now(),pro:D.proName||'',rdv:R,cv:C,motifs:mot,items:items,cvItems:cv};
 }
 var _remLast='';
 function remPublish(){
