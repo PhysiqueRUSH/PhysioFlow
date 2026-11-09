@@ -652,7 +652,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div id="app">
   <button class="ib" onclick="showCloseDialog()" title="Fermer" style="position:fixed;top:8px;right:8px;z-index:150;font-size:18px;width:34px;height:34px;background:#fce0e8;color:#e74c3c">✕</button>
   <div class="hdr">
-    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 110 · Firebase</div></div><button id="btnAsst" class="secrbtn on" onclick="openAsst()" title="✨ Assistant du cabinet">✨</button>
+    <div class="logoWrap" onclick="openDashboard()" style="cursor:pointer" title="Tableau de bord"><div class="logo"><b>Physio</b>Flow</div><div class="ver">version 111 · Firebase</div></div><button id="btnAsst" class="secrbtn on" onclick="openAsst()" title="✨ Assistant du cabinet">✨</button>
     <div class="hdr-c"><button class="nb" onclick="navW(-1)">‹</button><span id="hd" onclick="openCalModal()" title="Ouvrir le calendrier" style="cursor:pointer"></span><button id="btnClean" class="cleanpill" onclick="cleanPatientCancels()" title="Supprimer les séances annulées par les patients ce jour"></button><button class="nb" onclick="navW(1)">›</button></div>
   </div>
   <div class="ha toolbar">
@@ -703,6 +703,7 @@ input,select,textarea{font-family:inherit;color:var(--text);font-size:14px}
 <div class="mo" id="mSVIS"><div class="mop"><div class="moh"></div><h2>👁️ Visibilité des créneaux</h2><div id="mSVISB"></div></div></div>
 <div class="mo" id="mNOT"><div class="mop"><div class="moh"></div><h2>🗒 Notes & Documents</h2><div id="mNOTB"></div></div></div>
 <div class="mo" id="mQH"><div class="mop"><div class="moh"></div><h2 id="mQHT">🙈 Masquer des créneaux</h2><div id="mQHB"></div></div></div>
+<div class="mo" id="mVUE"><div class="mop"><div class="moh"></div><h2 id="mVUET">👁️ Ce que voit le patient</h2><div id="mVUEB"></div></div></div>
 <div class="mo" id="mSIG"><div class="mop"><div class="moh"></div><h2 id="mSIGT">📢 Signaler au patient</h2><div id="mSIGB"></div></div></div>
 <div class="mo" id="mBRK"><div class="mop"><div class="moh"></div><h2 id="mBRKT">☕ Break</h2><div id="mBRKB"></div></div></div>
 <div class="mo" id="mXS"><div class="mop"><div class="moh"></div><h2>➕ Place supplémentaire automatique</h2><div id="mXSB"></div></div></div>
@@ -4234,6 +4235,7 @@ function openPC(pid){
     '<button onclick="togglePatBlock(\''+pid+'\',\'card\')">'+(p.blocked?'✅ Débloquer':'⛔ Bloquer')+'</button></div>'+ /* v103 */
     famCardHtml(p)+ /* v109 : même téléphone, déplacer des RDV */
     '<button class="btn bs bw" style="margin-bottom:8px;font-size:12px" onclick="openQuickHide(\''+pid+'\')">🙈 Masquer des créneaux à ce patient</button>'+
+    '<button class="btn bs bw" style="margin-bottom:8px;font-size:12px" onclick="openVuePatient(\''+pid+'\')">👁️ Ce que voit ce patient dans l\'appli</button>'+ /* v111 */
     '<div class="pcks"><label><input type="checkbox" '+(p.needOrdo?'checked':'')+' onchange="togFlag(\''+pid+'\',\'needOrdo\',this.checked)"> ❗ Ordonnance</label>'+
     '<label><input type="checkbox" '+(p.needMut?'checked':'')+' onchange="togMutFlag(\''+pid+'\',this.checked)"> ‼️ Mutuelle</label>'+
     '<label><input type="checkbox" '+(p.needSecu?'checked':'')+' onchange="togFlag(\''+pid+'\',\'needSecu\',this.checked)"> ‼️ Sécu</label></div>'+
@@ -12716,7 +12718,7 @@ var PFENG=(function(){
   (function(module){
 /* ═══════════════════════════════════════════════════════════════════
    FICHIER GÉNÉRÉ — ne pas modifier à la main (tools/gen_engine.py).
-   Copie exacte des règles de créneaux de l'appli patient v75, pour que
+   Copie exacte des règles de créneaux de l'appli patient v76, pour que
    l'assistant propose EXACTEMENT les mêmes créneaux que l'appli patient.
    ═══════════════════════════════════════════════════════════════════ */
 module.exports = function makePatientRules(CFG, APTS, who, opts) {
@@ -13289,15 +13291,34 @@ function _pfPatientIsKnown(){
   var nums=_pfMyNums();
   if(!nums.length)return false;
   var kp=(CFG&&CFG.knownPatients)||[];
+  /* v76 — « c'est la même personne » : noms identiques, contenus l'un dans l'autre,
+     ou composés des mêmes mots dans un autre ordre (NOM Prénom / Prénom NOM).
+     Sans cela, une patiente déjà suivie était traitée en « nouvelle patiente »
+     dès que son nom était saisi dans l'autre sens. */
+  var eq=function(x,y){
+    x=_pfNm(x);y=_pfNm(y);
+    if(!x||!y)return false;
+    if(x===y||x.indexOf(y)>=0||y.indexOf(x)>=0)return true;
+    var A=x.split(' ').filter(Boolean),B=y.split(' ').filter(Boolean);
+    if(!A.length||!B.length)return false;
+    var S=A.length<=B.length?A:B,L=A.length<=B.length?B:A;
+    return S.every(function(w){return L.indexOf(w)>=0;});
+  };
   /* v74 — une personne choisie (« Pour qui ? ») : connue si une fiche du cabinet porte son nom
      (avec ce numéro, ou sans numéro) ou si elle a déjà eu un RDV avec ce numéro */
   var sel=(typeof SEL_PATIENT!=='undefined'&&SEL_PATIENT&&(SEL_PATIENT.lastName||SEL_PATIENT.firstName))?_pfNm((SEL_PATIENT.lastName||'')+' '+(SEL_PATIENT.firstName||'')):'';
   if(sel){
-    var same=function(x){x=_pfNm(x);return !!(x&&(x===sel||x.indexOf(sel)>=0||sel.indexOf(x)>=0));};
+    var same=function(x){return eq(x,sel);};
     if(kp.some(function(k){return k&&k.name&&same(k.name)&&(!k.ph||String(k.ph).length<8||nums.indexOf(k.ph)>=0)}))return true;
     return (APTS||[]).some(function(a){if(!_pfSeance(a)||!a.patientPhone)return false;var n=_normPhoneMatch(a.patientPhone);return n.length>=8&&nums.indexOf(n)>=0&&same(a.patientName||((a.patientLastName||'')+' '+(a.patientFirstName||'')));});
   }
   if(kp.some(function(k){return k&&k.ph&&nums.indexOf(k.ph)>=0}))return true;
+  /* v76 — fiche sans téléphone enregistré (ou numéro différent de celui saisi) :
+     on reconnaît la personne par le nom mémorisé sur cet appareil lors d'une
+     réservation précédente. Nom ET prénom exigés, pour ne jamais confondre
+     deux personnes sur un simple prénom. */
+  var myNm=(typeof getMyNormName==='function')?_pfNm(getMyNormName()):'';
+  if(myNm&&myNm.split(' ').filter(Boolean).length>=2&&kp.some(function(k){return k&&k.name&&eq(k.name,myNm)}))return true;
   return (APTS||[]).some(function(a){if(!a||a.cancelled||!a.patientPhone)return false;var n=_normPhoneMatch(a.patientPhone);return n.length>=8&&nums.indexOf(n)>=0;});
 }
 function findPatientsForPhone(phone){
@@ -13408,7 +13429,7 @@ function _pfPtsOk(dateKey,t,motif,dayApts,pts){
     occ: _pfOcc, seance: _pfSeance, eligibility: _pfEligibility, apName: _pfApName, blockedFor: _pfBlockedFor, ptsOk: _pfPtsOk
   };
 };
-module.exports.PATIENT_APP_VERSION = 75;
+module.exports.PATIENT_APP_VERSION = 76;
 
   })(module);
   var _mpr=module.exports,module2={exports:{}};
@@ -13710,6 +13731,167 @@ module.exports = { createEngine, normPhone, displayPhone, dateLabel };
 })();
 /* v96/v97 — même objet que la configuration publiée par fbPush (lecture seule) */
 function _asstPublicCfg(){return buildPublicConfig();} /* v108 */
+
+/* ═══════════════════════════════════════════════════════════════════
+   v111 — « CE QUE VOIT LE PATIENT »
+   Répond à la question : pourquoi ce patient ne voit-il rien (ou pas ce
+   que j'attends) dans l'appli de réservation ?
+   Le verdict n'est pas recalculé ici : il est demandé au moteur PFENG,
+   qui est la copie exacte des règles de l'appli patient. Ce que cet
+   écran affiche est donc, par construction, ce que le patient voit.
+   Lecture seule : aucune donnée n'est modifiée.
+   ═══════════════════════════════════════════════════════════════════ */
+var VUE={pid:'',phone:'',lastName:'',firstName:''};
+
+function openVuePatient(pid){
+  var p=pid?gp(pid):null;
+  VUE={pid:pid||'',
+       phone:p?((_famNums(p)[0]||p.phone||'')):'',
+       lastName:p?(p.lastName||''):'',
+       firstName:p?(p.firstName||''):''};
+  renderVuePatient();
+  opM('mVUE');
+}
+
+/* Construit le moteur patient pour la personne examinée */
+function _vueEngine(){
+  var who={phone:VUE.phone||'',lastName:VUE.lastName||'',firstName:VUE.firstName||'',extraPhones:[]};
+  var p=VUE.pid?gp(VUE.pid):null;
+  if(p){var L=_famNums(p);if(L.length>1)who.extraPhones=L.slice(1);}
+  var cfg=buildPublicConfig();
+  var apts=(D.appointments||[]).map(function(a){
+    var pp=a.patientId?gp(a.patientId):null;
+    return {id:a.id,date:a.date,time:a.time,duration:a.duration,motifId:a.motifId||'',
+            cancelled:!!a.cancelled,type:a.type||'rdv',patientId:a.patientId||'',
+            patientName:_pubApName(a,pp),patientPhone:_pubApPhone(a,pp),
+            pts:pp?patLabelPts(pp):(+a.pts||0),source:a.source||'pro',
+            allDay:!!a.allDay,isHoliday:!!a.isHoliday};
+  });
+  return PFENG.createEngine(cfg,apts,who,{});
+}
+
+/* Raison précise pour laquelle un motif n'est pas proposé */
+function _vueWhyHidden(m,known,eng){
+  if(!m)return 'Motif introuvable.';
+  if(m.hiddenForPatient)return 'Masqué dans l\'appli patient (réglage du motif).';
+  var a=m.audience;
+  if(a==='known'&&!known)return 'Réservé aux patients déjà venus — ce patient est vu comme NOUVEAU.';
+  if(a==='new'&&known)return 'Réservé aux nouveaux patients — ce patient est vu comme DÉJÀ VENU.';
+  return '';
+}
+
+function renderVuePatient(){
+  var b=document.getElementById('mVUEB');
+  var p=VUE.pid?gp(VUE.pid):null;
+  document.getElementById('mVUET').textContent='👁️ Ce que voit '+(p?(p.lastName+' '+p.firstName):'ce patient');
+
+  /* Saisie : on peut tester n'importe quel numéro, même sans fiche */
+  var form='<div class="fr">'+
+      '<div class="fg"><label>Téléphone saisi par le patient</label>'+
+        '<input type="tel" id="vuePh" value="'+esc(VUE.phone||'')+'" placeholder="06…" onchange="VUE.phone=this.value;renderVuePatient()"></div>'+
+    '</div>'+
+    '<div class="fr">'+
+      '<div class="fg"><label>Nom</label><input type="text" id="vueLn" value="'+esc(VUE.lastName||'')+'" onchange="VUE.lastName=this.value;renderVuePatient()"></div>'+
+      '<div class="fg"><label>Prénom</label><input type="text" id="vueFn" value="'+esc(VUE.firstName||'')+'" onchange="VUE.firstName=this.value;renderVuePatient()"></div>'+
+    '</div>';
+
+  if(!_proNormPhone(VUE.phone||'')||_proNormPhone(VUE.phone||'').length<8){
+    b.innerHTML=form+'<div style="padding:12px;background:var(--bg);border-radius:10px;font-size:12px;color:var(--text2)">Indiquez un numéro de téléphone mobile pour lancer le diagnostic.</div>'+
+      '<div class="br"><button class="btn bs" onclick="clM(\'mVUE\')">Fermer</button></div>';
+    return;
+  }
+
+  var eng,known,elig;
+  try{
+    eng=_vueEngine();
+    known=eng.isKnown();
+    elig=eng.eligibility();
+  }catch(e){
+    b.innerHTML=form+'<div style="padding:12px;background:#fdf0ee;border:1px solid #f5c6c0;border-radius:10px;font-size:12px;color:#c0392b">Diagnostic indisponible : '+esc(e.message||e)+'</div>'+
+      '<div class="br"><button class="btn bs" onclick="clM(\'mVUE\')">Fermer</button></div>';
+    return;
+  }
+
+  /* 1. Identité telle que l'appli patient la voit */
+  var idH='<div style="padding:10px;background:var(--bg);border-radius:10px;margin-bottom:10px">'+
+    '<div style="font-weight:700;font-size:12px;margin-bottom:5px">1 · Identité</div>'+
+    '<div style="font-size:12px;line-height:1.6">'+
+      'Vu par l\'appli comme : <b style="color:'+(known?'var(--accent)':'#e67e22')+'">'+(known?'patient DÉJÀ VENU':'NOUVEAU patient')+'</b>'+
+      (p?'':'<br><span style="color:#e67e22">Aucune fiche à ce numéro dans votre liste de patients.</span>')+
+    '</div></div>';
+
+  /* 2. Le cabinet accepte-t-il ce patient ? */
+  var elH='';
+  if(!elig.ok){
+    var why={blocked:'Ce patient est bloqué (⛔ sur sa fiche) : aucun rendez-vous ne lui est proposé.',
+             vacation:'Le cabinet est en congés : la réservation est fermée pour tout le monde.',
+             newPatient:'Vous refusez les nouveaux patients (Paramètres → Réservation en ligne).',
+             newTreatment:'Vous refusez les nouvelles prises en charge (Paramètres → Réservation en ligne).'}[elig.reason]
+            ||('Réservation refusée ('+esc(String(elig.reason||'?'))+').');
+    elH='<div style="padding:10px;background:#fdf0ee;border:1px solid #f5c6c0;border-radius:10px;margin-bottom:10px">'+
+      '<div style="font-weight:700;font-size:12px;margin-bottom:5px;color:#c0392b">2 · ⛔ Bloqué avant même le choix du motif</div>'+
+      '<div style="font-size:12px;line-height:1.5">'+why+'</div></div>';
+  }else{
+    elH='<div style="padding:10px;background:var(--bg);border-radius:10px;margin-bottom:10px">'+
+      '<div style="font-weight:700;font-size:12px;margin-bottom:5px">2 · Accès à la réservation</div>'+
+      '<div style="font-size:12px;line-height:1.5">✅ Autorisé'+
+      (elig.delayDays?' — mais ne peut réserver qu\'à partir de '+elig.delayDays+' jour(s) (délai nouveaux patients).':'.')+
+      '</div></div>';
+  }
+
+  /* 3. Motifs : ce que la liste affiche, et pourquoi les autres manquent */
+  var choices=[];
+  try{choices=eng.rules.motifChoices(known)||[];}catch(e){choices=[];}
+  var visIds={};choices.forEach(function(m){if(m&&m.id)visIds[m.id]=1;});
+
+  /* Tous les motifs candidats, agenda actuel + agenda futur (comme l'appli patient) */
+  var cfg=eng.CFG,fa=cfg.futureAgenda;
+  var all=[],seen={};
+  (cfg.motifs||[]).forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;all.push({m:m,src:'actuel'});}});
+  if(fa&&Array.isArray(fa.motifs))fa.motifs.forEach(function(m){if(m&&m.id&&!seen[m.id]){seen[m.id]=1;all.push({m:m,src:'futur'});}});
+
+  var mH='<div style="padding:10px;background:var(--bg);border-radius:10px;margin-bottom:10px">'+
+    '<div style="font-weight:700;font-size:12px;margin-bottom:6px">3 · Types de séance proposés</div>';
+  if(!all.length){
+    mH+='<div style="font-size:12px;color:#c0392b">Aucun motif n\'est défini dans vos paramètres.</div>';
+  }else{
+    all.forEach(function(x){
+      var ok=!!visIds[x.m.id];
+      var why=ok?'':_vueWhyHidden(x.m,known,eng);
+      mH+='<div style="display:flex;gap:7px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--border2)">'+
+        '<span style="flex:none;font-size:13px">'+(ok?'✅':'❌')+'</span>'+
+        '<div style="flex:1;font-size:12px;line-height:1.45"><b>'+esc(x.m.label||'(sans nom)')+'</b>'+
+        (x.src==='futur'?' <span style="font-size:10px;color:var(--text3)">(agenda futur)</span>':'')+
+        (why?'<div style="color:#c0392b">'+why+'</div>':'')+'</div></div>';
+    });
+  }
+  mH+='</div>';
+
+  /* 4. Verdict et correction en un geste */
+  var vH='';
+  if(elig.ok&&!choices.length&&all.length){
+    var nAud=all.filter(function(x){return !x.m.hiddenForPatient&&x.m.audience&&x.m.audience!=='all'}).length;
+    var nHid=all.filter(function(x){return x.m.hiddenForPatient}).length;
+    var fix='';
+    if(nAud&&!known)fix='Tous vos motifs sont réservés aux patients déjà venus, et ce patient est vu comme nouveau. '+
+      (p?'Sa fiche existe : vérifiez que le numéro qu\'il saisit est bien celui de sa fiche.':'Créez-lui une fiche avec ce numéro, ou passez un motif en « tous les patients ».');
+    else if(nAud&&known)fix='Tous vos motifs sont réservés aux nouveaux patients, et ce patient est déjà venu. Passez un motif en « tous les patients ».';
+    else if(nHid===all.length)fix='Tous vos motifs sont masqués dans l\'appli patient. Décochez le masquage sur au moins un motif.';
+    else fix='Aucun motif ne correspond au profil de ce patient.';
+    vH='<div style="padding:11px;background:#fdf0ee;border:2px solid #e74c3c;border-radius:10px;margin-bottom:10px">'+
+      '<div style="font-weight:700;font-size:13px;color:#c0392b;margin-bottom:5px">⚠️ Ce patient voit l\'écran vide</div>'+
+      '<div style="font-size:12px;line-height:1.55;margin-bottom:8px">« Aucun type de séance n\'est réservable en ligne pour votre profil. »<br><b>Cause : </b>'+fix+'</div>'+
+      '<button class="btn bs bw" style="font-size:11px" onclick="clM(\'mVUE\');openSet()">⚙ Ouvrir les paramètres</button></div>';
+  }else if(elig.ok&&choices.length){
+    vH='<div style="padding:10px;background:var(--accentbg);border-radius:10px;margin-bottom:10px;font-size:12px;line-height:1.5">'+
+      '✅ Ce patient voit <b>'+choices.length+' type'+(choices.length>1?'s':'')+' de séance</b> : '+
+      esc(choices.map(function(m){return m.label}).join(', '))+'.</div>';
+  }
+
+  b.innerHTML=form+vH+idH+elH+mH+
+    '<div style="font-size:10px;color:var(--text3);margin-bottom:8px;line-height:1.45">Diagnostic établi avec les règles exactes de l\'appli patient. Lecture seule : rien n\'est modifié.</div>'+
+    '<div class="br"><button class="btn bs" onclick="clM(\'mVUE\')">Fermer</button></div>';
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    v108 — CARTE VITALE, SANS SECRÉTAIRE
@@ -15274,6 +15456,7 @@ function showPatCtx(e,pid){
     '<div class="ci" onclick="clCtx();billPatient(\''+pid+'\',true)">💵 Facturer</div>'+
     '<div class="ci" onclick="openNewOrdo(\''+pid+'\')">📄 Nouvelle ordonnance / cotation</div>'+
     '<div class="ci" onclick="clCtx();openQuickHide(\''+pid+'\')">🙈 Masquer des créneaux à ce patient</div>'+
+    '<div class="ci" onclick="clCtx();openVuePatient(\''+pid+'\')">👁️ Ce que voit ce patient</div>'+ /* v111 */
     blockCtxItem(pid);
   m.innerHTML=it;m.style.left='-9999px';m.style.top='0';m.style.maxHeight='';m.classList.add('open');
   var r=m.getBoundingClientRect(),mW=r.width||210,mH=Math.min(r.height,window.innerHeight-16);
